@@ -1,4 +1,4 @@
-package org.overpaas.web.tomcat
+package brooklyn.entity.webapp.tomcat
 
 import groovy.transform.InheritConstructors
 
@@ -10,18 +10,19 @@ import java.util.concurrent.TimeUnit
 
 import javax.management.InstanceNotFoundException
 
-import org.overpaas.decorators.Startable
-import org.overpaas.entities.AbstractEntity
-import org.overpaas.entities.Group
-import org.overpaas.locations.SshBasedJavaWebAppSetup
-import org.overpaas.locations.SshMachineLocation
-import org.overpaas.types.ActivitySensor
-import org.overpaas.types.EntityStartException
-import org.overpaas.types.Location
-import org.overpaas.util.EntityStartUtils
-import org.overpaas.util.JmxSensorEffectorTool
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import brooklyn.entity.AbstractEntity
+import brooklyn.entity.Group
+import brooklyn.entity.trait.Startable
+import brooklyn.event.ActivitySensor
+import brooklyn.event.EntityStartException
+import brooklyn.location.Location
+import brooklyn.location.basic.SshBasedJavaWebAppSetup
+import brooklyn.location.basic.SshMachineLocation
+import brooklyn.util.internal.EntityStartUtils
+import brooklyn.util.internal.JmxSensorEffectorTool
 
 /**
  * An entity that represents a single Tomcat instance.

@@ -1,4 +1,4 @@
-package org.overpaas.web.jboss
+package brooklyn.entity.webapp.jboss
 
 import groovy.transform.InheritConstructors
 
@@ -7,15 +7,15 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-import org.overpaas.decorators.Startable
-import org.overpaas.entities.AbstractEntity
-import org.overpaas.entities.Group
-import org.overpaas.locations.SshBasedJavaWebAppSetup
-import org.overpaas.locations.SshMachineLocation
-import org.overpaas.types.ActivitySensor
-import org.overpaas.types.Location
-import org.overpaas.util.EntityStartUtils
-import org.overpaas.util.JmxSensorEffectorTool
+import brooklyn.entity.AbstractEntity
+import brooklyn.entity.Group
+import brooklyn.entity.trait.Startable
+import brooklyn.event.ActivitySensor
+import brooklyn.location.Location
+import brooklyn.location.basic.SshBasedJavaWebAppSetup
+import brooklyn.location.basic.SshMachineLocation
+import brooklyn.util.internal.EntityStartUtils
+import brooklyn.util.internal.JmxSensorEffectorTool
 
 /**
  * JBoss web application server.

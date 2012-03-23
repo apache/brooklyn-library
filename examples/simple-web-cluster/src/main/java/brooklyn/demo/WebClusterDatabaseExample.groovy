@@ -9,12 +9,15 @@ import org.slf4j.LoggerFactory
 import brooklyn.config.BrooklynProperties
 import brooklyn.entity.Entity
 import brooklyn.entity.basic.AbstractApplication
+import brooklyn.entity.basic.Attributes;
 import brooklyn.entity.basic.Entities
+import brooklyn.entity.database.mysql.MySqlNode;
 import brooklyn.entity.proxy.nginx.NginxController
 import brooklyn.entity.webapp.ControlledDynamicWebAppCluster
 import brooklyn.entity.webapp.DynamicWebAppCluster
 import brooklyn.entity.webapp.JavaWebAppService
 import brooklyn.entity.webapp.jboss.JBoss7Server
+import brooklyn.event.basic.DependentConfiguration;
 import brooklyn.launcher.BrooklynLauncher
 import brooklyn.location.Location
 import brooklyn.location.basic.CommandLineLocations
@@ -25,8 +28,8 @@ import brooklyn.util.CommandLineUtil
  * Run with:
  *   java -Xmx512m -Xms128m -XX:MaxPermSize=256m -cp target/brooklyn-example-*-with-dependencies.jar brooklyn.demo.WebClusterExample 
  **/
-public class WebClusterExample extends AbstractApplication {
-    public static final Logger LOG = LoggerFactory.getLogger(WebClusterExample)
+public class WebClusterDatabaseExample extends AbstractApplication {
+    public static final Logger LOG = LoggerFactory.getLogger(WebClusterDatabaseExample)
     
     static BrooklynProperties config = BrooklynProperties.Factory.newDefault()
 
@@ -34,25 +37,48 @@ public class WebClusterExample extends AbstractApplication {
 
     public static final String WAR_PATH = "classpath://hello-world-webapp.war"
     
-    public WebClusterExample(Map props=[:]) {
+    public static final String DB_USERNAME = "brooklyn"
+    public static final String DB_PASSWORD = "br00k11n"
+    
+    public static final String DB_SETUP_SQL = """
+create database visitors;
+use visitors;
+create user '${DB_USERNAME}' identified by '${DB_PASSWORD}';
+grant usage on *.* to '${DB_USERNAME}'@'localhost' identified by '${DB_PASSWORD}';
+grant all privileges on visitors.* to '${DB_USERNAME}'@'localhost';
+flush privileges;
+
+CREATE TABLE MESSAGES (
+        id INT NOT NULL AUTO_INCREMENT,
+        NAME VARCHAR(30) NOT NULL,
+        MESSAGE VARCHAR(400) NOT NULL,
+        PRIMARY KEY (ID)
+    );
+
+INSERT INTO MESSAGES values (default, 'Isaac Asimov', 'I grew up in Brooklyn' );
+""";
+
+    public WebClusterDatabaseExample(Map props=[:]) {
         super(props)
         setConfig(JavaWebAppService.ROOT_WAR, WAR_PATH)
     }
     
+    MySqlNode mysql = new MySqlNode(this, creationScript: DB_SETUP_SQL);
 
     protected JavaWebAppService newWebServer(Map flags, Entity cluster) {
-        return new JBoss7Server(flags, cluster).configure(httpPort: "8000+")
+        JBoss7Server jb7 = new JBoss7Server(flags).configure(httpPort: "8000+");
+        jb7.setConfig(JBoss7Server.JAVA_OPTIONS, ["brooklyn.example.db.url": 
+                //"jdbc:mysql://localhost/visitors?user=brooklyn&password=br00k11n"
+                DependentConfiguration.valueWhenAttributeReady(mysql, MySqlNode.MYSQL_URL, 
+                    { "jdbc:"+it+"visitors?user=${DB_USERNAME}\\&password=${DB_PASSWORD}" }) ]);
+        jb7.setOwner(cluster);
+        return jb7;
     }
 
-    NginxController nginxController = new NginxController(
-        domain: 'webclusterexample.brooklyn.local',
-        port:8080)
-
     ControlledDynamicWebAppCluster webCluster = new ControlledDynamicWebAppCluster(this,
-        name: "WebApp cluster",
-        controller: nginxController,
-        initialSize: 1,
+        controller: new NginxController(),
         webServerFactory: this.&newWebServer )
+
     
     ResizerPolicy policy = new ResizerPolicy(DynamicWebAppCluster.AVERAGE_REQUESTS_PER_SECOND).
         setSizeRange(1, 5).
@@ -64,7 +90,7 @@ public class WebClusterExample extends AbstractApplication {
         int port = CommandLineUtil.getCommandLineOptionInt(args, "--port", 8081);
         List<Location> locations = CommandLineLocations.getLocationsById(args ?: [DEFAULT_LOCATION])
 
-        WebClusterExample app = new WebClusterExample(name:'Brooklyn WebApp Cluster example')
+        WebClusterDatabaseExample app = new WebClusterDatabaseExample(name:'Brooklyn WebApp Cluster with Database example')
             
         BrooklynLauncher.manage(app, port)
         app.start(locations)

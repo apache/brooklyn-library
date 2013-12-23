@@ -1,3 +1,0 @@
-name: cassandra node
-services:
-- type: brooklyn.entity.nosql.cassandra.CassandraNode

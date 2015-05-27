@@ -1,6 +1,15 @@
-name: imageId us-west-2/ami-07390a37
+name: mssql
 
-location: AWS Oregon Win
+location:
+  jclouds:aws-ec2:us-west-2:
+    displayName: AWS Oregon (Windows)
+    imageId: us-west-2/ami-8fd3f9bf
+    hardwareId:  m3.medium
+    useJcloudsSshInit: false
+    templateOptions:
+      subnetId: subnet-a10e96c4
+      securityGroupIds: [['sg-a2d0c2c7']]
+      mapNewVolumeToDeviceName: ["/dev/sda1", 100, true]
 
 services:
 - type: brooklyn.entity.basic.VanillaWindowsProcess

@@ -38,10 +38,6 @@ public class DoNothingSoftwareProcessDriver extends AbstractSoftwareProcessSshDr
     }
 
     @Override
-    public void stop() {
-    }
-
-    @Override
     public void install() {
     }
 
@@ -53,4 +49,7 @@ public class DoNothingSoftwareProcessDriver extends AbstractSoftwareProcessSshDr
     public void launch() {
     }
 
+    @Override
+    public void stop() {
+    }
 }

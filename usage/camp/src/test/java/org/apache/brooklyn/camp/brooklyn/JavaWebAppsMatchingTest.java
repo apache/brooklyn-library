@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.brooklyn.camp.brooklyn;
+package org.apache.brooklyn.camp.brooklyn;
 
 import io.brooklyn.camp.spi.AssemblyTemplate;
 import io.brooklyn.camp.spi.PlatformComponentTemplate;
@@ -29,6 +29,8 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.brooklyn.camp.brooklyn.BrooklynCampPlatform;
+import org.apache.brooklyn.camp.brooklyn.BrooklynCampReservedKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

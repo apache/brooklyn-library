@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.brooklyn.camp.brooklyn;
+package org.apache.brooklyn.camp.brooklyn;
 
 import java.net.URI;
 import java.util.Collection;

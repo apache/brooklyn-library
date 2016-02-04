@@ -16,40 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.brooklyn.entity.salt;
+package org.apache.brooklyn.entity.cm.salt.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.brooklyn.core.feed.ConfigToAttributes;
-import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
+import org.apache.brooklyn.entity.cm.salt.SaltEntityDriver;
+import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
+import org.apache.brooklyn.location.ssh.SshMachineLocation;
 
-public class SaltStackMasterImpl extends SoftwareProcessImpl implements SaltStackMaster {
+// TODO: does this belong to the _.impl package?
+public class SaltEntitySshDriver extends AbstractSoftwareProcessSshDriver implements SaltEntityDriver {
 
-    private static final Logger log = LoggerFactory.getLogger(SaltStackMasterImpl.class);
-
-    public SaltStackMasterImpl() {
-        super();
+    public SaltEntitySshDriver(SaltEntityImpl entity, SshMachineLocation machine) {
+        super(entity, machine);
     }
 
     @Override
-    public Class getDriverInterface() {
-        return SaltStackMasterDriver.class;
+    public SaltEntityImpl getEntity() {
+        return (SaltEntityImpl) super.getEntity();
     }
 
     @Override
-    protected void connectSensors() {
-        super.connectSensors();
-
-        // TODO what sensors should we poll?
-        ConfigToAttributes.apply(this);
-
-        connectServiceUpIsRunning();
+    public void install() {
     }
 
     @Override
-    protected void disconnectSensors() {
-        disconnectServiceUpIsRunning();
-
-        super.disconnectSensors();
+    public void customize() {
     }
+
+    @Override
+    public void launch() {
+    }
+
+    @Override
+    public boolean isRunning() {
+        return true;
+    }
+
+    @Override
+    public void stop() {
+    }
+
 }

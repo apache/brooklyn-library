@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.brooklyn.entity.salt;
+package org.apache.brooklyn.entity.cm.salt;
 
 import org.apache.brooklyn.entity.software.base.SoftwareProcessDriver;
 
-public interface SaltStackMasterDriver extends SoftwareProcessDriver {
+public interface SaltEntityDriver extends SoftwareProcessDriver {
 
 }

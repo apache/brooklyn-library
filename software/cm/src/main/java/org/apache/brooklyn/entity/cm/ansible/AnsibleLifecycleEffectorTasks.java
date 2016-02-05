@@ -48,7 +48,7 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
 
     protected String serviceName;
     protected SshFeed serviceSshFeed;
-    
+
     public AnsibleLifecycleEffectorTasks() {
     }
 
@@ -111,11 +111,11 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
             LOG.warn("No way to check whether "+entity()+" is running; assuming yes");
         }
         entity().sensors().set(SoftwareProcess.SERVICE_UP, true);
-        
+
         Maybe<SshMachineLocation> machine = Locations.findUniqueSshMachineLocation(entity().getLocations());
 
         if (machine.isPresent()) {
-            
+
             String serviceName = String.format("[%s]%s", entity().config().get(SERVICE_NAME).substring(0, 1),
                     entity().config().get(SERVICE_NAME).substring(1));
             String checkCmd = String.format("ps -ef | grep %s", serviceName);
@@ -134,7 +134,7 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
                             .setOnSuccess(true)
                             .setOnFailureOrException(false))
                     .build();
-                    
+
              entity().feeds().addFeed(serviceSshFeed);
         } else {
             LOG.warn("Location(s) {} not an ssh-machine location, so not polling for status; setting serviceUp immediately", entity().getLocations());

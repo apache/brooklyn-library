@@ -65,6 +65,7 @@ public class HighstateTest {
         SaltHighstate.applyHighstate(contents, entity);
 
         final List<String> states = entity.sensors().get(SaltEntity.STATES);
+        LOG.info("Test states are: "+states);
         assertThat(states)
             .contains("apache")
             .contains("apache-reload")

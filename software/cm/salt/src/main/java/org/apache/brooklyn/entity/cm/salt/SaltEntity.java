@@ -19,6 +19,7 @@
 package org.apache.brooklyn.entity.cm.salt;
 
 import com.google.common.reflect.TypeToken;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -43,6 +44,7 @@ public interface SaltEntity extends SoftwareProcess, SaltConfig {
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(
         BrooklynConfigKeys.SUGGESTED_VERSION, "stable");
 
+    @SuppressWarnings("serial")
     AttributeSensor<List<String>> STATES = Sensors.newSensor(new TypeToken<List<String>>() {}, "salt.states",
         "Salt Highstate states");
 

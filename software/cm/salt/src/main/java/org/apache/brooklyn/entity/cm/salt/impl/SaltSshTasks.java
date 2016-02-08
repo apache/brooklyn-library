@@ -212,7 +212,8 @@ public class SaltSshTasks {
     public static SshEffectorTaskFactory<Integer> invokeSaltUtility(String functionName, String args, boolean permitFailure) {
 
         final SshEffectorTaskFactory<Integer> taskFactory =
-            ssh(sudo("/bin/bash -c '. /etc/salt/salt_utilities.sh ; " + functionName + " " + args + "'"));
+            ssh(sudo("/bin/bash -c '. /etc/salt/salt_utilities.sh ; " + functionName + " " + args + "'"))
+            .summary(functionName);
 
         if (permitFailure) {
             taskFactory.allowingNonZeroExitCode();

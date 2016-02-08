@@ -19,6 +19,7 @@
 package org.apache.brooklyn.entity.cm.salt.impl;
 
 import com.google.common.reflect.TypeToken;
+
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.core.sensor.Sensors;
@@ -41,6 +42,7 @@ public class SaltHighstate {
 
     public static final String HIGHSTATE_SENSOR_PREFIX = "salt.state";
 
+    @SuppressWarnings("serial")
     public static TypeToken<Map<String, Object>> STATE_FUNCTION_TYPE =
         new TypeToken<Map<String, Object>>() {};
 

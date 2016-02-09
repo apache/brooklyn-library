@@ -19,16 +19,20 @@
 package org.apache.brooklyn.entity.cm.ansible;
 
 import org.apache.brooklyn.api.entity.Entity;
-
 import org.apache.brooklyn.api.mgmt.TaskFactory;
 import org.apache.brooklyn.core.effector.EffectorTasks;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.core.task.Tasks;
+import org.apache.brooklyn.util.core.task.system.ProcessTaskFactory;
 import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 public class AnsiblePlaybookTasks {
     private static final Logger LOG = LoggerFactory.getLogger(AnsiblePlaybookTasks.class);
@@ -68,5 +72,11 @@ public class AnsiblePlaybookTasks {
         return SshEffectorTasks.ssh(cdAndRun(ansibleDirectory, cmd)).
                 summary("run ansible playbook for " + playbookName).requiringExitCodeZero();
     }
-    
+
+    public static ProcessTaskFactory<Integer> moduleCommand(String module, String args) {
+        final String command = "ansible localhost -m '" + module + "' -a '" + args + "'";
+        return SshEffectorTasks.ssh(sudo(command))
+            .summary("ad-hoc: " + command).requiringExitCodeZero();
+    }
 }
+

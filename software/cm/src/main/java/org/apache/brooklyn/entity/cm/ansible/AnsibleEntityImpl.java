@@ -19,6 +19,8 @@
 package org.apache.brooklyn.entity.cm.ansible;
 
 import org.apache.brooklyn.entity.stock.EffectorStartableImpl;
+import org.apache.brooklyn.util.core.task.DynamicTasks;
+import org.apache.brooklyn.util.core.task.system.ProcessTaskWrapper;
 import org.apache.brooklyn.util.text.Strings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,5 +39,17 @@ public class AnsibleEntityImpl extends EffectorStartableImpl implements AnsibleE
     @Override
     public void populateServiceNotUpDiagnostics() {
         // TODO no-op currently; should check ssh'able etc
-    }    
+    }
+
+    @Override
+    public String ansibleCommand(String module, String args) {
+        final ProcessTaskWrapper<Integer> command = DynamicTasks.queue(AnsiblePlaybookTasks.moduleCommand(module, args));
+                command.asTask().blockUntilEnded();
+                if (0 == command.getExitCode()) {
+                        return command.getStdout();
+                    } else {
+                        throw new RuntimeException("Command (" + args + ") in module " + module
+                            +  " failed with stderr:\n" + command.getStderr() + "\n");
+                    }
+    }
 }

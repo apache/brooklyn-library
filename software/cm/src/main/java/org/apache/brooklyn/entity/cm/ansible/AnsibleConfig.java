@@ -28,35 +28,39 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface AnsibleConfig {
 
-    public static enum AnsibleModes {
+    enum AnsibleModes {
         PLAYBOOK
     };
 
     @SetFromFlag("playbook")
-    public static final ConfigKey<String> ANSIBLE_PLAYBOOK = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbook",
+    ConfigKey<String> ANSIBLE_PLAYBOOK = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbook",
         "Playbook to be execute by Ansible");
 
     @SetFromFlag("playbook.yaml")
-    public static final ConfigKey<String> ANSIBLE_PLAYBOOK_YAML = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbookYaml",
+    ConfigKey<String> ANSIBLE_PLAYBOOK_YAML = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbookYaml",
         "Playbook to be execute by Ansible");
 
     @SetFromFlag("playbook.url")
-    public static final ConfigKey<String> ANSIBLE_PLAYBOOK_URL = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbookUrl");
+    ConfigKey<String> ANSIBLE_PLAYBOOK_URL = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbookUrl");
 
     @SetFromFlag("ansible.service.start")
-    public static final ConfigKey<String> ANSIBLE_SERVICE_START = ConfigKeys.newStringConfigKey("ansible.service.start",
+    ConfigKey<String> ANSIBLE_SERVICE_START = ConfigKeys.newStringConfigKey("ansible.service.start",
             "Default start command used with conjunction with the Ansible's service module",
             "sudo ansible localhost -c local -m service -a \"name=%s state=started\"");
 
     @SetFromFlag("ansible.service.stop")
-    public static final ConfigKey<String> ANSIBLE_SERVICE_STOP = ConfigKeys.newStringConfigKey("ansible.service.stop",
+    ConfigKey<String> ANSIBLE_SERVICE_STOP = ConfigKeys.newStringConfigKey("ansible.service.stop",
             "Default stop command used with conjunction with the Ansible's service module",
             "sudo ansible localhost -c local -m service -a \"name=%s state=stopped\"");
 
     @SetFromFlag("ansible.service.checkPort")
-    public static final ConfigKey<Integer> ANSIBLE_SERVICE_CHECK_PORT = ConfigKeys.newIntegerConfigKey("ansible.service.check.port");
+    ConfigKey<Integer> ANSIBLE_SERVICE_CHECK_PORT = ConfigKeys.newIntegerConfigKey("ansible.service.check.port");
 
     @SetFromFlag("service.name")
-    public static final ConfigKey<String> SERVICE_NAME = ConfigKeys.newStringConfigKey("brooklyn.ansible.serviceName",
+    ConfigKey<String> SERVICE_NAME = ConfigKeys.newStringConfigKey("brooklyn.ansible.serviceName",
         "Name of OS service this will run as, for use in checking running and stopping");
+
+    @SetFromFlag("ansible.vars")
+    ConfigKey<Object> ANSIBLE_VARS = ConfigKeys.newConfigKey(Object.class, "brooklyn.ansible.vars",
+        "Ansible 'extra-vars' variable configuration values");
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.cm.ansible;
 
+import com.google.common.base.Supplier;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.location.MachineLocation;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
@@ -31,16 +32,14 @@ import org.apache.brooklyn.entity.software.base.lifecycle.MachineLifecycleEffect
 import org.apache.brooklyn.feed.ssh.SshFeed;
 import org.apache.brooklyn.feed.ssh.SshPollConfig;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.Duration;
 import org.apache.brooklyn.util.time.Time;
-
-import com.google.common.base.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks implements AnsibleConfig {
 
@@ -48,13 +47,34 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
 
     protected String serviceName;
     protected SshFeed serviceSshFeed;
-    
+
+    protected Object extraVars;
+    protected String baseDir;
+    protected String runDir;
+
     public AnsibleLifecycleEffectorTasks() {
     }
 
     public String getServiceName() {
         if (serviceName!=null) return serviceName;
         return serviceName = entity().config().get(AnsibleConfig.SERVICE_NAME);
+    }
+
+    public Object getExtraVars() {
+        if (extraVars != null) return extraVars;
+        return extraVars = entity().config().get(ANSIBLE_VARS);
+    }
+
+    public String getBaseDir() {
+        if (null != baseDir) return baseDir;
+        return baseDir = MachineLifecycleEffectorTasks.resolveOnBoxDir(entity(),
+                Machines.findUniqueMachineLocation(entity().getLocations(), SshMachineLocation.class).get());
+    }
+
+    public String getRunDir() {
+        if (null != runDir) return runDir;
+        return runDir = Urls.mergePaths(getBaseDir(), "apps/"+entity().getApplicationId()+"/ansible/playbooks/"
+            +entity().getEntityType().getSimpleName()+"_"+entity().getId());
     }
 
     @Override
@@ -79,29 +99,32 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
     }
 
     protected void startWithAnsibleAsync() {
-        String baseDir = MachineLifecycleEffectorTasks.resolveOnBoxDir(entity(), Machines.findUniqueMachineLocation(entity().getLocations(), SshMachineLocation.class).get());
-        String installDir = Urls.mergePaths(baseDir, "installs/ansible");
+        String installDir = Urls.mergePaths(getBaseDir(), "installs/ansible");
 
         String playbookUrl = entity().config().get(ANSIBLE_PLAYBOOK_URL);
         String playbookYaml = entity().config().get(ANSIBLE_PLAYBOOK_YAML);
 
         if (Strings.isNonBlank(playbookUrl) && Strings.isNonBlank(playbookYaml)) {
-            throw new IllegalArgumentException("You can specify " +  AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName() +  " or " + AnsibleConfig.ANSIBLE_PLAYBOOK_YAML.getName() + " but not both of them!");
+            throw new IllegalArgumentException("You can specify " +  AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName()
+                +  " or " + AnsibleConfig.ANSIBLE_PLAYBOOK_YAML.getName() + " but not both of them!");
         }
 
         DynamicTasks.queue(AnsiblePlaybookTasks.installAnsible(installDir, false));
 
-        String runDir = Urls.mergePaths(baseDir, "apps/"+entity().getApplicationId()+"/ansible/playbooks/"+entity().getEntityType().getSimpleName()+"_"+entity().getId());
-        
+        if (getExtraVars() != null) {
+            DynamicTasks.queue(AnsiblePlaybookTasks.configureExtraVars(getRunDir(), extraVars, false));
+        }
+
         if (Strings.isNonBlank(playbookUrl)) {
-            DynamicTasks.queue(AnsiblePlaybookTasks.installPlaybook(runDir, getPlaybookName(), playbookUrl));
+            DynamicTasks.queue(AnsiblePlaybookTasks.installPlaybook(getRunDir(), getPlaybookName(), playbookUrl));
         }
 
         if (Strings.isNonBlank(playbookYaml)) {
-            DynamicTasks.queue(AnsiblePlaybookTasks.buildPlaybookFile(runDir, getPlaybookName()));
+            DynamicTasks.queue(AnsiblePlaybookTasks.buildPlaybookFile(getRunDir(), getPlaybookName()));
         }
-        DynamicTasks.queue(AnsiblePlaybookTasks.runAnsible(runDir, getPlaybookName()));
+        DynamicTasks.queue(AnsiblePlaybookTasks.runAnsible(getRunDir(), getExtraVars(), getPlaybookName()));
     }
+
 
     protected void postStartCustom() {
         boolean result = false;

@@ -27,13 +27,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AnsibleEntityImpl extends EffectorStartableImpl implements AnsibleEntity {
 
+    private AnsibleLifecycleEffectorTasks lifecycleTasks;
+
     public void init() {
         checkNotNull(getConfig(SERVICE_NAME), "service name is missing. it has to be provided by the user");
         String playbookName = getConfig(ANSIBLE_PLAYBOOK);
         if (!Strings.isBlank(playbookName)) setDefaultDisplayName(playbookName + " (ansible)");
 
         super.init();
-        new AnsibleLifecycleEffectorTasks().attachLifecycleEffectors(this);
+
+        lifecycleTasks = new AnsibleLifecycleEffectorTasks();
+
+        lifecycleTasks.attachLifecycleEffectors(this);
     }
 
     @Override
@@ -43,13 +48,14 @@ public class AnsibleEntityImpl extends EffectorStartableImpl implements AnsibleE
 
     @Override
     public String ansibleCommand(String module, String args) {
-        final ProcessTaskWrapper<Integer> command = DynamicTasks.queue(AnsiblePlaybookTasks.moduleCommand(module, args));
-                command.asTask().blockUntilEnded();
-                if (0 == command.getExitCode()) {
-                        return command.getStdout();
-                    } else {
-                        throw new RuntimeException("Command (" + args + ") in module " + module
-                            +  " failed with stderr:\n" + command.getStderr() + "\n");
-                    }
+        final ProcessTaskWrapper<Integer> command = DynamicTasks.queue(
+            AnsiblePlaybookTasks.moduleCommand(module, config().get(ANSIBLE_VARS), lifecycleTasks.getRunDir(), args));
+        command.asTask().blockUntilEnded();
+        if (0 == command.getExitCode()) {
+            return command.getStdout();
+        } else {
+            throw new RuntimeException("Command (" + args + ") in module " + module
+                + " failed with stderr:\n" + command.getStderr() + "\n");
+        }
     }
 }

@@ -27,15 +27,17 @@ import org.apache.brooklyn.util.core.task.Tasks;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskFactory;
 import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.ssh.BashCommands;
+import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 public class AnsiblePlaybookTasks {
     private static final Logger LOG = LoggerFactory.getLogger(AnsiblePlaybookTasks.class);
+    private static final String EXTRA_VARS_FILENAME = "extra_vars.yaml";
 
     public static TaskFactory<?> installAnsible(String ansibleDirectory, boolean force) {
         String installCmd = cdAndRun(ansibleDirectory, AnsibleBashCommands.INSTALL_ANSIBLE);
@@ -45,7 +47,9 @@ public class AnsiblePlaybookTasks {
 
     public static TaskFactory<?> installPlaybook(final String ansibleDirectory, final String playbookName, final String playbookUrl) {
         return Tasks.sequential("build ansible playbook file for "+playbookName,
-                SshEffectorTasks.put(ansibleDirectory + "/" + playbookName + ".yaml").contents(ResourceUtils.create().getResourceFromUrl(playbookUrl)).createDirectory());
+                SshEffectorTasks.put(ansibleDirectory + "/" + playbookName + ".yaml")
+                    .contents(ResourceUtils.create().getResourceFromUrl(playbookUrl))
+                    .createDirectory());
     }
     
     protected static String cdAndRun(String targetDirectory, String command) {
@@ -59,24 +63,47 @@ public class AnsiblePlaybookTasks {
         String yaml = entity.config().get(AnsibleConfig.ANSIBLE_PLAYBOOK_YAML);
 
         return Tasks.sequential("build ansible playbook file for "+ playbook,
-                    SshEffectorTasks.put(Urls.mergePaths(ansibleDirectory) + "/" + playbook + ".yaml").contents(yaml).createDirectory());
+            SshEffectorTasks.put(Urls.mergePaths(ansibleDirectory) + "/" + playbook + ".yaml")
+                .contents(yaml).createDirectory());
     }
 
-    public static TaskFactory<?> runAnsible(final String ansibleDirectory, String playbookName) {
-        String cmd = String.format("sudo ansible-playbook -i \"localhost,\" -c local -s %s.yaml", playbookName);
+    public static TaskFactory<?> runAnsible(final String dir, Object extraVars, String playbookName) {
+        String cmd = String.format("sudo ansible-playbook -i \"localhost,\" -c local "
+            + optionalExtraVarsParameter(extraVars)
+            + " -s %s.yaml", playbookName);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ansible command: {}", cmd);
         }
 
-        return SshEffectorTasks.ssh(cdAndRun(ansibleDirectory, cmd)).
+        return SshEffectorTasks.ssh(cdAndRun(dir, cmd)).
                 summary("run ansible playbook for " + playbookName).requiringExitCodeZero();
     }
 
-    public static ProcessTaskFactory<Integer> moduleCommand(String module, String args) {
-        final String command = "ansible localhost -m '" + module + "' -a '" + args + "'";
-        return SshEffectorTasks.ssh(sudo(command))
+    public static ProcessTaskFactory<Integer> moduleCommand(String module, Object extraVars, String root, String args) {
+        final String command = "ansible localhost "
+            + optionalExtraVarsParameter(extraVars)
+            + " -m '" + module + "' -a '" + args + "'";
+        return SshEffectorTasks.ssh(sudo(BashCommands.chain("cd " + root, command)))
             .summary("ad-hoc: " + command).requiringExitCodeZero();
+    }
+
+    public static TaskFactory<?> configureExtraVars(String dir, Object extraVars, boolean force) {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
+        Yaml asYaml = new Yaml(options);
+        final String varsYaml = asYaml.dump(extraVars);
+        return SshEffectorTasks.put(Urls.mergePaths(dir, EXTRA_VARS_FILENAME))
+            .contents(varsYaml)
+            .summary("install extra vars")
+            .createDirectory();
+    }
+
+    private static String optionalExtraVarsParameter(Object extraVars) {
+        if (null == extraVars || Strings.isBlank(extraVars.toString())) {
+            return "";
+        }
+        return " --extra-vars \"@" + EXTRA_VARS_FILENAME + "\" ";
     }
 }
 

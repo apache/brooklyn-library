@@ -33,9 +33,10 @@ import org.apache.brooklyn.api.sensor.Feed;
 import org.apache.brooklyn.core.BrooklynFeatureEnablement;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
+import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestUtils;
 import org.apache.brooklyn.core.test.entity.TestApplication;
@@ -44,7 +45,6 @@ import org.apache.brooklyn.entity.webapp.tomcat.TomcatServer;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.location.ssh.SshMachineLocationReuseIntegrationTest.RecordingSshjTool;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.WebAppMonitor;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.apache.brooklyn.util.core.task.BasicExecutionManager;
@@ -139,7 +139,7 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
         LOG.info("feeds before rebind are: "+origFeeds);
         Assert.assertTrue(origFeeds.size() >= 1);
 
-        origManagementContext.getRebindManager().forcePersistNow();
+        origManagementContext.getRebindManager().forcePersistNow(false, null);
 
         List<Task<?>> tasksBefore = ((BasicExecutionManager)origManagementContext.getExecutionManager()).getAllTasks();
         LOG.info("tasks before disabling HA, "+tasksBefore.size()+": "+tasksBefore);
@@ -161,7 +161,8 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
         
         RecordingSshjTool.forbidden.set(true);
         newManagementContext = createNewManagementContext();
-        newApp = (TestApplication) RebindTestUtils.rebind((LocalManagementContext)newManagementContext, classLoader);
+        newApp = (TestApplication) RebindTestUtils.rebind(
+            RebindOptions.create().newManagementContext(newManagementContext).classLoader(classLoader));
 
         NginxController newNginx = Iterables.getOnlyElement(Entities.descendants(newApp, NginxController.class));
         
@@ -170,11 +171,11 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
         Assert.assertTrue(newFeeds.size() >= 1);
         
         // eventually goes on fire, because we disabled ssh
-        EntityTestUtils.assertAttributeEqualsEventually(newNginx, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.ON_FIRE);
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.ON_FIRE);
         
         // re-enable SSH and it should right itself
         RecordingSshjTool.forbidden.set(false);
-        EntityTestUtils.assertAttributeEqualsEventually(newNginx, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
     }
 
 }

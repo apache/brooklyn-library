@@ -21,20 +21,18 @@ package org.apache.brooklyn.entity.network.bind;
 import static org.testng.Assert.assertEquals;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.sensor.EnricherSpec;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.EntityPredicates;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixture;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.enricher.stock.Enrichers;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.software.base.EmptySoftwareProcess;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -56,7 +54,7 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
 
     @Override
     protected TestApplication createApp() {
-        TestApplication app = ApplicationBuilder.newManagedApp(TestApplication.class, origManagementContext);
+        TestApplication app = origManagementContext.getEntityManager().createEntity(EntitySpec.create(TestApplication.class));
         dns = app.createAndManageChild(EntitySpec.create(BindDnsServer.class, TestBindDnsServerImpl.class)
                 .configure(BindDnsServer.ENTITY_FILTER, Predicates.instanceOf(EmptySoftwareProcess.class))
                 .configure(BindDnsServer.HOSTNAME_SENSOR, PrefixAndIdEnricher.SENSOR));
@@ -72,7 +70,7 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
 
     @Test(groups = "Integration")
     public void testOneARecordAndNoCnameRecordsWhenEntitiesHaveSameName() {
-        TestApplication app = ApplicationBuilder.newManagedApp(TestApplication.class, origManagementContext);
+        TestApplication app = origManagementContext.getEntityManager().createEntity(EntitySpec.create(TestApplication.class));
         EnricherSpec<?> dnsEnricher = Enrichers.builder().transforming(Attributes.HOSTNAME)
                 .computing(Functions.constant("my-name"))
                 .publishing(PrefixAndIdEnricher.SENSOR)
@@ -96,7 +94,7 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
 
     @Test(groups = "Integration")
     public void testDuplicateAAndCnameRecordsAreIgnored() {
-        TestApplication app = ApplicationBuilder.newManagedApp(TestApplication.class, origManagementContext);
+        TestApplication app = origManagementContext.getEntityManager().createEntity(EntitySpec.create(TestApplication.class));
         EnricherSpec<?> enricher1 = Enrichers.builder().transforming(Attributes.HOSTNAME)
                 .computing(Functions.constant("my-name-1"))
                 .publishing(PrefixAndIdEnricher.SENSOR)
@@ -127,9 +125,9 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
         origApp.start(ImmutableList.of(origApp.newLocalhostProvisioningLocation()));
         cluster.resize(1);
         assertDnsEntityEventuallyHasActiveMembers(1);
-        EntityLocal e = (EntityLocal) Iterables.getOnlyElement(cluster.getMembers());
+        Entity e = Iterables.getOnlyElement(cluster.getMembers());
         e.sensors().set(PrefixAndIdEnricher.SENSOR, " _-pretend.hostname.10.0.0.7.my-cloud.com");
-        EntityTestUtils.assertAttributeEqualsEventually(dns, BindDnsServer.A_RECORDS,
+        EntityAsserts.assertAttributeEqualsEventually(dns, BindDnsServer.A_RECORDS,
                 ImmutableMap.of("pretend-hostname-10-0-0-7-my-cloud-com", e.getAttribute(Attributes.ADDRESS)));
     }
 
@@ -138,16 +136,16 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
         origApp.start(ImmutableList.of(origApp.newLocalhostProvisioningLocation()));
         cluster.resize(1);
         assertDnsEntityEventuallyHasActiveMembers(1);
-        EntityLocal e = (EntityLocal) Iterables.getOnlyElement(cluster.getMembers());
+        Entity e = Iterables.getOnlyElement(cluster.getMembers());
         e.sensors().set(PrefixAndIdEnricher.SENSOR, Strings.repeat("a", 171));
-        EntityTestUtils.assertAttributeEqualsEventually(dns, BindDnsServer.A_RECORDS,
+        EntityAsserts.assertAttributeEqualsEventually(dns, BindDnsServer.A_RECORDS,
                 ImmutableMap.of(Strings.repeat("a", 63), e.getAttribute(Attributes.ADDRESS)));
     }
 
     @Test(groups = "Integration")
     public void testCanConfigureToListenToChildrenOfEntityOtherThanParent() {
         // Ignoring origApp
-        TestApplication app = ApplicationBuilder.newManagedApp(TestApplication.class, origManagementContext);
+        TestApplication app = origManagementContext.getEntityManager().createEntity(EntitySpec.create(TestApplication.class));
 
         EnricherSpec<PrefixAndIdEnricher> dnsEnricher = EnricherSpec.create(PrefixAndIdEnricher.class)
                 .configure(PrefixAndIdEnricher.PREFIX, "dns-integration-test-")
@@ -177,7 +175,7 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
         assertMapSizes(3, 1, 2, 1);
 
         cluster.resize(4);
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicCluster.GROUP_SIZE, 4);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicCluster.GROUP_SIZE, 4);
         assertDnsEntityEventuallyHasActiveMembers(4);
         assertMapSizes(4, 1, 3, 1);
 
@@ -201,12 +199,12 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
             cluster.resize(1);
             assertDnsEntityEventuallyHasActiveMembers(1);
             logDnsMappings();
-            EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicCluster.GROUP_SIZE, 1);
+            EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicCluster.GROUP_SIZE, 1);
             assertMapSizes(1, 1, 0, 1);
             cluster.resize(5);
             assertDnsEntityEventuallyHasActiveMembers(5);
             logDnsMappings();
-            EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicCluster.GROUP_SIZE, 5);
+            EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicCluster.GROUP_SIZE, 5);
             assertMapSizes(5, 1, 4, 1);
         } catch (Throwable t) {
             // Failing in jenkins occasionally; don't know why and can't reproduce.
@@ -220,7 +218,7 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
     @Test(groups = "Integration")
     public void testMapsSeveralEntitiesOnOneMachine() {
         origApp.start(ImmutableList.of(origApp.newLocalhostProvisioningLocation()));
-        EntityTestUtils.assertAttributeEqualsEventually(dns, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(dns, Attributes.SERVICE_UP, true);
         logDnsMappings();
 
         // One host with one A, two CNAME and one PTR record
@@ -249,7 +247,7 @@ public class BindDnsServerIntegrationTest extends RebindTestFixture<TestApplicat
     }
 
     private void assertDnsEntityEventuallyHasActiveMembers(final int size) {
-        EntityTestUtils.assertPredicateEventuallyTrue(dns, new Predicate<BindDnsServer>() {
+        EntityAsserts.assertPredicateEventuallyTrue(dns, new Predicate<BindDnsServer>() {
             @Override
             public boolean apply(BindDnsServer input) {
                 return input.getAddressMappings().size() == size;

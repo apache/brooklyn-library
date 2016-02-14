@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.core.annotation.Effector;
 import org.apache.brooklyn.core.annotation.EffectorParam;
@@ -201,5 +202,10 @@ public abstract class JavaWebAppSoftwareProcessImpl extends SoftwareProcessImpl 
         HttpsSslConfig config = getAttribute(HTTPS_SSL_CONFIG);
         return (config == null) ? "" : config.getKeystorePassword();
     }
+
+    public String getBuildpack() {
+        return getConfig(BUILDPACK);
+    }
+
 
 }

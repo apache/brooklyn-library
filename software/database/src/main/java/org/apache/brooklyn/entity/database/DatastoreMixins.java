@@ -18,19 +18,25 @@
  */
 package org.apache.brooklyn.entity.database;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.brooklyn.api.effector.Effector;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.effector.Effectors;
+import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
+import org.apache.brooklyn.util.core.text.TemplateProcessor;
+import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.apache.brooklyn.util.stream.KnownSizeInputStream;
 import org.apache.brooklyn.util.text.Strings;
 
@@ -58,8 +64,9 @@ public class DatastoreMixins {
     }
 
     
-    public static final ConfigKey<String> CREATION_SCRIPT_CONTENTS = CanGiveCreationScript.CREATION_SCRIPT_CONTENTS; 
-    public static final ConfigKey<String> CREATION_SCRIPT_URL = CanGiveCreationScript.CREATION_SCRIPT_URL; 
+    public static final ConfigKey<String> CREATION_SCRIPT_CONTENTS = CanGiveCreationScript.CREATION_SCRIPT_CONTENTS;
+    public static final ConfigKey<String> CREATION_SCRIPT_URL = CanGiveCreationScript.CREATION_SCRIPT_URL;
+    public static final ConfigKey<String> CREATION_SCRIPT_TEMPLATE = CanGiveCreationScript.CREATION_SCRIPT_TEMPLATE;
 
     public static interface CanGiveCreationScript {
         @SetFromFlag("creationScriptContents")
@@ -67,11 +74,17 @@ public class DatastoreMixins {
                 "datastore.creation.script.contents",
                 "Contents of creation script to initialize the datastore",
                 "");
-        
+
         @SetFromFlag("creationScriptUrl")
         public static final ConfigKey<String> CREATION_SCRIPT_URL = ConfigKeys.newStringConfigKey(
                 "datastore.creation.script.url",
                 "URL of creation script to use to initialize the datastore (ignored if creationScriptContents is specified)",
+                "");
+
+        @SetFromFlag("creationScriptTemplateUrl")
+        public static final ConfigKey<String> CREATION_SCRIPT_TEMPLATE = ConfigKeys.newStringConfigKey(
+                "datastore.creation.script.template.url",
+                "URL of creation script Freemarker template used to initialize the datastore (ignored if datastore.creation.script.contents or datastore.creation.script.url is specified)",
                 "");
     }
 
@@ -80,6 +93,17 @@ public class DatastoreMixins {
         String url = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_URL);
         if (!Strings.isBlank(url))
             return new ResourceUtils(entity).getResourceFromUrl(url);
+
+        String templateUrl = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_TEMPLATE);
+        if (!Strings.isBlank(templateUrl)) {
+            String template = TemplateProcessor.processTemplateContents(new ResourceUtils(entity).getResourceAsString(templateUrl), (EntityInternal) entity, ImmutableMap.<String, Object>of());
+            try {
+                return new ByteArrayInputStream(template.getBytes("UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw Exceptions.propagate(e);
+            }
+        }
+
         String contents = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_CONTENTS);
         if (!Strings.isBlank(contents))
             return KnownSizeInputStream.of(contents);
@@ -91,6 +115,11 @@ public class DatastoreMixins {
         String url = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_URL);
         if (!Strings.isBlank(url))
             return new ResourceUtils(entity).getResourceAsString(url);
+
+        String templateUrl = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_TEMPLATE);
+        if (!Strings.isBlank(templateUrl))
+            return TemplateProcessor.processTemplateContents(new ResourceUtils(entity).getResourceAsString(templateUrl), (EntityInternal) entity, ImmutableMap.<String, Object>of());
+
         String contents = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_CONTENTS);
         if (!Strings.isBlank(contents))
             return contents;

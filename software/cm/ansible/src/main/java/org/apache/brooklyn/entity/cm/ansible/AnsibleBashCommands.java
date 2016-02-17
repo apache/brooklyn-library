@@ -22,6 +22,7 @@ import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
 import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_TAR;
 import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_UNZIP;
 import static org.apache.brooklyn.util.ssh.BashCommands.installExecutable;
+import static org.apache.brooklyn.util.ssh.BashCommands.ifExecutableElse0;
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 import org.apache.brooklyn.util.ssh.BashCommands;
@@ -30,7 +31,7 @@ public class AnsibleBashCommands {
 
     public static final String INSTALL_ANSIBLE =
             BashCommands.chain(
-                    sudo("apt-add-repository -y ppa:ansible/ansible"),
+                    ifExecutableElse0("apt-add-repository",sudo("apt-add-repository -y ppa:ansible/ansible")),
                     INSTALL_CURL,
                     INSTALL_TAR,
                     INSTALL_UNZIP,

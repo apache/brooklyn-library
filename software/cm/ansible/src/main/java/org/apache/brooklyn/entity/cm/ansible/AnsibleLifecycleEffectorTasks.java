@@ -35,6 +35,8 @@ import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.net.Urls;
+
+import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.Duration;
 import org.apache.brooklyn.util.time.Time;
@@ -99,14 +101,20 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
     }
 
     protected void startWithAnsibleAsync() {
+        
         String installDir = Urls.mergePaths(getBaseDir(), "installs/ansible");
 
         String playbookUrl = entity().config().get(ANSIBLE_PLAYBOOK_URL);
         String playbookYaml = entity().config().get(ANSIBLE_PLAYBOOK_YAML);
 
-        if (Strings.isNonBlank(playbookUrl) && Strings.isNonBlank(playbookYaml)) {
-            throw new IllegalArgumentException("You can specify " +  AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName()
-                +  " or " + AnsibleConfig.ANSIBLE_PLAYBOOK_YAML.getName() + " but not both of them!");
+        if (playbookUrl != null && playbookYaml != null) {
+            throw new IllegalArgumentException( "You can not specify both "+  AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName() + 
+                " and " + AnsibleConfig.ANSIBLE_PLAYBOOK_YAML.getName() + " as arguments.");
+        }
+
+        if (playbookUrl == null && playbookYaml == null) { 
+                throw new IllegalArgumentException("You have to specify either " + AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName() + 
+                " or " + AnsibleConfig.ANSIBLE_PLAYBOOK_YAML.getName() + " as arguments.");
         }
 
         DynamicTasks.queue(AnsiblePlaybookTasks.installAnsible(installDir, false));
@@ -138,15 +146,21 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
         Maybe<SshMachineLocation> machine = Locations.findUniqueSshMachineLocation(entity().getLocations());
 
         if (machine.isPresent()) {
-            
-            String serviceName = String.format("[%s]%s", entity().config().get(SERVICE_NAME).substring(0, 1),
-                    entity().config().get(SERVICE_NAME).substring(1));
-            String checkCmd = String.format("ps -ef | grep %s", serviceName);
+            // For example “ps -f| grep httpd” matches for any process including the text “httpd”,
+            // which includes the grep command itself, whereas “ps | grep [h]ttpd” matches only processes
+            // including the text “httpd” (doesn’t include the grep) and additionally 
+            // provides a correct return code
+            //
+            // The command constructed bellow will look like  - ps -ef |grep [h]ttpd
+            String serviceNameCheck = getServiceName().replaceFirst("^(.)(.*)", "[$1]$2");
+            String checkCmd = String.format("ps -ef | grep %s", serviceNameCheck);
 
             Integer serviceCheckPort = entity().config().get(ANSIBLE_SERVICE_CHECK_PORT);
 
             if (serviceCheckPort != null) {
-                checkCmd = String.format("sudo ansible localhost -c local -m wait_for -a \"host=0.0.0.0 port=%d\"", serviceCheckPort);
+                checkCmd = sudo(String.format("ansible localhost -c local -m wait_for -a \"host=" + 
+                                        entity().config().get(ANSIBLE_SERVICE_CHECK_HOST) + 
+                                        "\" port=%d\"", serviceCheckPort));
             }
             serviceSshFeed = SshFeed.builder()
                     .entity(entity())
@@ -160,7 +174,8 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
                     
              entity().feeds().addFeed(serviceSshFeed);
         } else {
-            LOG.warn("Location(s) {} not an ssh-machine location, so not polling for status; setting serviceUp immediately", entity().getLocations());
+            LOG.warn("Location(s) {} not an ssh-machine location, so not polling for status; "
+                    + "setting serviceUp immediately", entity().getLocations());
         }
     }
 
@@ -169,7 +184,8 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
 
         // if it's still up after 5s assume we are good (default behaviour)
         Time.sleep(Duration.FIVE_SECONDS);
-        if (!((Integer)0).equals(DynamicTasks.queue(SshEffectorTasks.ssh(String.format(entity().config().get(AnsibleConfig.ANSIBLE_SERVICE_START), getServiceName()))).get())) {
+        int result = DynamicTasks.queue(SshEffectorTasks.ssh(sudo(getServiveStartCommand()))).get();
+        if (0 != result) {
             throw new IllegalStateException("The process for "+entity()+" appears not to be running (service "+getServiceName()+")");
         }
 
@@ -193,11 +209,19 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
 
     protected boolean tryStopService() {
         if (getServiceName()==null) return false;
-        int result = DynamicTasks.queue(SshEffectorTasks.ssh(String.format(entity().config().get(AnsibleConfig.ANSIBLE_SERVICE_STOP), getServiceName()))).get();
+        int result = DynamicTasks.queue(SshEffectorTasks.ssh(sudo(getServiveStopCommand()))).get();
         if (0 == result) return true;
         if (entity().getAttribute(Attributes.SERVICE_STATE_ACTUAL) != Lifecycle.RUNNING)
             return true;
-        
+
         throw new IllegalStateException("The process for "+entity()+" appears could not be stopped (exit code "+result+" to service stop)");
+    }
+
+    private String getServiveStartCommand() {
+        return String.format(entity().config().get(AnsibleConfig.ANSIBLE_SERVICE_START), getServiceName());
+    }
+
+    private String getServiveStopCommand() {
+        return String.format(entity().config().get(AnsibleConfig.ANSIBLE_SERVICE_STOP), getServiceName());
     }
 }

@@ -46,12 +46,16 @@ public interface AnsibleConfig {
     @SetFromFlag("ansible.service.start")
     ConfigKey<String> ANSIBLE_SERVICE_START = ConfigKeys.newStringConfigKey("ansible.service.start",
             "Default start command used with conjunction with the Ansible's service module",
-            "sudo ansible localhost -c local -m service -a \"name=%s state=started\"");
+            "ansible localhost -c local -m service -a \"name=%s state=started\"");
 
     @SetFromFlag("ansible.service.stop")
     ConfigKey<String> ANSIBLE_SERVICE_STOP = ConfigKeys.newStringConfigKey("ansible.service.stop",
             "Default stop command used with conjunction with the Ansible's service module",
-            "sudo ansible localhost -c local -m service -a \"name=%s state=stopped\"");
+            "ansible localhost -c local -m service -a \"name=%s state=stopped\"");
+
+    @SetFromFlag("ansible.service.checkHost")
+    ConfigKey<String> ANSIBLE_SERVICE_CHECK_HOST = ConfigKeys.newStringConfigKey("ansible.service.check.host",
+            "IP to be checked. Default: All IPs ", "0.0.0.0");
 
     @SetFromFlag("ansible.service.checkPort")
     ConfigKey<Integer> ANSIBLE_SERVICE_CHECK_PORT = ConfigKeys.newIntegerConfigKey("ansible.service.check.port");

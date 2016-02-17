@@ -68,9 +68,9 @@ public class AnsiblePlaybookTasks {
     }
 
     public static TaskFactory<?> runAnsible(final String dir, Object extraVars, String playbookName) {
-        String cmd = String.format("sudo ansible-playbook -i \"localhost,\" -c local "
+        String cmd = sudo(String.format("ansible-playbook -i \"localhost,\" -c local "
             + optionalExtraVarsParameter(extraVars)
-            + " -s %s.yaml", playbookName);
+            + " -s %s.yaml", playbookName));
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ansible command: {}", cmd);

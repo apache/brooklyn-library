@@ -39,6 +39,11 @@ deployed by brooklyn, to show <b>SQL database interactivity</b>.
 
 <%
 String url=System.getProperty("brooklyn.example.db.url");
+
+if((url == null) || (url.isEmpty())) {
+    url = System.getenv("brooklyn.example.db.url");
+}
+
 //URL should be supplied e.g. ""-Dbrooklyn.example.db.url=jdbc:mysql://localhost/visitors?user=brooklyn&password=br00k11n"
 //(note quoting needed due to ampersand)
 if (url==null) {

@@ -114,6 +114,7 @@
         <module>qa</module>
         
         <module>examples</module>
+        <module>brooklyn-validations</module>
 
     </modules>
 

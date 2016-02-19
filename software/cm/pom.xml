@@ -70,10 +70,10 @@
         </mailingList>
     </mailingLists>
 
-
     <modules>
 
         <module>salt</module>
+        <module>ansible</module>
 
     </modules>
 

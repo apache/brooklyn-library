@@ -499,7 +499,7 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     }
 
     // Utilities for modifying an AttributeSensor of type map
-    private static class MapAttribute {
+    static class MapAttribute {
         public static <K, V> V put(Entity entity, AttributeSensor<Map<K,V>> attribute, K key, V value) {
             Map<K, V> oldMap = entity.getAttribute(attribute);
             Map<K, V> newMap = MutableMap.copyOf(oldMap);

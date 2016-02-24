@@ -39,7 +39,6 @@ import org.apache.brooklyn.api.location.MachineProvisioningLocation;
 import org.apache.brooklyn.api.location.NoMachinesAvailableException;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.factory.EntityFactory;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
@@ -47,6 +46,8 @@ import org.apache.brooklyn.core.test.entity.TestEntity;
 import org.apache.brooklyn.core.test.entity.TestEntityImpl;
 import org.apache.brooklyn.entity.group.Cluster;
 import org.apache.brooklyn.entity.group.DynamicCluster;
+import org.apache.brooklyn.location.byon.FixedListMachineProvisioningLocation;
+import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.collections.MutableSet;
@@ -56,8 +57,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.byon.FixedListMachineProvisioningLocation;
-import org.apache.brooklyn.location.ssh.SshMachineLocation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -103,29 +102,47 @@ public class AbstractControllerTest extends BrooklynAppUnitTestSupport {
     // values change.
     @Test
     public void testUpdateCalledWhenChildHostnameAndPortChanges() throws Exception {
+        log.info("adding child (no effect until up)");
         TestEntity child = cluster.addChild(EntitySpec.create(TestEntity.class));
         cluster.addMember(child);
 
         List<Collection<String>> u = Lists.newArrayList(controller.getUpdates());
         assertTrue(u.isEmpty(), "expected no updates, but got "+u);
         
+        log.info("setting child service_up");
         child.sensors().set(Startable.SERVICE_UP, true);
+        // above may trigger error logged about no hostname, but should update again with the settings below
         
-        // TODO Ugly sleep to allow AbstractController to detect node having been added
-        Thread.sleep(100);
-        
+        log.info("setting mymachine:1234");
         child.sensors().set(ClusteredEntity.HOSTNAME, "mymachine");
         child.sensors().set(Attributes.SUBNET_HOSTNAME, "mymachine");
         child.sensors().set(ClusteredEntity.HTTP_PORT, 1234);
         assertEventuallyExplicitAddressesMatch(ImmutableList.of("mymachine:1234"));
         
+        /* a race failure has been observed, https://issues.apache.org/jira/browse/BROOKLYN-206
+         * but now (two months later) i (alex) can't see how it could happen. 
+         * probably optimistic but maybe it is fixed. if not we'll need the debug logs to see what is happening.
+         * i've confirmed:
+         * * the policy is attached and active during setup, before start completes
+         * * the child is added as a member synchronously
+         * * the policy which is "subscribed to members" is in fact subscribed to everything
+         *   then filtered for members, not ideal, but there shouldn't be a race in the policy getting notices
+         * * the handling of those events are both processed in order and look up the current values
+         *   rather than relying on the published values; either should be sufficient to cause the addresses to change
+         * there was a sleep(100) marked "Ugly sleep to allow AbstractController to detect node having been added"
+         * from the test's addition by aled in early 2014, but can't see why that would be necessary
+         */
+        
+        log.info("setting mymachine2:1234");
         child.sensors().set(ClusteredEntity.HOSTNAME, "mymachine2");
         child.sensors().set(Attributes.SUBNET_HOSTNAME, "mymachine2");
         assertEventuallyExplicitAddressesMatch(ImmutableList.of("mymachine2:1234"));
         
+        log.info("setting mymachine2:1235");
         child.sensors().set(ClusteredEntity.HTTP_PORT, 1235);
         assertEventuallyExplicitAddressesMatch(ImmutableList.of("mymachine2:1235"));
         
+        log.info("clearing");
         child.sensors().set(ClusteredEntity.HOSTNAME, null);
         child.sensors().set(Attributes.SUBNET_HOSTNAME, null);
         assertEventuallyExplicitAddressesMatch(ImmutableList.<String>of());
@@ -305,7 +322,7 @@ public class AbstractControllerTest extends BrooklynAppUnitTestSupport {
         List<Collection<String>> u = Lists.newArrayList(controller.getUpdates());
         Collection<String> last = Iterables.getLast(u, null);
         log.debug("test "+u.size()+" updates, expecting "+expectedAddresses+"; actual "+last);
-        assertTrue(u.size() > 0);
+        assertTrue(!u.isEmpty(), "no updates; expecting "+expectedAddresses);
         assertEquals(ImmutableSet.copyOf(last), ImmutableSet.copyOf(expectedAddresses), "actual="+last+" expected="+expectedAddresses);
         assertEquals(last.size(), expectedAddresses.size(), "actual="+last+" expected="+expectedAddresses);
     }

@@ -22,13 +22,13 @@ import static java.lang.String.format;
 import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
 import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_TAR;
 import static org.apache.brooklyn.util.ssh.BashCommands.addSbinPathCommand;
-import static org.apache.brooklyn.util.ssh.BashCommands.sbinPath;
 import static org.apache.brooklyn.util.ssh.BashCommands.alternatives;
 import static org.apache.brooklyn.util.ssh.BashCommands.chainGroup;
 import static org.apache.brooklyn.util.ssh.BashCommands.commandToDownloadUrlAs;
 import static org.apache.brooklyn.util.ssh.BashCommands.ifExecutableElse;
 import static org.apache.brooklyn.util.ssh.BashCommands.ifNotExecutable;
 import static org.apache.brooklyn.util.ssh.BashCommands.ok;
+import static org.apache.brooklyn.util.ssh.BashCommands.sbinPath;
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 import static org.apache.brooklyn.util.text.StringEscapes.BashStringEscapes.escapeLiteralForDoubleQuotedBash;
 
@@ -37,8 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.api.location.OsDetails;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.core.entity.Attributes;
@@ -53,6 +51,8 @@ import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -108,9 +108,10 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
 
     @Override
     public void install() {
-        if (entity.getConfig(Attributes.DOWNLOAD_URL) != null) {
-            LOG.warn("Ignoring download.url {}, use download.url.rhelcentos or download.url.mac", entity.getConfig(Attributes.DOWNLOAD_URL));
-        }
+        // TODO download URL can be inferred
+//        if (entity.getConfig(Attributes.DOWNLOAD_URL) != null) {
+//            LOG.warn("Ignoring download.url {}, use download.url.rhelcentos or download.url.mac", entity.getConfig(Attributes.DOWNLOAD_URL));
+//        }
 
         OsDetails osDetails = getMachine().getMachineDetails().getOsDetails();
         List<String> commands = Lists.newLinkedList();

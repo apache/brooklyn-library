@@ -37,9 +37,17 @@ New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\Microsoft SQL 
 
 Install-WindowsFeature NET-Framework-Core
 
+& winrm set winrm/config/service/auth '@{CredSSP="true"}'
+& winrm set winrm/config/client/auth '@{CredSSP="true"}'
+
 $pass = '${attribute['windows.password']}'
 $secpasswd = ConvertTo-SecureString $pass -AsPlainText -Force
-$mycreds = New-Object System.Management.Automation.PSCredential ($($env:COMPUTERNAME + "\Administrator"), $secpasswd)
+$mycreds = New-Object System.Management.Automation.PSCredential ($($env:COMPUTERNAME + "\${location.user}"), $secpasswd)
 
-$process = Start-Process ( $driveLetter + "setup.exe") -ArgumentList "/ConfigurationFile=C:\ConfigurationFile.ini" -Credential $mycreds -RedirectStandardOutput "C:\sqlout.txt" -RedirectStandardError "C:\sqlerr.txt" -Wait -PassThru
-exit $process.ExitCode
+$exitCode = Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $mycreds -ScriptBlock {
+    param($driveLetter)
+    $process = Start-Process ( $driveLetter + "setup.exe") -ArgumentList "/ConfigurationFile=C:\ConfigurationFile.ini" -RedirectStandardOutput "C:\sqlout.txt" -RedirectStandardError "C:\sqlerr.txt" -Wait -PassThru -NoNewWindow
+    $process.ExitCode
+} -Authentication CredSSP -ArgumentList $driveLetter
+
+exit $exitCode

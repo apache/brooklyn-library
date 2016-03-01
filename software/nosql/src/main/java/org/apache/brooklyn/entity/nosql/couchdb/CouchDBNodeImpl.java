@@ -65,21 +65,21 @@ public class CouchDBNodeImpl extends SoftwareProcessImpl implements CouchDBNode 
         connectServiceUpIsRunning();
 
         boolean retrieveUsageMetrics = getConfig(RETRIEVE_USAGE_METRICS);
-        
+
         httpFeed = HttpFeed.builder()
                 .entity(this)
                 .period(500, TimeUnit.MILLISECONDS)
                 .baseUri(String.format("http://%s:%d/_stats", getAttribute(HOSTNAME), getHttpPort()))
                 .poll(new HttpPollConfig<Integer>(REQUEST_COUNT)
-                        .onSuccess(HttpValueFunctions.jsonContents(new String[] { "httpd", "requests", "count" }, Integer.class))
+                        .onSuccess(HttpValueFunctions.jsonContents(new String[] { "httpd", "requests", "sum" }, Integer.class))
                         .onFailureOrException(EntityFunctions.attribute(this, REQUEST_COUNT))
                         .enabled(retrieveUsageMetrics))
                 .poll(new HttpPollConfig<Integer>(ERROR_COUNT)
-                        .onSuccess(HttpValueFunctions.jsonContents(new String[] { "httpd_status_codes", "404", "count" }, Integer.class))
+                        .onSuccess(HttpValueFunctions.jsonContents(new String[] { "httpd_status_codes", "404", "sum" }, Integer.class))
                         .onFailureOrException(Functions.constant(-1))
                         .enabled(retrieveUsageMetrics))
                 .poll(new HttpPollConfig<Integer>(TOTAL_PROCESSING_TIME)
-                        .onSuccess(HttpValueFunctions.jsonContents(new String[] { "couchdb", "request_time", "count" }, Integer.class))
+                        .onSuccess(HttpValueFunctions.jsonContents(new String[] { "couchdb", "request_time", "sum" }, Integer.class))
                         .onFailureOrException(Functions.constant(-1))
                         .enabled(retrieveUsageMetrics))
                 .poll(new HttpPollConfig<Integer>(MAX_PROCESSING_TIME)

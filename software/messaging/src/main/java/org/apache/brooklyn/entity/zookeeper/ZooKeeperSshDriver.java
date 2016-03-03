@@ -91,13 +91,7 @@ public class ZooKeeperSshDriver extends JavaSoftwareProcessSshDriver implements 
         newScript(ImmutableMap.of(USE_PID_FILE, getPidFile()), STOPPING).execute();     
     }
 
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("zookeeper-%s", getVersion()))));
-    }
-
-    @Override
+   @Override
     public void install() {
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();

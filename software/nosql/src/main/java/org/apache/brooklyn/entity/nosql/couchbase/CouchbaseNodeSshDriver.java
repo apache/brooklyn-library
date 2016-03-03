@@ -19,7 +19,12 @@
 package org.apache.brooklyn.entity.nosql.couchbase;
 
 import static java.lang.String.format;
-import static org.apache.brooklyn.util.ssh.BashCommands.*;
+import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
+import static org.apache.brooklyn.util.ssh.BashCommands.alternatives;
+import static org.apache.brooklyn.util.ssh.BashCommands.chainGroup;
+import static org.apache.brooklyn.util.ssh.BashCommands.installPackage;
+import static org.apache.brooklyn.util.ssh.BashCommands.ok;
+import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -29,35 +34,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.Group;
-import org.apache.brooklyn.api.location.OsDetails;
-import org.apache.brooklyn.api.mgmt.Task;
-import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
-import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.drivers.downloads.BasicDownloadRequirement;
-import org.apache.brooklyn.core.entity.drivers.downloads.DownloadProducerFromUrlAttribute;
-import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
-import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
-import org.apache.brooklyn.core.sensor.DependentConfiguration;
-import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
-import org.apache.brooklyn.feed.http.HttpValueFunctions;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.brooklyn.location.ssh.SshMachineLocation;
-import org.apache.brooklyn.util.collections.MutableMap;
-import org.apache.brooklyn.util.http.HttpTool;
-import org.apache.brooklyn.util.http.HttpToolResponse;
-import org.apache.brooklyn.util.core.task.DynamicTasks;
-import org.apache.brooklyn.util.core.task.TaskBuilder;
-import org.apache.brooklyn.util.core.task.TaskTags;
-import org.apache.brooklyn.util.core.task.Tasks;
-import org.apache.brooklyn.util.repeat.Repeater;
-import org.apache.brooklyn.util.ssh.BashCommands;
-import org.apache.brooklyn.util.text.NaturalOrderComparator;
-import org.apache.brooklyn.util.text.Strings;
-import org.apache.brooklyn.util.text.StringEscapes.BashStringEscapes;
-import org.apache.brooklyn.util.time.Duration;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -65,6 +42,34 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
+
+import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.api.entity.Group;
+import org.apache.brooklyn.api.location.OsDetails;
+import org.apache.brooklyn.api.mgmt.Task;
+import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
+import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.drivers.downloads.BasicDownloadRequirement;
+import org.apache.brooklyn.core.entity.drivers.downloads.DownloadProducerFromUrlAttribute;
+import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
+import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
+import org.apache.brooklyn.core.sensor.DependentConfiguration;
+import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
+import org.apache.brooklyn.feed.http.HttpValueFunctions;
+import org.apache.brooklyn.location.ssh.SshMachineLocation;
+import org.apache.brooklyn.util.collections.MutableMap;
+import org.apache.brooklyn.util.core.task.DynamicTasks;
+import org.apache.brooklyn.util.core.task.TaskBuilder;
+import org.apache.brooklyn.util.core.task.TaskTags;
+import org.apache.brooklyn.util.core.task.Tasks;
+import org.apache.brooklyn.util.http.HttpTool;
+import org.apache.brooklyn.util.http.HttpToolResponse;
+import org.apache.brooklyn.util.repeat.Repeater;
+import org.apache.brooklyn.util.ssh.BashCommands;
+import org.apache.brooklyn.util.text.NaturalOrderComparator;
+import org.apache.brooklyn.util.text.StringEscapes.BashStringEscapes;
+import org.apache.brooklyn.util.text.Strings;
+import org.apache.brooklyn.util.time.Duration;
 
 public class CouchbaseNodeSshDriver extends AbstractSoftwareProcessSshDriver implements CouchbaseNodeDriver {
 
@@ -74,12 +79,6 @@ public class CouchbaseNodeSshDriver extends AbstractSoftwareProcessSshDriver imp
 
     public static String couchbaseCli(String cmd) {
         return "/opt/couchbase/bin/couchbase-cli " + cmd + " ";
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(getInstallDir());
     }
 
     @Override

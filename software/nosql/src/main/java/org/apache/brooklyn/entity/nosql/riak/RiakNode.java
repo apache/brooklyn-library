@@ -49,6 +49,9 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION,
             "Version to install (Default 2.0.5)", "2.0.5");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "riak-%s");
+
     @SetFromFlag("optimizeNetworking")
     ConfigKey<Boolean> OPTIMIZE_HOST_NETWORKING  = ConfigKeys.newBooleanConfigKey("riak.networking.optimize", "Optimize host networking when running in a VM", Boolean.TRUE);
 

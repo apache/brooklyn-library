@@ -24,7 +24,7 @@ import org.apache.brooklyn.api.objs.HasShortName;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
@@ -42,14 +42,17 @@ public interface Jetty6Server extends JavaWebAppSoftwareProcess, UsesJmx, HasSho
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "6.1.26");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "jetty-%s");
+
     ConfigKey<Duration> START_TIMEOUT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.START_TIMEOUT, Duration.FIVE_MINUTES);
 
     @SetFromFlag("configXmlTemplateUrl")
     ConfigKey<String> CONFIG_XML_TEMPLATE_URL = ConfigKeys.newStringConfigKey("jetty.configXml.templateUrl", "Extra XML configuration file template URL if required");
 
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "http://get.jenv.mvnsearch.org/download/jetty/jetty-${version}.zip");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://get.jenv.mvnsearch.org/download/jetty/jetty-${version}.zip");
 
     AttributeSensor<Integer> RESPONSES_4XX_COUNT =
             Sensors.newIntegerSensor("webapp.responses.4xx", "Responses in the 400's");

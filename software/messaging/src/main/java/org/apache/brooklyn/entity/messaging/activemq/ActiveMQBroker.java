@@ -47,6 +47,9 @@ public interface ActiveMQBroker extends SoftwareProcess, MessageBroker, UsesJmx,
     @SetFromFlag("version")
     public static final ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "5.10.2");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-activemq-%s");
+
     @SetFromFlag("downloadUrl")
     public static final AttributeSensorAndConfigKey<String,String> DOWNLOAD_URL = new StringAttributeSensorAndConfigKey(
             Attributes.DOWNLOAD_URL, "${driver.mirrorUrl}/${version}/apache-activemq-${version}-bin.tar.gz");

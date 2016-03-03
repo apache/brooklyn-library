@@ -20,6 +20,8 @@ package org.apache.brooklyn.entity.proxy.nginx;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.objs.HasShortName;
@@ -29,6 +31,7 @@ import org.apache.brooklyn.core.annotation.Effector;
 import org.apache.brooklyn.core.annotation.EffectorParam;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.effector.MethodEffector;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.proxy.AbstractController;
@@ -36,13 +39,11 @@ import org.apache.brooklyn.entity.proxy.ProxySslConfig;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * An entity that represents an Nginx proxy (e.g. for routing requests to servers in a cluster).
  * <p>
  * The default driver *builds* nginx from source (because binaries are not reliably available, esp not with sticky sessions).
- * This requires gcc and other build tools installed. The code attempts to install them but inevitably 
+ * This requires gcc and other build tools installed. The code attempts to install them but inevitably
  * this entity may be more finicky about the OS/image where it runs than others.
  * <p>
  * Paritcularly on OS X we require Xcode and command-line gcc installed and on the path.
@@ -51,7 +52,7 @@ import com.google.common.collect.ImmutableMap;
  * of configuring nginx.
  * <p>
  * https configuration is supported, with the certificates providable on a per-UrlMapping basis or a global basis.
- * (not supported to define in both places.) 
+ * (not supported to define in both places.)
  * per-Url is useful if different certificates are used for different server names,
  * or different ports if that is supported.
  * see more info on Ssl in {@link ProxySslConfig}.
@@ -65,10 +66,13 @@ public interface NginxController extends AbstractController, HasShortName {
 
     MethodEffector<Void> DEPLOY =
             new MethodEffector<Void>(NginxController.class, "deploy");
-    
+
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION =
             ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "1.8.0");
+
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "nginx-%s");
 
     @SetFromFlag("stickyVersion")
     ConfigKey<String> STICKY_VERSION = ConfigKeys.newStringConfigKey(
@@ -79,12 +83,12 @@ public interface NginxController extends AbstractController, HasShortName {
             "pcre.version", "Version of PCRE to be installed, if required", "8.37");
 
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "http://nginx.org/download/nginx-${version}.tar.gz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://nginx.org/download/nginx-${version}.tar.gz");
 
     @SetFromFlag("downloadAddonUrls")
-    BasicAttributeSensorAndConfigKey<Map<String,String>> DOWNLOAD_ADDON_URLS = new BasicAttributeSensorAndConfigKey<Map<String,String>>(
-            SoftwareProcess.DOWNLOAD_ADDON_URLS, ImmutableMap.of(
+    AttributeSensorAndConfigKey<Map<String,String>, Map<String,String>> DOWNLOAD_ADDON_URLS =
+            ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_ADDON_URLS, ImmutableMap.of(
                     "stickymodule", "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/${addonversion}.tar.gz",
                     "pcre", "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${addonversion}.tar.gz"));
 
@@ -115,10 +119,10 @@ public interface NginxController extends AbstractController, HasShortName {
     ConfigKey<String> STATIC_CONTENT_ARCHIVE_URL = ConfigKeys.newStringConfigKey(
             "nginx.config.staticContentArchiveUrl", "The URL of an archive file of static content (To be copied to the server)");
 
-    BasicAttributeSensorAndConfigKey<String> ACCESS_LOG_LOCATION = new BasicAttributeSensorAndConfigKey<String>(String.class,
+    AttributeSensorAndConfigKey<String, String> ACCESS_LOG_LOCATION = ConfigKeys.newStringSensorAndConfigKey(
             "nginx.log.access", "Nginx access log file location", "logs/access.log");
 
-    BasicAttributeSensorAndConfigKey<String> ERROR_LOG_LOCATION = new BasicAttributeSensorAndConfigKey<String>(String.class,
+    AttributeSensorAndConfigKey<String, String> ERROR_LOG_LOCATION = ConfigKeys.newStringSensorAndConfigKey(
             "nginx.log.error", "Nginx error log file location", "logs/error.log");
 
     boolean isSticky();
@@ -134,11 +138,11 @@ public interface NginxController extends AbstractController, HasShortName {
     Iterable<UrlMapping> getUrlMappings();
 
     boolean appendSslConfig(String id, StringBuilder out, String prefix, ProxySslConfig ssl, boolean sslBlock, boolean certificateBlock);
-    
-    public static final AttributeSensor<Boolean> NGINX_URL_ANSWERS_NICELY = Sensors.newBooleanSensor( "nginx.url.answers.nicely");
-    public static final AttributeSensor<String> PID_FILE = Sensors.newStringSensor( "nginx.pid.file", "PID file");
-    
-    public interface NginxControllerInternal {
+
+    AttributeSensor<Boolean> NGINX_URL_ANSWERS_NICELY = Sensors.newBooleanSensor("nginx.url.answers.nicely");
+    AttributeSensor<String> PID_FILE = Sensors.newStringSensor("nginx.pid.file", "PID file");
+
+    interface NginxControllerInternal {
         public void doExtraConfigurationDuringStart();
     }
 

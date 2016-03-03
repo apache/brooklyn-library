@@ -20,19 +20,19 @@ package org.apache.brooklyn.entity.webapp.nodejs;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
-import org.apache.brooklyn.api.location.PortRange;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.location.PortRanges;
+import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.WebAppService;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 
 @Catalog(name="Node.JS Application",
         description="Node.js is a cross-platform runtime environment for server-side and networking applications. Node.js applications are written in JavaScriptq",
@@ -43,7 +43,7 @@ public interface NodeJsWebAppService extends SoftwareProcess, WebAppService {
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "stable");
 
     @SetFromFlag("httpPort")
-    ConfigKey<PortRange> HTTP_PORT = ConfigKeys.newConfigKeyWithDefault(Attributes.HTTP_PORT.getConfigKey(), PortRanges.fromInteger(3000));
+    PortAttributeSensorAndConfigKey HTTP_PORT = ConfigKeys.newPortSensorAndConfigKeyWithDefault(Attributes.HTTP_PORT, PortRanges.fromInteger(3000));
 
     @SetFromFlag("gitRepoUrl")
     ConfigKey<String> APP_GIT_REPOSITORY_URL = ConfigKeys.newStringConfigKey("nodejs.gitRepo.url", "The Git repository where the application is hosted");

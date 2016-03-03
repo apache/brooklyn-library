@@ -22,9 +22,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.location.OsDetails;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.lifecycle.ScriptHelper;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
@@ -35,13 +42,6 @@ import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 public abstract class AbstractMongoDBSshDriver extends AbstractSoftwareProcessSshDriver {
 
@@ -52,9 +52,8 @@ public abstract class AbstractMongoDBSshDriver extends AbstractSoftwareProcessSs
     }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(getBaseName())));
+    public String getArchiveNameFormat() {
+        return getOsTag() + "-%s";
     }
 
     @Override
@@ -148,10 +147,6 @@ public abstract class AbstractMongoDBSshDriver extends AbstractSoftwareProcessSs
                     "done\n" +
                     "echo \"mongoDB process still running after 10 seconds; continuing but may subsequently fail\"")
                 .execute();
-    }
-
-    protected String getBaseName() {
-        return getOsTag() + "-" + entity.getConfig(AbstractMongoDBServer.SUGGESTED_VERSION);
     }
 
     // IDE note: This is used by MongoDBServer.DOWNLOAD_URL

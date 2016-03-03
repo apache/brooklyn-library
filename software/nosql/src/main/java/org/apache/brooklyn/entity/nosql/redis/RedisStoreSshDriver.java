@@ -48,12 +48,6 @@ public class RedisStoreSshDriver extends AbstractSoftwareProcessSshDriver implem
     }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("redis-%s", getVersion()))));
-    }
-
-    @Override
     public void install() {
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();

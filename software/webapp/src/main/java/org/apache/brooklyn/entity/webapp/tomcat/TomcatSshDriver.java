@@ -25,7 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.brooklyn.core.entity.Entities;
+import com.google.common.base.Preconditions;
+
 import org.apache.brooklyn.entity.webapp.JavaWebAppSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableList;
@@ -35,20 +36,12 @@ import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.StringEscapes.BashStringEscapes;
 
-import com.google.common.base.Preconditions;
-
 public class TomcatSshDriver extends JavaWebAppSshDriver implements TomcatDriver {
 
     private static final String KEYSTORE_FILE = "keystore";
 
     public TomcatSshDriver(TomcatServerImpl entity, SshMachineLocation machine) {
         super(entity, machine);
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName("apache-tomcat-"+getVersion())));
     }
 
     @Override

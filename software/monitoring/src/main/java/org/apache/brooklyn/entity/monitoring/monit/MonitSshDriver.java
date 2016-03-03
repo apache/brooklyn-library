@@ -23,17 +23,15 @@ import static java.lang.String.format;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.brooklyn.api.location.OsDetails;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.lifecycle.ScriptHelper;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
-import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 public class MonitSshDriver extends AbstractSoftwareProcessSshDriver implements MonitDriver {
     
@@ -41,12 +39,6 @@ public class MonitSshDriver extends AbstractSoftwareProcessSshDriver implements 
     
     public MonitSshDriver(MonitNodeImpl entity, SshMachineLocation machine) {
         super(entity, machine);
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("monit-%s", getVersion()))));
     }
 
     @Override

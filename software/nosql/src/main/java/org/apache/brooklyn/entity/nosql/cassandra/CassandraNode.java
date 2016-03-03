@@ -21,16 +21,18 @@ package org.apache.brooklyn.entity.nosql.cassandra;
 import java.math.BigInteger;
 import java.util.Set;
 
+import com.google.common.reflect.TypeToken;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.effector.Effector;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
-import org.apache.brooklyn.core.config.BasicConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.entity.BrooklynConfigKeys;
 import org.apache.brooklyn.core.location.PortRanges;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
@@ -40,8 +42,6 @@ import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.time.Duration;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a Cassandra node in a {@link CassandraDatacenter}.
@@ -57,20 +57,23 @@ public interface CassandraNode extends DatastoreMixins.DatastoreCommon, Software
     // when this changes remember to put a copy under releng2:/var/www/developer/brooklyn/repository/ !
     // TODO experiment with supporting 2.0.x
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-cassandra-%s");
+
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "${driver.mirrorUrl}/${version}/apache-cassandra-${version}-bin.tar.gz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "${driver.mirrorUrl}/${version}/apache-cassandra-${version}-bin.tar.gz");
 
     /** download mirror, if desired */
     @SetFromFlag("mirrorUrl")
-    ConfigKey<String> MIRROR_URL = new BasicConfigKey<String>(String.class, "cassandra.install.mirror.url", "URL of mirror", 
+    ConfigKey<String> MIRROR_URL = ConfigKeys.newStringConfigKey("cassandra.install.mirror.url", "URL of mirror", 
         "http://www.mirrorservice.org/sites/ftp.apache.org/cassandra"
         // for older versions, but slower:
 //        "http://archive.apache.org/dist/cassandra/"
         );
 
     @SetFromFlag("tgzUrl")
-    ConfigKey<String> TGZ_URL = new BasicConfigKey<String>(String.class, "cassandra.install.tgzUrl", "URL of TGZ download file");
+    ConfigKey<String> TGZ_URL = ConfigKeys.newStringConfigKey("cassandra.install.tgzUrl", "URL of TGZ download file");
 
     @SetFromFlag("clusterName")
     BasicAttributeSensorAndConfigKey<String> CLUSTER_NAME = CassandraDatacenter.CLUSTER_NAME;
@@ -79,20 +82,20 @@ public interface CassandraNode extends DatastoreMixins.DatastoreCommon, Software
     ConfigKey<String> ENDPOINT_SNITCH_NAME = CassandraDatacenter.ENDPOINT_SNITCH_NAME;
 
     @SetFromFlag("gossipPort")
-    PortAttributeSensorAndConfigKey GOSSIP_PORT = new PortAttributeSensorAndConfigKey("cassandra.gossip.port", "Cassandra Gossip communications port", PortRanges.fromString("7000+"));
+    PortAttributeSensorAndConfigKey GOSSIP_PORT = ConfigKeys.newPortSensorAndConfigKey("cassandra.gossip.port", "Cassandra Gossip communications port", PortRanges.fromString("7000+"));
 
     @SetFromFlag("sslGgossipPort")
-    PortAttributeSensorAndConfigKey SSL_GOSSIP_PORT = new PortAttributeSensorAndConfigKey("cassandra.ssl-gossip.port", "Cassandra Gossip SSL communications port", PortRanges.fromString("7001+"));
+    PortAttributeSensorAndConfigKey SSL_GOSSIP_PORT = ConfigKeys.newPortSensorAndConfigKey("cassandra.ssl-gossip.port", "Cassandra Gossip SSL communications port", PortRanges.fromString("7001+"));
 
     @SetFromFlag("thriftPort")
-    PortAttributeSensorAndConfigKey THRIFT_PORT = new PortAttributeSensorAndConfigKey("cassandra.thrift.port", "Cassandra Thrift RPC port", PortRanges.fromString("9160+"));
+    PortAttributeSensorAndConfigKey THRIFT_PORT = ConfigKeys.newPortSensorAndConfigKey("cassandra.thrift.port", "Cassandra Thrift RPC port", PortRanges.fromString("9160+"));
 
     @SetFromFlag("nativePort")
-    PortAttributeSensorAndConfigKey NATIVE_TRANSPORT_PORT = new PortAttributeSensorAndConfigKey("cassandra.native.port", "Cassandra Native Transport port", PortRanges.fromString("9042+"));
+    PortAttributeSensorAndConfigKey NATIVE_TRANSPORT_PORT = ConfigKeys.newPortSensorAndConfigKey("cassandra.native.port", "Cassandra Native Transport port", PortRanges.fromString("9042+"));
 
     @SetFromFlag("rmiRegistryPort")
     // cassandra nodetool and others want 7199 - not required, but useful
-    PortAttributeSensorAndConfigKey RMI_REGISTRY_PORT = new PortAttributeSensorAndConfigKey(UsesJmx.RMI_REGISTRY_PORT, 
+    PortAttributeSensorAndConfigKey RMI_REGISTRY_PORT = ConfigKeys.newPortSensorAndConfigKeyWithDefault(UsesJmx.RMI_REGISTRY_PORT, 
         PortRanges.fromInteger(7199));
 
     // some of the cassandra tooing (eg nodetool) use RMI, but we want JMXMP, so do both!
@@ -123,14 +126,12 @@ public interface CassandraNode extends DatastoreMixins.DatastoreCommon, Software
             "cassandra.config.rackdc.fileName", "Name for the copied rackdc config file (used for configuring replication, when a suitable snitch is used)", "cassandra-rackdc.properties");
     
     @SetFromFlag("datacenterName")
-    BasicAttributeSensorAndConfigKey<String> DATACENTER_NAME = new BasicAttributeSensorAndConfigKey<String>(
-            String.class, "cassandra.replication.datacenterName", "Datacenter name (used for configuring replication, when a suitable snitch is used)", 
-            null);
+    AttributeSensorAndConfigKey<String, String> DATACENTER_NAME = ConfigKeys.newStringSensorAndConfigKey(
+            "cassandra.replication.datacenterName", "Datacenter name (used for configuring replication, when a suitable snitch is used)");
 
     @SetFromFlag("rackName")
-    BasicAttributeSensorAndConfigKey<String> RACK_NAME = new BasicAttributeSensorAndConfigKey<String>(
-            String.class, "cassandra.replication.rackName", "Rack name (used for configuring replication, when a suitable snitch is used)", 
-            null);
+    AttributeSensorAndConfigKey<String, String> RACK_NAME = ConfigKeys.newStringSensorAndConfigKey(
+            "cassandra.replication.rackName", "Rack name (used for configuring replication, when a suitable snitch is used)");
 
     ConfigKey<Integer> NUM_TOKENS_PER_NODE = ConfigKeys.newIntegerConfigKey("cassandra.numTokensPerNode",
             "Number of tokens per node; if using vnodes, should set this to a value like 256",
@@ -138,15 +139,15 @@ public interface CassandraNode extends DatastoreMixins.DatastoreCommon, Software
     
     @SetFromFlag("tokens")
     @SuppressWarnings("serial")
-    BasicAttributeSensorAndConfigKey<Set<BigInteger>> TOKENS = new BasicAttributeSensorAndConfigKey<Set<BigInteger>>(
+    AttributeSensorAndConfigKey<Set<BigInteger>, Set<BigInteger>> TOKENS = ConfigKeys.newSensorAndConfigKey(
             new TypeToken<Set<BigInteger>>() {}, "cassandra.tokens", "Cassandra Tokens");
 
     @SetFromFlag("useThriftMonitoring")
     ConfigKey<Boolean> USE_THRIFT_MONITORING = ConfigKeys.newConfigKey("thriftMonitoring.enabled", "Thrift-port monitoring enabled", Boolean.TRUE);
 
-    AttributeSensor<Integer> PEERS = Sensors.newIntegerSensor( "cassandra.peers", "Number of peers in cluster");
+    AttributeSensor<Integer> PEERS = Sensors.newIntegerSensor("cassandra.peers", "Number of peers in cluster");
 
-    AttributeSensor<Integer> LIVE_NODE_COUNT = Sensors.newIntegerSensor( "cassandra.liveNodeCount", "Number of live nodes in cluster");
+    AttributeSensor<Integer> LIVE_NODE_COUNT = Sensors.newIntegerSensor("cassandra.liveNodeCount", "Number of live nodes in cluster");
 
     /* Metrics for read/write performance. */
 

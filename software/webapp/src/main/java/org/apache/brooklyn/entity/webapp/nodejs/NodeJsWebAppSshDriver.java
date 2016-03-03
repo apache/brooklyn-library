@@ -23,12 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.WebAppService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -37,10 +43,6 @@ import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.Strings;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 public class NodeJsWebAppSshDriver extends AbstractSoftwareProcessSshDriver implements NodeJsWebAppDriver {
 
@@ -87,14 +89,14 @@ public class NodeJsWebAppSshDriver extends AbstractSoftwareProcessSshDriver impl
     // to report failures early, and in case getShellEnvironment() tries to convert any null port numbers
     // to int.
     @Override
-    public void preInstall() {
-        super.preInstall();
+    public void prepare() {
+        super.prepare();
         Networking.checkPortsValid(getPortMap());
     }
     
     @Override
     public void install() {
-        LOG.info("Installing Node.JS {}", getEntity().getConfig(SoftwareProcess.SUGGESTED_VERSION));
+        LOG.info("Installing Node.JS {}", getVersion());
 
         List<String> commands = MutableList.<String>builder()
                 .add(BashCommands.INSTALL_CURL)
@@ -104,7 +106,7 @@ public class NodeJsWebAppSshDriver extends AbstractSoftwareProcessSshDriver impl
                 .add(BashCommands.installPackage(MutableMap.of("yum", "git nodejs npm", "apt", "git-core nodejs"), null))
                 .add("mkdir \"$HOME/.npm\"")
                 .add(BashCommands.sudo("npm install -g n"))
-                .add(BashCommands.sudo("n " + getEntity().getConfig(SoftwareProcess.SUGGESTED_VERSION)))
+                .add(BashCommands.sudo("n " + getVersion()))
                 .build();
 
         newScript(INSTALLING)

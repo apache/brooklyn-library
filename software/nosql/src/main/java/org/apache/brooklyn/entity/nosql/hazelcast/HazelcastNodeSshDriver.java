@@ -48,11 +48,6 @@ public class HazelcastNodeSshDriver extends JavaSoftwareProcessSshDriver impleme
     }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-    }
-
-    @Override
     public void install() {
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();

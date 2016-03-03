@@ -22,7 +22,7 @@ import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcess;
@@ -36,27 +36,29 @@ public interface JBoss6Server extends JavaWebAppSoftwareProcess, UsesJmx {
     // On localhost, if an existing jboss6 is running and consuming the required port(s), 
     // then we don't spot that and don't claim a different port.
     // Things then fail silently!
-    
+
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION =
             ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "6.0.0.Final");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "jboss-%s");
+
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${version}/jboss-as-distribution-${version}.zip?" +
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${version}/jboss-as-distribution-${version}.zip?" +
             "r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fjboss%2Ffiles%2FJBoss%2F${version}%2F&ts=1307104229&use_mirror=kent");
 
     @SetFromFlag("bindAddress")
-    BasicAttributeSensorAndConfigKey<String> BIND_ADDRESS =
-            new BasicAttributeSensorAndConfigKey<String>(String.class, "jboss6.bind.address", 
+    AttributeSensorAndConfigKey<String, String> BIND_ADDRESS = ConfigKeys.newStringSensorAndConfigKey("jboss6.bind.address", 
                 "Address of interface JBoss should listen on, defaulting 0.0.0.0 (but could set e.g. to attributeWhenReady(HOSTNAME)", 
                 "0.0.0.0");
 
     @SetFromFlag("portIncrement")
-    BasicAttributeSensorAndConfigKey<Integer> PORT_INCREMENT =
-            new BasicAttributeSensorAndConfigKey<Integer>(Integer.class, "jboss6.portincrement", "Increment to be used for all jboss ports", 0);
+    AttributeSensorAndConfigKey<Integer, Integer> PORT_INCREMENT = ConfigKeys.newIntegerSensorAndConfigKey(
+            "jboss6.portincrement", "Increment to be used for all jboss ports", 0);
 
     @SetFromFlag("clusterName")
-    BasicAttributeSensorAndConfigKey<String> CLUSTER_NAME =
-            new BasicAttributeSensorAndConfigKey<String>(String.class, "jboss6.clusterName", "Identifier used to group JBoss instances", "");
+    AttributeSensorAndConfigKey<String, String> CLUSTER_NAME = ConfigKeys.newStringSensorAndConfigKey(
+            "jboss6.clusterName", "Identifier used to group JBoss instances", "");
 }

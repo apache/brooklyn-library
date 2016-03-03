@@ -25,7 +25,7 @@ import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.config.render.RendererHints;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.java.UsesJmx;
@@ -45,15 +45,18 @@ public interface Storm extends SoftwareProcess, UsesJmx {
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "0.8.2");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "storm-%s");
+
     @SetFromFlag("nimbusHostname")
     ConfigKey<String> NIMBUS_HOSTNAME = ConfigKeys.newStringConfigKey("storm.nimbus.hostname");
-    
+
     @SetFromFlag("nimbusEntity")
     ConfigKey<Entity> NIMBUS_ENTITY = ConfigKeys.newConfigKey(Entity.class, "storm.nimbus.entity");
 
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "https://dl.dropboxusercontent.com/s/fl4kr7w0oc8ihdw/storm-${version}.zip");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "https://dl.dropboxusercontent.com/s/fl4kr7w0oc8ihdw/storm-${version}.zip");
 
     ConfigKey<Object> START_MUTEX = ConfigKeys.newConfigKey(Object.class, "storm.start.mutex");
 
@@ -62,12 +65,12 @@ public interface Storm extends SoftwareProcess, UsesJmx {
 
     @SetFromFlag("localDir")
     ConfigKey<String> LOCAL_DIR = ConfigKeys.newStringConfigKey("storm.local.dir", "Setting for Storm local dir");
-    
+
     @SetFromFlag("uiPort")
-    PortAttributeSensorAndConfigKey UI_PORT = new PortAttributeSensorAndConfigKey("storm.ui.port", "Storm UI port", "8080+");
+    PortAttributeSensorAndConfigKey UI_PORT = ConfigKeys.newPortSensorAndConfigKey("storm.ui.port", "Storm UI port", "8080+");
 
     @SetFromFlag("thriftPort")
-    PortAttributeSensorAndConfigKey THRIFT_PORT = new PortAttributeSensorAndConfigKey("storm.thrift.port", "Storm Thrift port", "6627");
+    PortAttributeSensorAndConfigKey THRIFT_PORT = ConfigKeys.newPortSensorAndConfigKey("storm.thrift.port", "Storm Thrift port", "6627");
 
     @SetFromFlag("zookeeperEnsemble")
     ConfigKey<ZooKeeperEnsemble> ZOOKEEPER_ENSEMBLE = ConfigKeys.newConfigKey(ZooKeeperEnsemble.class,
@@ -88,11 +91,11 @@ public interface Storm extends SoftwareProcess, UsesJmx {
     String getHostname();
 
     Role getRole();
-    
+
     enum Role { NIMBUS, SUPERVISOR, UI }
 
     AttributeSensor<String> STORM_UI_URL = StormUiUrl.STORM_UI_URL;
-    
+
     class StormUiUrl {
         public static final AttributeSensor<String> STORM_UI_URL = Sensors.newStringSensor("storm.ui.url", "URL");
 

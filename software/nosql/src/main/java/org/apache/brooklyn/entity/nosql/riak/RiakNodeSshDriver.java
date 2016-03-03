@@ -93,9 +93,8 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
     }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("riak-%s", getVersion()))));
+    public void prepare() {
+        super.prepare();
 
         // Set package install attribute
         OsDetails osDetails = getMachine().getMachineDetails().getOsDetails();

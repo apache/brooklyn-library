@@ -42,6 +42,9 @@ public interface CrateNode extends SoftwareProcess, UsesJava,UsesJmx, UsesJavaMX
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION,
             "0.45.7");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "crate-%s");
+
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey.StringAttributeSensorAndConfigKey(
             Attributes.DOWNLOAD_URL,

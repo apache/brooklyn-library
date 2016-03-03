@@ -110,7 +110,7 @@ public class MariaDbSshDriver extends AbstractSoftwareProcessSshDriver implement
     }
 
     @Override
-    public void preInstall() {
+    public void prepare() {
         resolver = Entities.newDownloader(this, ImmutableMap.of("filename", getInstallFilename()));
         setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("mariadb-%s-%s", getVersion(), getOsTag()))));
     }

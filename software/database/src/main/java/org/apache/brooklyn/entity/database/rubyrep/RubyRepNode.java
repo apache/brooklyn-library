@@ -39,6 +39,9 @@ public interface RubyRepNode extends SoftwareProcess {
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "1.2.0");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "rubyrep-%s");
+
     @SetFromFlag("downloadUrl")
     public static final BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new StringAttributeSensorAndConfigKey(
             Attributes.DOWNLOAD_URL, "http://files.rubyforge.vm.bytemark.co.uk/rubyrep/rubyrep-${version}.zip");

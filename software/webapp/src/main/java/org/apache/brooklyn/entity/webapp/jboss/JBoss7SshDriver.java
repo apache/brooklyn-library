@@ -103,7 +103,7 @@ public class JBoss7SshDriver extends JavaWebAppSshDriver implements JBoss7Driver
     }
 
     @Override
-    public void preInstall() {
+    public void prepare() {
         resolver = Entities.newDownloader(this);
         setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("jboss-as-%s", getVersion()))));
     }

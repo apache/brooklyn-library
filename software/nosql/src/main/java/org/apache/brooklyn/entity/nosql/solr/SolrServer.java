@@ -18,12 +18,15 @@
  */
 package org.apache.brooklyn.entity.nosql.solr;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
+import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
+import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.BrooklynConfigKeys;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
@@ -73,6 +76,8 @@ public interface SolrServer extends SoftwareProcess, UsesJava, UsesJmx, UsesJava
             Maps.<String, String>newHashMap());
 
     ConfigKey<Duration> START_TIMEOUT = ConfigKeys.newConfigKeyWithDefault(BrooklynConfigKeys.START_TIMEOUT, Duration.FIVE_MINUTES);
+
+    AttributeSensor<URI> MAIN_URI = Attributes.MAIN_URI;
 
     /* Accessors used from template */
 

@@ -84,8 +84,8 @@ public class BindDnsServerSshDriver extends AbstractSoftwareProcessSshDriver imp
                 BashCommands.sudo("service iptables save"),
                 BashCommands.sudo("service iptables restart"));
         if (getEntity().getConfig(BindDnsServer.UPDATE_ROOT_ZONES_FILE)) {
-            commands.add("wget --user=ftp --password=ftp ftp://ftp.rs.internic.net/domain/db.cache " +
-                    "-O " + getOsSupport().getRootZonesFile());
+            commands.add("curl --user=ftp:ftp ftp://ftp.rs.internic.net/domain/db.cache " +
+                    "-o " + getOsSupport().getRootZonesFile());
         }
         newScript(CUSTOMIZING)
                 .body.append(commands)

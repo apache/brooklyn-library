@@ -20,8 +20,9 @@ services:
 - type: org.apache.brooklyn.entity.software.base.VanillaSoftwareProcess
   name: CBC Pillowfight
   launch.command: |
-    sudo wget -O/etc/apt/sources.list.d/couchbase.list http://packages.couchbase.com/ubuntu/couchbase-ubuntu1204.list
-    sudo wget -O- http://packages.couchbase.com/ubuntu/couchbase.key | sudo apt-key add -
+    curl http://packages.couchbase.com/ubuntu/couchbase-ubuntu1204.list |
+      sudo tee /etc/apt/sources.list.d/couchbase.list
+    curl http://packages.couchbase.com/ubuntu/couchbase.key | sudo apt-key add -
     sudo apt-get update
     sudo apt-get install -y libcouchbase2-libevent libcouchbase-dev libcouchbase2-bin
   provisioning.properties:
@@ -72,6 +73,7 @@ services:
 
 # For CentOS, use the following launch command:
 #  launch.command: |
-#    sudo wget -O/etc/yum.repos.d/couchbase.repo http://packages.couchbase.com/rpm/couchbase-centos55-x86_64.repo
+#    curl http://packages.couchbase.com/rpm/couchbase-centos55-x86_64.repo |
+#      sudo tee /etc/yum.repos.d/couchbase.repo
 #    sudo yum check-update
 #    sudo yum install -y libcouchbase2-libevent libcouchbase-devel libcouchbase2-bin

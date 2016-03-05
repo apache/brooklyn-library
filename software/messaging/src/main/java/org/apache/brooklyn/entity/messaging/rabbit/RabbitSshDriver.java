@@ -19,7 +19,14 @@
 package org.apache.brooklyn.entity.messaging.rabbit;
 
 import static java.lang.String.format;
-import static org.apache.brooklyn.util.ssh.BashCommands.*;
+import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
+import static org.apache.brooklyn.util.ssh.BashCommands.chainGroup;
+import static org.apache.brooklyn.util.ssh.BashCommands.commandsToDownloadUrlsAs;
+import static org.apache.brooklyn.util.ssh.BashCommands.ifExecutableElse0;
+import static org.apache.brooklyn.util.ssh.BashCommands.installExecutable;
+import static org.apache.brooklyn.util.ssh.BashCommands.installPackage;
+import static org.apache.brooklyn.util.ssh.BashCommands.ok;
+import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +44,7 @@ import org.apache.brooklyn.entity.software.base.lifecycle.ScriptHelper;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Networking;
+import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.text.Strings;
 
@@ -45,7 +53,7 @@ import org.apache.brooklyn.util.text.Strings;
  */
 public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements RabbitDriver {
 
-    private static final Logger log = LoggerFactory.getLogger(RabbitSshDriver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitSshDriver.class);
 
     // See http://fedoraproject.org/wiki/EPEL/FAQ#howtouse
     private static final Map<String, String> CENTOS_VERSION_TO_EPEL_VERSION = ImmutableMap.of(
@@ -58,7 +66,7 @@ public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements
         super(entity, machine);
     }
 
-    protected String getLogFileLocation() { return getRunDir()+"/"+entity.getId()+".log"; }
+    protected String getLogFileLocation() { return Urls.mergePaths(getRunDir(), entity.getId() + ".log"); }
 
     public Integer getAmqpPort() { return entity.getAttribute(AmqpServer.AMQP_PORT); }
 
@@ -246,8 +254,8 @@ public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements
         String debFileName = "erlang-repo.deb";
 
         return chainGroup(
-                INSTALL_WGET,
-                format("wget --quiet -O %s %s", debFileName, entity.getConfig(RabbitBroker.ERLANG_DEB_REPO_URL)),
+                INSTALL_CURL,
+                format("curl %s -o %s", entity.config().get(RabbitBroker.ERLANG_DEB_REPO_URL), debFileName),
                 sudo(format("dpkg -i %s", debFileName))
             );
     }

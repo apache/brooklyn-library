@@ -204,6 +204,7 @@ public class RiakClusterImpl extends DynamicClusterImpl implements RiakCluster {
                     DependentConfiguration.attributeWhenReady(member, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, Predicates.equalTo(false)).blockUntilEnded(Duration.TWO_MINUTES);
                     @SuppressWarnings("unchecked")
                     Optional<Entity> anyNodeInCluster = Iterables.tryFind(nodes.keySet(), Predicates.and(
+                            EntityPredicates.isManaged(),
                             Predicates.instanceOf(RiakNode.class),
                             EntityPredicates.attributeEqualTo(RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true),
                             Predicates.not(Predicates.equalTo(member))));

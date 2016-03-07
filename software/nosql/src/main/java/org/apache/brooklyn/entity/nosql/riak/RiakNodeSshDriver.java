@@ -108,11 +108,6 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
 
     @Override
     public void install() {
-        // TODO download URL can be inferred
-//        if (entity.getConfig(Attributes.DOWNLOAD_URL) != null) {
-//            LOG.warn("Ignoring download.url {}, use download.url.rhelcentos or download.url.mac", entity.getConfig(Attributes.DOWNLOAD_URL));
-//        }
-
         OsDetails osDetails = getMachine().getMachineDetails().getOsDetails();
         List<String> commands = Lists.newLinkedList();
         if (osDetails.isLinux()) {
@@ -130,6 +125,7 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
                     getMachine() + ". Details: " + getMachine().getMachineDetails().getOsDetails());
         }
 
+        LOG.debug("Installing to "+this+" using commands:\n"+Strings.join(commands, "\n"));
         int result = newScript(INSTALLING)
                 .body.append(commands)
                 .failIfBodyEmpty()

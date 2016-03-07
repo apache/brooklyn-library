@@ -44,13 +44,13 @@ import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.group.Cluster;
 import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.task.Tasks;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.text.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
@@ -142,20 +142,25 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
 
         LOG.info("Added policy {} to {}", serverPoolMemberTrackerPolicy, this);
         
-        // Initialize ourselves immediately with the latest set of members; don't wait for
-        // listener notifications because then will be out-of-date for short period (causing 
-        // problems for rebind)
-        Map<Entity,String> serverPoolTargets = Maps.newLinkedHashMap();
-        for (Entity member : getServerPool().getMembers()) {
-            if (belongsInServerPool(member)) {
-                if (LOG.isTraceEnabled()) LOG.trace("Done {} checkEntity {}", this, member);
-                String address = getAddressOfEntity(member);
-                serverPoolTargets.put(member, address);
+        synchronized (serverPoolAddresses) {
+            // Initialize ourselves immediately with the latest set of members; don't wait for
+            // listener notifications because then will be out-of-date for short period (causing 
+            // problems for rebind)
+            // if invoked on start, we'll have isActive=false at this point so other policies wont' run anyway,
+            // but synch in case invoked at other times; and note if !isActive during start means we miss some after this,
+            // we will update again on postStart after setting isActive=true
+            Map<Entity,String> serverPoolTargets = Maps.newLinkedHashMap();
+            for (Entity member : getServerPool().getMembers()) {
+                if (belongsInServerPool(member)) {
+                    if (LOG.isTraceEnabled()) LOG.trace("Done {} checkEntity {}", this, member);
+                    String address = getAddressOfEntity(member);
+                    serverPoolTargets.put(member, address);
+                }
             }
-        }
 
-        LOG.info("Resetting {}, server pool targets {}", new Object[] {this, serverPoolTargets});
-        sensors().set(SERVER_POOL_TARGETS, serverPoolTargets);
+            LOG.info("Resetting {}, server pool targets {}", new Object[] {this, serverPoolTargets});
+            sensors().set(SERVER_POOL_TARGETS, serverPoolTargets);
+        }
     }
     
     protected void removeServerPoolMemberTrackingPolicy() {

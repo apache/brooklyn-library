@@ -57,19 +57,19 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
     public AbstractNonProvisionedControllerImpl() {
         this(MutableMap.of(), null, null);
     }
-    public AbstractNonProvisionedControllerImpl(Map properties) {
+    public AbstractNonProvisionedControllerImpl(Map<?,?> properties) {
         this(properties, null, null);
     }
     public AbstractNonProvisionedControllerImpl(Entity parent) {
         this(MutableMap.of(), parent, null);
     }
-    public AbstractNonProvisionedControllerImpl(Map properties, Entity parent) {
+    public AbstractNonProvisionedControllerImpl(Map<?,?> properties, Entity parent) {
         this(properties, parent, null);
     }
     public AbstractNonProvisionedControllerImpl(Entity parent, Cluster cluster) {
         this(MutableMap.of(), parent, cluster);
     }
-    public AbstractNonProvisionedControllerImpl(Map properties, Entity parent, Cluster cluster) {
+    public AbstractNonProvisionedControllerImpl(Map<?,?> properties, Entity parent, Cluster cluster) {
     }
 
     public static class MemberTrackingPolicy extends AbstractMembershipTrackingPolicy {
@@ -106,8 +106,8 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
     
     protected void preStart() {
         AttributeSensor<?> hostAndPortSensor = getConfig(HOST_AND_PORT_SENSOR);
-        Maybe<Object> hostnameSensor = getConfigRaw(HOSTNAME_SENSOR, true);
-        Maybe<Object> portSensor = getConfigRaw(PORT_NUMBER_SENSOR, true);
+        Maybe<Object> hostnameSensor = config().getRaw(HOSTNAME_SENSOR);
+        Maybe<Object> portSensor = config().getRaw(PORT_NUMBER_SENSOR);
         if (hostAndPortSensor != null) {
             checkState(!hostnameSensor.isPresent() && !portSensor.isPresent(), 
                     "Must not set %s and either of %s or %s", HOST_AND_PORT_SENSOR, HOSTNAME_SENSOR, PORT_NUMBER_SENSOR);

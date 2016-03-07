@@ -26,6 +26,8 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.entity.Group;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
+import org.apache.brooklyn.core.entity.StartableApplication;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
 import org.apache.brooklyn.entity.group.BasicGroup;
@@ -34,15 +36,14 @@ import org.apache.brooklyn.entity.proxy.LoadBalancer;
 import org.apache.brooklyn.entity.proxy.TrackingAbstractController;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
+import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.entity.TestJavaWebAppEntity;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -77,12 +78,12 @@ public class ControlledDynamicWebAppClusterTest extends BrooklynAppUnitTestSuppo
                 .configure("memberSpec", EntitySpec.create(JBoss7Server.class).configure("war", getTestWar())));
         app.start(locs);
 
-        EntityTestUtils.assertAttributeEqualsEventually(controller, AbstractController.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(controller, AbstractController.SERVICE_UP, true);
         assertEquals(cluster.getController(), controller);
 
         // Stopping cluster should not stop controller (because it didn't create it)
         cluster.stop();
-        EntityTestUtils.assertAttributeEquals(controller, AbstractController.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEquals(controller, AbstractController.SERVICE_UP, true);
     }
     
     @Test
@@ -115,12 +116,12 @@ public class ControlledDynamicWebAppClusterTest extends BrooklynAppUnitTestSuppo
         app.start(locs);
         LoadBalancer controller = cluster.getController();
         
-        EntityTestUtils.assertAttributeEqualsEventually(controller, AbstractController.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(controller, AbstractController.SERVICE_UP, true);
         assertEquals(controller.getDisplayName(), "mycustom");
 
         // Stopping cluster should stop the controller (because it created it)
         cluster.stop();
-        EntityTestUtils.assertAttributeEquals(controller, AbstractController.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEquals(controller, AbstractController.SERVICE_UP, false);
     }
     
     @Test
@@ -128,10 +129,11 @@ public class ControlledDynamicWebAppClusterTest extends BrooklynAppUnitTestSuppo
         SoftwareProcess n = app.createAndManageChild(EntitySpec.create(TestJavaWebAppEntity.class));
         app.start(locs);
 
-        EntityTestUtils.assertAttributeEqualsEventually(n, AbstractController.SERVICE_UP, true);
-        
+        EntityAsserts.assertAttributeEqualsEventually(n, AbstractController.SERVICE_UP, true);
+
+        app.config().set(StartableApplication.DESTROY_ON_STOP, false);
         app.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(n, AbstractController.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(n, AbstractController.SERVICE_UP, false);
     }
     
     @Test
@@ -205,6 +207,6 @@ public class ControlledDynamicWebAppClusterTest extends BrooklynAppUnitTestSuppo
         Entities.unmanage(controller);
         
         cluster.stop();
-        EntityTestUtils.assertAttributeEquals(cluster, ControlledDynamicWebAppCluster.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
+        EntityAsserts.assertAttributeEquals(cluster, ControlledDynamicWebAppCluster.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
     }
 }

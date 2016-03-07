@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.brooklyn.entity.proxy.AbstractControllerImpl;
 import org.apache.brooklyn.entity.software.base.test.driver.MockSshDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,7 @@ public class TrackingAbstractControllerImpl extends AbstractControllerImpl imple
     }
 
     @Override
-    public Class getDriverInterface() {
+    public Class<?> getDriverInterface() {
         return MockSshDriver.class;
     }
     

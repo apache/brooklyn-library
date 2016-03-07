@@ -175,12 +175,12 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
                 ok(sudo("apt-get -y --allow-unauthenticated install logrotate libpam0g-dev libssl0.9.8")),
                 "export OS_NAME=" + Strings.toLowerCase(osDetails.getName()),
                 "export OS_RELEASE=" + osReleaseCmd,
-                String.format("wget -O %s %s", saveAsApt, downloadUrl),
+                String.format("curl %s -o %s", downloadUrl, saveAsApt),
                 sudo(String.format("dpkg -i %s", saveAsApt)));
         String yum = chainGroup(
                 "which yum",
                 ok(sudo("yum -y install openssl")),
-                String.format("wget -O %s %s", saveAsYum, entity.getAttribute(RiakNode.DOWNLOAD_URL_RHEL_CENTOS)),
+                String.format("curl %s -o %s", entity.sensors().get(RiakNode.DOWNLOAD_URL_RHEL_CENTOS), saveAsYum),
                 sudo(String.format("yum localinstall -y %s", saveAsYum)));
         return ImmutableList.<String>builder()
                 .add("mkdir -p " + installBin)

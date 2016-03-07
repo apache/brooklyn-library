@@ -19,7 +19,7 @@
 package org.apache.brooklyn.entity.database.postgresql;
 
 import static java.lang.String.format;
-import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_WGET;
+import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
 import static org.apache.brooklyn.util.ssh.BashCommands.alternativesGroup;
 import static org.apache.brooklyn.util.ssh.BashCommands.chainGroup;
 import static org.apache.brooklyn.util.ssh.BashCommands.dontRequireTtyForSudo;
@@ -216,17 +216,17 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
         }
 
         return chainGroup(
-                INSTALL_WGET,
-                sudo(format("wget http://yum.postgresql.org/%s/redhat/rhel-%s-%s/pgdg-%s%s-%s.noarch.rpm", majorMinorVersion, osMajorVersion, arch, osName, shortVersion, version)),
-                sudo(format("rpm -Uvh pgdg-%s%s-%s.noarch.rpm", osName, shortVersion, version))
+                INSTALL_CURL,
+                sudo(format("curl http://yum.postgresql.org/%s/redhat/rhel-%s-%s/pgdg-%s%s-%s.noarch.rpm -o pgdg.rpm", majorMinorVersion, osMajorVersion, arch, osName, shortVersion, version)),
+                sudo("rpm -Uvh pgdg.rpm")
             );
     }
 
     private String getAptRepository() {
         return chainGroup(
-                INSTALL_WGET,
-                "wget --quiet -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | sudo tee -a apt-key add -",
-                "echo \"deb http://apt.postgresql.org/pub/repos/apt/   $(sudo lsb_release --codename --short)-pgdg main\" | sudo tee -a /etc/apt/sources.list.d/postgresql.list"
+                INSTALL_CURL,
+                "curl http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | sudo tee -a apt-key add",
+                "echo \"deb http://apt.postgresql.org/pub/repos/apt/ $(sudo lsb_release --codename --short)-pgdg main\" | sudo tee -a /etc/apt/sources.list.d/postgresql.list"
             );
     }
 

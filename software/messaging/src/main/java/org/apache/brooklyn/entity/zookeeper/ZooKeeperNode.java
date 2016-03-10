@@ -23,9 +23,9 @@ import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensor;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 
@@ -39,15 +39,23 @@ public interface ZooKeeperNode extends SoftwareProcess {
 
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "3.4.5");
-    @SetFromFlag("zookeeperPort")
-    PortAttributeSensorAndConfigKey ZOOKEEPER_PORT = new PortAttributeSensorAndConfigKey("zookeeper.port", "Zookeeper port", "2181+");
-    @SetFromFlag("zookeeperLeaderPort")
-    PortAttributeSensorAndConfigKey ZOOKEEPER_LEADER_PORT = new PortAttributeSensorAndConfigKey("zookeeper.leader.port", "Zookeeper leader ports", "2888+");
-    @SetFromFlag("zookeeperElectionPort")
-    PortAttributeSensorAndConfigKey ZOOKEEPER_ELECTION_PORT = new PortAttributeSensorAndConfigKey("zookeeper.election.port", "Zookeeper election ports", "3888+");
+
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "zookeeper-%s");
+
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "http://apache.fastbull.org/zookeeper/zookeeper-${version}/zookeeper-${version}.tar.gz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://apache.fastbull.org/zookeeper/zookeeper-${version}/zookeeper-${version}.tar.gz");
+
+    @SetFromFlag("zookeeperPort")
+    PortAttributeSensorAndConfigKey ZOOKEEPER_PORT = ConfigKeys.newPortSensorAndConfigKey("zookeeper.port", "Zookeeper port", "2181+");
+
+    @SetFromFlag("zookeeperLeaderPort")
+    PortAttributeSensorAndConfigKey ZOOKEEPER_LEADER_PORT = ConfigKeys.newPortSensorAndConfigKey("zookeeper.leader.port", "Zookeeper leader ports", "2888+");
+
+    @SetFromFlag("zookeeperElectionPort")
+    PortAttributeSensorAndConfigKey ZOOKEEPER_ELECTION_PORT = ConfigKeys.newPortSensorAndConfigKey("zookeeper.election.port", "Zookeeper election ports", "3888+");
+
     /**
      * Location of the ZK configuration file template to be copied to the server.
      */
@@ -55,10 +63,11 @@ public interface ZooKeeperNode extends SoftwareProcess {
     ConfigKey<String> ZOOKEEPER_CONFIG_TEMPLATE = ConfigKeys.newStringConfigKey(
             "zookeeper.configTemplate", "Zookeeper configuration template (in freemarker format)",
             "classpath://org/apache/brooklyn/entity/messaging/zookeeper/zoo.cfg");
-    AttributeSensor<Long> OUTSTANDING_REQUESTS = new BasicAttributeSensor<Long>(Long.class, "zookeeper.outstandingRequests", "Outstanding request count");
-    AttributeSensor<Long> PACKETS_RECEIVED = new BasicAttributeSensor<Long>(Long.class, "zookeeper.packets.received", "Total packets received");
-    AttributeSensor<Long> PACKETS_SENT = new BasicAttributeSensor<Long>(Long.class, "zookeeper.packets.sent", "Total packets sent");
-    AttributeSensor<Integer> MY_ID = new BasicAttributeSensor<Integer>(Integer.class, "zookeeper.myid", "ZooKeeper node's myId");
+
+    AttributeSensor<Long> OUTSTANDING_REQUESTS = Sensors.newLongSensor("zookeeper.outstandingRequests", "Outstanding request count");
+    AttributeSensor<Long> PACKETS_RECEIVED = Sensors.newLongSensor("zookeeper.packets.received", "Total packets received");
+    AttributeSensor<Long> PACKETS_SENT = Sensors.newLongSensor("zookeeper.packets.sent", "Total packets sent");
+    AttributeSensor<Integer> MY_ID = Sensors.newIntegerSensor("zookeeper.myid", "ZooKeeper node's myId");
 
     Integer getZookeeperPort();
 

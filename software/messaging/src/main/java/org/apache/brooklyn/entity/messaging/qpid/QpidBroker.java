@@ -18,15 +18,11 @@
  */
 package org.apache.brooklyn.entity.messaging.qpid;
 
-import java.util.Map;
-
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.config.ConfigKey;
-import org.apache.brooklyn.core.config.BasicConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
-import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.messaging.MessageBroker;
@@ -44,35 +40,30 @@ public interface QpidBroker extends SoftwareProcess, MessageBroker, UsesJmx, Amq
 
     /* Qpid runtime file locations for convenience. */
 
-    public static final String CONFIG_XML = "etc/config.xml";
-    public static final String VIRTUALHOSTS_XML = "etc/virtualhosts.xml";
-    public static final String PASSWD = "etc/passwd";
+    String CONFIG_XML = "etc/config.xml";
+    String VIRTUALHOSTS_XML = "etc/virtualhosts.xml";
+    String PASSWD = "etc/passwd";
 
     @SetFromFlag("version")
-    public static final ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "0.20");
-    
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "0.20");
+
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "qpid-broker-%s");
+
     @SetFromFlag("downloadUrl")
-    public static final BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            Attributes.DOWNLOAD_URL, "http://download.nextag.com/apache/qpid/${version}/qpid-java-broker-${version}.tar.gz");
-
-    @SetFromFlag("amqpPort")
-    public static final PortAttributeSensorAndConfigKey AMQP_PORT = AmqpServer.AMQP_PORT;
-
-    @SetFromFlag("virtualHost")
-    public static final BasicAttributeSensorAndConfigKey<String> VIRTUAL_HOST_NAME = AmqpServer.VIRTUAL_HOST_NAME;
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://download.nextag.com/apache/qpid/${version}/qpid-java-broker-${version}.tar.gz");
 
     @SetFromFlag("amqpVersion")
-    public static final BasicAttributeSensorAndConfigKey<String> AMQP_VERSION = new BasicAttributeSensorAndConfigKey<String>(
-            AmqpServer.AMQP_VERSION, AmqpServer.AMQP_0_10);
-    
+    AttributeSensorAndConfigKey<String, String> AMQP_VERSION = ConfigKeys.newSensorAndConfigKeyWithDefault(AmqpServer.AMQP_VERSION, AmqpServer.AMQP_0_10);
+
     @SetFromFlag("httpManagementPort")
-    public static final PortAttributeSensorAndConfigKey HTTP_MANAGEMENT_PORT = new PortAttributeSensorAndConfigKey("qpid.http-management.port", "Qpid HTTP management plugin port");
+    PortAttributeSensorAndConfigKey HTTP_MANAGEMENT_PORT = ConfigKeys.newPortSensorAndConfigKey(
+            "qpid.http-management.port", "Qpid HTTP management plugin port");
 
     @SetFromFlag("jmxUser")
-    public static final BasicAttributeSensorAndConfigKey<String> JMX_USER = new BasicAttributeSensorAndConfigKey<String>(
-            UsesJmx.JMX_USER, "admin");
-    
+    AttributeSensorAndConfigKey<String, String> JMX_USER = ConfigKeys.newSensorAndConfigKeyWithDefault(UsesJmx.JMX_USER, "admin");
+
     @SetFromFlag("jmxPassword")
-    public static final BasicAttributeSensorAndConfigKey<String> JMX_PASSWORD = new BasicAttributeSensorAndConfigKey<String>(
-            UsesJmx.JMX_PASSWORD, "admin");
+    AttributeSensorAndConfigKey<String, String> JMX_PASSWORD = ConfigKeys.newSensorAndConfigKeyWithDefault(UsesJmx.JMX_PASSWORD, "admin");
 }

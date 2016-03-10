@@ -24,8 +24,7 @@ import org.apache.brooklyn.api.objs.HasShortName;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey.StringAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
@@ -45,27 +44,29 @@ public interface JBoss7Server extends JavaWebAppSoftwareProcess, HasShortName {
     // see https://community.jboss.org/thread/197780
     // 7.2.0.Final should be out during Q3 2012
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "jboss-%s");
+
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new StringAttributeSensorAndConfigKey(
-            SoftwareProcess.DOWNLOAD_URL, "http://download.jboss.org/jbossas/7.1/jboss-as-${version}/jboss-as-${version}.tar.gz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://download.jboss.org/jbossas/7.1/jboss-as-${version}/jboss-as-${version}.tar.gz");
 
     @SetFromFlag("bindAddress")
-    BasicAttributeSensorAndConfigKey<String> BIND_ADDRESS =
-            new StringAttributeSensorAndConfigKey("jboss.bind.address",
-                "Address of interface JBoss should listen on, defaulting 0.0.0.0 (but could set e.g. to attributeWhenReady(HOSTNAME)", 
+    AttributeSensorAndConfigKey<String, String> BIND_ADDRESS = ConfigKeys.newStringSensorAndConfigKey("jboss.bind.address",
+                "Address of interface JBoss should listen on, defaulting 0.0.0.0 (but could set e.g. to attributeWhenReady(HOSTNAME)",
                 "0.0.0.0");
 
     @SetFromFlag("managementHttpPort")
-    PortAttributeSensorAndConfigKey MANAGEMENT_HTTP_PORT =
-            new PortAttributeSensorAndConfigKey("webapp.jboss.managementHttpPort", "Management port", "9990+");
+    PortAttributeSensorAndConfigKey MANAGEMENT_HTTP_PORT = ConfigKeys.newPortSensorAndConfigKey(
+            "webapp.jboss.managementHttpPort", "Management port", "9990+");
 
     @SetFromFlag("managementHttpsPort")
-    PortAttributeSensorAndConfigKey MANAGEMENT_HTTPS_PORT =
-            new PortAttributeSensorAndConfigKey("webapp.jboss.managementHttpsPort", "Management port", "9443+");
+    PortAttributeSensorAndConfigKey MANAGEMENT_HTTPS_PORT = ConfigKeys.newPortSensorAndConfigKey(
+            "webapp.jboss.managementHttpsPort", "Management port", "9443+");
 
     @SetFromFlag("managementNativePort")
-    PortAttributeSensorAndConfigKey MANAGEMENT_NATIVE_PORT =
-            new PortAttributeSensorAndConfigKey("webapp.jboss.managementNativePort", "Management native port", "10999+");
+    PortAttributeSensorAndConfigKey MANAGEMENT_NATIVE_PORT = ConfigKeys.newPortSensorAndConfigKey(
+            "webapp.jboss.managementNativePort", "Management native port", "10999+");
 
     /**
      * Port increments are the standard way to run multiple instances of AS7 on the same machine.
@@ -103,9 +104,9 @@ public interface JBoss7Server extends JavaWebAppSoftwareProcess, HasShortName {
     AttributeSensor<Integer> MANAGEMENT_STATUS =
             Sensors.newIntegerSensor("webapp.jboss.managementStatus", "HTTP response code for the management server");
 
-    AttributeSensor<Boolean> MANAGEMENT_URL_UP = 
+    AttributeSensor<Boolean> MANAGEMENT_URL_UP =
             Sensors.newBooleanSensor("webapp.jboss.managementUp", "Management server is responding with OK");
-    
-    public static final AttributeSensor<String> PID_FILE = Sensors.newStringSensor("jboss.pid.file", "PID file");
+
+    AttributeSensor<String> PID_FILE = Sensors.newStringSensor("jboss.pid.file", "PID file");
 
 }

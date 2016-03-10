@@ -21,6 +21,9 @@ package org.apache.brooklyn.entity.nosql.solr;
 import java.net.URI;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -29,7 +32,7 @@ import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.BrooklynConfigKeys;
 import org.apache.brooklyn.core.location.PortRanges;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.java.UsesJava;
 import org.apache.brooklyn.entity.java.UsesJavaMXBeans;
@@ -37,9 +40,6 @@ import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.time.Duration;
-
-import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a Solr node.
@@ -52,9 +52,12 @@ public interface SolrServer extends SoftwareProcess, UsesJava, UsesJmx, UsesJava
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "4.7.2");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "solr-%s");
+
     @SetFromFlag("downloadUrl")
-    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "${driver.mirrorUrl}/${version}/solr-${version}.tgz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "${driver.mirrorUrl}/${version}/solr-${version}.tgz");
 
     /** download mirror, if desired */
     @SetFromFlag("mirrorUrl")
@@ -62,7 +65,7 @@ public interface SolrServer extends SoftwareProcess, UsesJava, UsesJmx, UsesJava
             "http://mirrors.ukfast.co.uk/sites/ftp.apache.org/lucene/solr/");
 
     @SetFromFlag("solrPort")
-    PortAttributeSensorAndConfigKey SOLR_PORT = new PortAttributeSensorAndConfigKey("solr.http.port", "Solr HTTP communications port",
+    PortAttributeSensorAndConfigKey SOLR_PORT = ConfigKeys.newPortSensorAndConfigKey("solr.http.port", "Solr HTTP communications port",
             PortRanges.fromString("8983+"));
 
     @SetFromFlag("solrConfigTemplateUrl")

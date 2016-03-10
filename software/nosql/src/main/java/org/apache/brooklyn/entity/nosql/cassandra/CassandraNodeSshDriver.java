@@ -113,10 +113,6 @@ public class CassandraNodeSshDriver extends JavaSoftwareProcessSshDriver impleme
 
     public String getMirrorUrl() { return entity.getConfig(CassandraNode.MIRROR_URL); }
 
-    protected String getDefaultUnpackedDirectoryName() {
-        return "apache-cassandra-"+getVersion();
-    }
-
     protected boolean isV2() {
         String version = getVersion();
         return version.startsWith("2.");
@@ -129,12 +125,6 @@ public class CassandraNodeSshDriver extends JavaSoftwareProcessSshDriver impleme
         } else {
             return super.installJava();
         }
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(getDefaultUnpackedDirectoryName())));
     }
 
     @Override

@@ -41,4 +41,7 @@ public interface Kafka {
 //    BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
 //            Attributes.DOWNLOAD_URL, "http://mirror.catn.com/pub/apache/kafka/${version}/kafka-${version}-src.tgz");
 
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "kafka_%s");
+
 }

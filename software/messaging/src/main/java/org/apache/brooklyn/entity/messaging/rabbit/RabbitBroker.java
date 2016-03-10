@@ -26,9 +26,8 @@ import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
-import org.apache.brooklyn.core.config.BasicConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.messaging.MessageBroker;
@@ -44,17 +43,20 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
 public interface RabbitBroker extends SoftwareProcess, MessageBroker, AmqpServer {
 
     @SetFromFlag("version")
-    public static final ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "3.6.0");
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "3.6.0");
+
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "rabbitmq_server-%s");
 
     @SetFromFlag("downloadUrl")
-    public static final BasicAttributeSensorAndConfigKey<String> DOWNLOAD_URL = new BasicAttributeSensorAndConfigKey<String>(
-            SoftwareProcess.DOWNLOAD_URL, "http://www.rabbitmq.com/releases/rabbitmq-server/v${version}/rabbitmq-server-generic-unix-${version}.tar.xz");
-    
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
+            "http://www.rabbitmq.com/releases/rabbitmq-server/v${version}/rabbitmq-server-generic-unix-${version}.tar.xz");
+
     @SetFromFlag("erlangVersion")
-    public static final BasicConfigKey<String> ERLANG_VERSION = new BasicConfigKey<String>(String.class, "erlang.version", "Erlang runtime version", "18.2");
+    ConfigKey<String> ERLANG_VERSION = ConfigKeys.newStringConfigKey("erlang.version", "Erlang runtime version", "18.2");
 
     @SetFromFlag("erlangDebRepoUrl")
-    public static final BasicConfigKey<String> ERLANG_DEB_REPO_URL = new BasicConfigKey<String>(String.class, "erlang.deb.repo.url", 
+    ConfigKey<String> ERLANG_DEB_REPO_URL = ConfigKeys.newStringConfigKey("erlang.deb.repo.url", 
             "Deb file used to configure an external Erlang repository which provides up to date packages for Ubuntu/Debian", 
             "http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb");
 
@@ -63,25 +65,18 @@ public interface RabbitBroker extends SoftwareProcess, MessageBroker, AmqpServer
             "rabbitmq.templateUrl", "Template file (in freemarker format) for the rabbitmq.config config file",
             "classpath://org/apache/brooklyn/entity/messaging/rabbit/rabbitmq.config");
 
-    @SetFromFlag("amqpPort")
-    public static final PortAttributeSensorAndConfigKey AMQP_PORT = AmqpServer.AMQP_PORT;
-
-    @SetFromFlag("virtualHost")
-    public static final BasicAttributeSensorAndConfigKey<String> VIRTUAL_HOST_NAME = AmqpServer.VIRTUAL_HOST_NAME;
-
     @SetFromFlag("amqpVersion")
-    public static final BasicAttributeSensorAndConfigKey<String> AMQP_VERSION = new BasicAttributeSensorAndConfigKey<String>(
-            AmqpServer.AMQP_VERSION, AmqpServer.AMQP_0_9_1);
+    AttributeSensorAndConfigKey<String, String> AMQP_VERSION = ConfigKeys.newSensorAndConfigKeyWithDefault(AmqpServer.AMQP_VERSION, AmqpServer.AMQP_0_9_1);
 
     @SetFromFlag("managmentPort")
-    public static final PortAttributeSensorAndConfigKey MANAGEMENT_PORT = new PortAttributeSensorAndConfigKey(
+    PortAttributeSensorAndConfigKey MANAGEMENT_PORT = ConfigKeys.newPortSensorAndConfigKey(
             "rabbitmq.management.port", "Port on which management interface will be available", "15672+");
 
-    public static AttributeSensor<String> MANAGEMENT_URL = Sensors.newStringSensor(
+    AttributeSensor<String> MANAGEMENT_URL = Sensors.newStringSensor(
             "rabbitmq.management.url", "Management URL is only available if management plugin flag is true");
 
     @SetFromFlag("enableManagementPlugin")
-    public static final ConfigKey<Boolean> ENABLE_MANAGEMENT_PLUGIN = ConfigKeys.newBooleanConfigKey(
+    ConfigKey<Boolean> ENABLE_MANAGEMENT_PLUGIN = ConfigKeys.newBooleanConfigKey(
             "rabbitmq.management.plugin", "Management plugin will be enabled", false);
 
     RabbitQueue createQueue(Map properties);
@@ -89,7 +84,7 @@ public interface RabbitBroker extends SoftwareProcess, MessageBroker, AmqpServer
     // TODO required by RabbitDestination due to close-coupling between that and RabbitBroker; how best to improve?
     @Beta
     Map<String, String> getShellEnvironment();
-    
+
     @Beta
     String getRunDir();
 }

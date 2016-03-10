@@ -129,12 +129,6 @@ public class NginxSshDriver extends AbstractSoftwareProcessSshDriver implements 
     }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("nginx-%s", getVersion()))));
-    }
-
-    @Override
     public void install() {
         // inessential here, installation will fail later if it needs to sudo (eg if using port 80)
         DynamicTasks.queueIfPossible(SshTasks.dontRequireTtyForSudo(getMachine(), OnFailingTask.WARN_OR_IF_DYNAMIC_FAIL_MARKING_INESSENTIAL)).orSubmitAndBlock();

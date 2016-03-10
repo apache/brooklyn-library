@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.java.UsesJmx.JmxAgentModes;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSshDriver;
@@ -86,12 +85,6 @@ public class JBoss6SshDriver extends JavaWebAppSshDriver implements JBoss6Driver
     public void postLaunch() {
         entity.sensors().set(JBoss6Server.HTTP_PORT, DEFAULT_HTTP_PORT + getPortIncrement());
         super.postLaunch();
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("jboss-%s", getVersion()))));
     }
 
     @Override

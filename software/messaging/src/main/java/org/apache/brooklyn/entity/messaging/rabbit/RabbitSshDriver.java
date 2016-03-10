@@ -80,12 +80,6 @@ public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements
     }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("rabbitmq_server-%s", getVersion()))));
-    }
-
-    @Override
     public void install() {
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();

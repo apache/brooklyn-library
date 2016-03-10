@@ -26,15 +26,15 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.brooklyn.core.entity.Entities;
+
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
-
-import com.google.common.collect.ImmutableMap;
 
 public class QpidSshDriver extends JavaSoftwareProcessSshDriver implements QpidDriver{
 
@@ -54,12 +54,6 @@ public class QpidSshDriver extends JavaSoftwareProcessSshDriver implements QpidD
     public String getAmqpVersion() { return entity.getAttribute(QpidBroker.AMQP_VERSION); }
 
     public Integer getHttpManagementPort() { return entity.getAttribute(QpidBroker.HTTP_MANAGEMENT_PORT); }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("qpid-broker-%s", getVersion()))));
-    }
 
     @Override
     public void install() {

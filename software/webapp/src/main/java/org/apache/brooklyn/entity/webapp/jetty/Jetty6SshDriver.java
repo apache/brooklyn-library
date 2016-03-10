@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableList;
@@ -49,12 +48,6 @@ public class Jetty6SshDriver extends JavaWebAppSshDriver implements Jetty6Driver
     @Override
     protected String getDeploySubdir() {
        return "webapps";
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("jetty-%s", getVersion()))));
     }
 
     @Override

@@ -25,19 +25,19 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.brooklyn.api.entity.EntityLocal;
-import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+
+import org.apache.brooklyn.api.entity.EntityLocal;
+import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.stream.Streams;
-
-import com.google.common.collect.ImmutableList;
 
 public class RubyRepSshDriver extends AbstractSoftwareProcessSshDriver implements RubyRepDriver {
 
@@ -51,12 +51,6 @@ public class RubyRepSshDriver extends AbstractSoftwareProcessSshDriver implement
 
     protected String getLogFileLocation() {
         return Os.mergePaths(getRunDir(), "log", "rubyrep.log");
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("rubyrep-%s", getVersion()))));
     }
 
     @Override

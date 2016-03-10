@@ -18,15 +18,14 @@
  */
 package org.apache.brooklyn.entity.nosql.elasticsearch;
 
-import static java.lang.String.format;
-
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.config.ConfigKey;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -34,18 +33,10 @@ import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 
-import com.google.common.collect.ImmutableList;
-
 public class ElasticSearchNodeSshDriver extends AbstractSoftwareProcessSshDriver implements ElasticSearchNodeDriver {
 
     public ElasticSearchNodeSshDriver(EntityLocal entity, SshMachineLocation machine) {
         super(entity, machine);
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("elasticsearch-%s", getVersion()))));
     }
 
     @Override

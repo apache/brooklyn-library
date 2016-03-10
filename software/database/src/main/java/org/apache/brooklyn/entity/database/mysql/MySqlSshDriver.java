@@ -33,6 +33,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.brooklyn.api.location.OsDetails;
 import org.apache.brooklyn.api.mgmt.Task;
 import org.apache.brooklyn.core.effector.EffectorTasks;
@@ -59,10 +64,6 @@ import org.apache.brooklyn.util.text.Identifiers;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.CountdownTimer;
 import org.apache.brooklyn.util.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * The SSH implementation of the {@link MySqlDriver}.
@@ -121,7 +122,7 @@ public class MySqlSshDriver extends AbstractSoftwareProcessSshDriver implements 
     }
 
     @Override
-    public void preInstall() {
+    public void prepare() {
         resolver = Entities.newDownloader(this);
         String unpackedDirectoryName = resolver.getUnpackedDirectoryName(getDefaultUnpackedDirectoryName());
         setExpandedInstallDir(Os.mergePaths(getInstallDir(), unpackedDirectoryName));

@@ -24,15 +24,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.brooklyn.core.entity.Entities;
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
-
-import com.google.common.collect.ImmutableMap;
 
 public class ActiveMQSshDriver extends JavaSoftwareProcessSshDriver implements ActiveMQDriver {
 
@@ -65,12 +64,6 @@ public class ActiveMQSshDriver extends JavaSoftwareProcessSshDriver implements A
 
     public String getPidFile() {
         return "data/activemq.pid";
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("apache-activemq-%s", getVersion()))));
     }
 
     @Override

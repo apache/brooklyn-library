@@ -18,33 +18,21 @@
  */
 package org.apache.brooklyn.entity.database.crate;
 
-import static java.lang.String.format;
-
 import java.util.List;
-
-import org.apache.brooklyn.api.entity.EntityLocal;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 
 import com.google.common.collect.ImmutableList;
 
+import org.apache.brooklyn.api.entity.EntityLocal;
+import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Urls;
-import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 
 public class CrateNodeSshDriver extends JavaSoftwareProcessSshDriver {
 
     public CrateNodeSshDriver(EntityLocal entity, SshMachineLocation machine) {
         super(entity, machine);
-    }
-
-    @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(),
-                resolver.getUnpackedDirectoryName(format("crate-%s", getVersion()))));
     }
 
     @Override

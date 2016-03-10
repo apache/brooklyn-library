@@ -65,12 +65,6 @@ public class SolrServerSshDriver extends JavaSoftwareProcessSshDriver implements
     public String getPidFile() { return Os.mergePaths(getRunDir(), "solr.pid"); }
 
     @Override
-    public void preInstall() {
-        resolver = Entities.newDownloader(this);
-        setExpandedInstallDir(Os.mergePaths(getInstallDir(), resolver.getUnpackedDirectoryName(format("solr-%s", getVersion()))));
-    }
-
-    @Override
     public void install() {
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();

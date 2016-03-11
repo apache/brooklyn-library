@@ -19,10 +19,10 @@
 package org.apache.brooklyn.entity.cm.ansible;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.mgmt.TaskAdaptable;
 import org.apache.brooklyn.api.mgmt.TaskFactory;
 import org.apache.brooklyn.core.effector.EffectorTasks;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
+import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.core.task.Tasks;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskFactory;
@@ -35,7 +35,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import static org.apache.brooklyn.core.effector.ssh.SshEffectorTasks.ssh;
-import static org.apache.brooklyn.util.ssh.BashCommands.pipeTextToFile;
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 public class AnsiblePlaybookTasks {
@@ -110,7 +109,25 @@ public class AnsiblePlaybookTasks {
     }
 
     public static TaskFactory<?> setUpHostsFile(String installDir, boolean force) {
-        return ssh(pipeTextToFile("localhost ansible_connection=local", "/etc/ansible/hosts"))
-            .summary("write hosts file");    }
+        final String hostsFile = "/etc/ansible/hosts";
+        final String tempFile = "/tmp/hosts";
+        String checkInstalled = !force ? "which ansible || " : "";
+        return sshCommands(
+                checkInstalled + " {",
+                sudo("rm -f " + hostsFile),
+                "echo 'localhost ansible_connection=local' > " + tempFile,
+                sudo("mv " + tempFile + " " + hostsFile),
+                "}"
+            )
+            .requiringExitCodeZero()
+            .summary("write hosts file");
+    }
+
+
+    public static SshEffectorTasks.SshEffectorTaskFactory<Integer> sshCommands(String line, String... lines) {
+        final MutableList.Builder<String> builder = MutableList.<String>builder().add(line);
+        builder.addAll(lines);
+        return ssh(Strings.join(builder.build(), "\n"));
+    }
 }
 

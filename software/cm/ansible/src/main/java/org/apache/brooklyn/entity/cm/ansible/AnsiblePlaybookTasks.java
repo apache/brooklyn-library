@@ -19,6 +19,7 @@
 package org.apache.brooklyn.entity.cm.ansible;
 
 import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.api.mgmt.TaskAdaptable;
 import org.apache.brooklyn.api.mgmt.TaskFactory;
 import org.apache.brooklyn.core.effector.EffectorTasks;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
@@ -33,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.apache.brooklyn.core.effector.ssh.SshEffectorTasks.ssh;
+import static org.apache.brooklyn.util.ssh.BashCommands.pipeTextToFile;
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 public class AnsiblePlaybookTasks {
@@ -42,7 +45,7 @@ public class AnsiblePlaybookTasks {
     public static TaskFactory<?> installAnsible(String ansibleDirectory, boolean force) {
         String installCmd = cdAndRun(ansibleDirectory, AnsibleBashCommands.INSTALL_ANSIBLE);
         if (!force) installCmd = BashCommands.alternatives("which ansible", installCmd);
-        return SshEffectorTasks.ssh(installCmd).summary("install ansible");
+        return ssh(installCmd).summary("install ansible");
     }
 
     public static TaskFactory<?> installPlaybook(final String ansibleDirectory, final String playbookName, final String playbookUrl) {
@@ -68,7 +71,7 @@ public class AnsiblePlaybookTasks {
     }
 
     public static TaskFactory<?> runAnsible(final String dir, Object extraVars, String playbookName) {
-        String cmd = sudo(String.format("ansible-playbook -i \"localhost,\" -c local "
+        String cmd = sudo(String.format("ansible-playbook "
             + optionalExtraVarsParameter(extraVars)
             + " -s %s.yaml", playbookName));
 
@@ -76,7 +79,7 @@ public class AnsiblePlaybookTasks {
             LOG.debug("Ansible command: {}", cmd);
         }
 
-        return SshEffectorTasks.ssh(cdAndRun(dir, cmd)).
+        return ssh(cdAndRun(dir, cmd)).
                 summary("run ansible playbook for " + playbookName).requiringExitCodeZero();
     }
 
@@ -84,7 +87,7 @@ public class AnsiblePlaybookTasks {
         final String command = "ansible localhost "
             + optionalExtraVarsParameter(extraVars)
             + " -m '" + module + "' -a '" + args + "'";
-        return SshEffectorTasks.ssh(sudo(BashCommands.chain("cd " + root, command)))
+        return ssh(sudo(BashCommands.chain("cd " + root, command)))
             .summary("ad-hoc: " + command).requiringExitCodeZero();
     }
 
@@ -105,5 +108,9 @@ public class AnsiblePlaybookTasks {
         }
         return " --extra-vars \"@" + EXTRA_VARS_FILENAME + "\" ";
     }
+
+    public static TaskFactory<?> setUpHostsFile(String installDir, boolean force) {
+        return ssh(pipeTextToFile("localhost ansible_connection=local", "/etc/ansible/hosts"))
+            .summary("write hosts file");    }
 }
 

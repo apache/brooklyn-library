@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.cm.ansible;
 
+import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.core.annotation.Effector;
 import org.apache.brooklyn.core.annotation.EffectorParam;
@@ -25,6 +26,7 @@ import org.apache.brooklyn.core.effector.MethodEffector;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 
 @ImplementedBy(AnsibleEntityImpl.class)
+@Catalog(name="AnsibleEntity", description="Software managed by Ansible CM")
 public interface AnsibleEntity extends SoftwareProcess, AnsibleConfig {
 
     MethodEffector<String> ANSIBLE_COMMAND = new MethodEffector<>(AnsibleEntity.class, "ansibleCommand");

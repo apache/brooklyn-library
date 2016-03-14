@@ -80,7 +80,6 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     protected AbstractMembershipTrackingPolicy serverPoolMemberTrackerPolicy;
     // final because this is the synch target
     final protected Set<String> serverPoolAddresses = Sets.newLinkedHashSet();
-    protected Map<Entity,String> serverPoolTargets = Maps.newLinkedHashMap();
     
     public AbstractControllerImpl() {
         this(MutableMap.of(), null, null);
@@ -150,7 +149,7 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
             // but synch in case invoked at other times; and note if !isActive during start means we miss some after this,
             // we will update again on postStart after setting isActive=true
             Map<Entity,String> serverPoolTargets = Maps.newLinkedHashMap();
-            for (Entity member : getServerPool().getMembers()) {
+            for (Entity member : serverPool.getMembers()) {
                 if (belongsInServerPool(member)) {
                     if (LOG.isTraceEnabled()) LOG.trace("Done {} checkEntity {}", this, member);
                     String address = getAddressOfEntity(member);
@@ -500,7 +499,7 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     }
 
     // Utilities for modifying an AttributeSensor of type map
-    private static class MapAttribute {
+    static class MapAttribute {
         public static <K, V> V put(Entity entity, AttributeSensor<Map<K,V>> attribute, K key, V value) {
             Map<K, V> oldMap = entity.getAttribute(attribute);
             Map<K, V> newMap = MutableMap.copyOf(oldMap);

@@ -108,26 +108,12 @@ public class AnsiblePlaybookTasks {
         return " --extra-vars \"@" + EXTRA_VARS_FILENAME + "\" ";
     }
 
-    public static TaskFactory<?> setUpHostsFile(String installDir, boolean force) {
-        final String hostsFile = "/etc/ansible/hosts";
-        final String tempFile = "/tmp/hosts";
-        String checkInstalled = !force ? "which ansible || " : "";
-        return sshCommands(
-                checkInstalled + " {",
-                sudo("rm -f " + hostsFile),
-                "echo 'localhost ansible_connection=local' > " + tempFile,
-                sudo("mv " + tempFile + " " + hostsFile),
-                "}"
-            )
+    public static TaskFactory<?> setUpHostsFile(boolean force) {
+        String checkInstalled = !force ? "grep localhost.ansible_connection=local /etc/ansible/hosts || " : "";
+        return ssh(checkInstalled + sudo("echo 'localhost ansible_connection=local' | sudo tee /etc/ansible/hosts"))
             .requiringExitCodeZero()
             .summary("write hosts file");
     }
 
-
-    public static SshEffectorTasks.SshEffectorTaskFactory<Integer> sshCommands(String line, String... lines) {
-        final MutableList.Builder<String> builder = MutableList.<String>builder().add(line);
-        builder.addAll(lines);
-        return ssh(Strings.join(builder.build(), "\n"));
-    }
 }
 

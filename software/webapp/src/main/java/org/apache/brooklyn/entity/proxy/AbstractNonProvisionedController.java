@@ -18,6 +18,8 @@
  */
 package org.apache.brooklyn.entity.proxy;
 
+import java.util.Set;
+
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 
@@ -25,4 +27,6 @@ import org.apache.brooklyn.api.entity.ImplementedBy;
 public interface AbstractNonProvisionedController extends LoadBalancer, Entity {
 
     public boolean isActive();
+    
+    Set<String> getServerPoolAddresses();
 }

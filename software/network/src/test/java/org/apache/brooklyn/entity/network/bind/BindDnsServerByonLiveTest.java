@@ -37,7 +37,7 @@ public class BindDnsServerByonLiveTest extends BrooklynAppLiveTestSupport {
         if (Strings.isBlank(locationSpec)) {
             LOG.info("{} got no spec, skipping test", this);
         } else {
-            Location testLocation = mgmt.getLocationRegistry().resolve(locationSpec);
+            Location testLocation = mgmt.getLocationRegistry().getLocationManaged(locationSpec);
             BindDnsServerLiveTest.testBindStartsAndUpdates(app, testLocation);
         }
     }

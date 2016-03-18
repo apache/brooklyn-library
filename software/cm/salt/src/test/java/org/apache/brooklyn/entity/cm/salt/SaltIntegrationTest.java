@@ -99,7 +99,7 @@ public class SaltIntegrationTest extends BrooklynAppLiveTestSupport {
 
         @SuppressWarnings("unchecked")
 		MachineProvisioningLocation<MachineLocation> provisioner = 
-        	(MachineProvisioningLocation<MachineLocation>) mgmt.getLocationRegistry().resolve(spec, flags);
+        	(MachineProvisioningLocation<MachineLocation>) mgmt.getLocationRegistry().getLocationManaged(spec, flags);
         return provisioner.obtain(ImmutableMap.of());
 
     }

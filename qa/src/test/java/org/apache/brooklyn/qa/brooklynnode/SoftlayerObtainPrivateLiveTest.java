@@ -117,7 +117,7 @@ public class SoftlayerObtainPrivateLiveTest {
     }
 
     private Location createLocation() {
-        return mgmt.getLocationRegistry().resolve(LOCATION_SPEC);
+        return mgmt.getLocationRegistry().getLocationManaged(LOCATION_SPEC);
     }
 
     @Test(groups="Live")

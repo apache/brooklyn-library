@@ -94,7 +94,7 @@ public class RubyRepRackspaceLiveTest extends RubyRepIntegrationTest {
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.image-id");
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageId");
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.inboundPorts", Arrays.asList(22, 9111));
-        Location loc = managementContext.getLocationRegistry().resolve("jclouds:rackspace-cloudservers-uk");
+        Location loc = managementContext.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
         
         startInLocation(tapp, db1, db2, loc);
 

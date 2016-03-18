@@ -94,7 +94,7 @@ public class MySqlLiveRackspaceTest extends MySqlIntegrationTest {
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.image-id");
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageId");
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.inboundPorts", Arrays.asList(22, 3306));
-        JcloudsLocation jcloudsLocation = (JcloudsLocation) mgmt.getLocationRegistry().resolve("jclouds:rackspace-cloudservers-uk");
+        JcloudsLocation jcloudsLocation = (JcloudsLocation) mgmt.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
 
         app.start(ImmutableList.of(jcloudsLocation));
 

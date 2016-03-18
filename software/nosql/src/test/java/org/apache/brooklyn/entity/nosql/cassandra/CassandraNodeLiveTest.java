@@ -60,7 +60,7 @@ public class CassandraNodeLiveTest extends AbstractCassandraNodeTest {
 
         Map<String, String> properties = MutableMap.of("imageId", imageId);
         testLocation = app.getManagementContext().getLocationRegistry()
-                .resolve(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
+                .getLocationManaged(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
 
         cassandra = app.createAndManageChild(EntitySpec.create(CassandraNode.class)
                 .configure("thriftPort", "9876+")

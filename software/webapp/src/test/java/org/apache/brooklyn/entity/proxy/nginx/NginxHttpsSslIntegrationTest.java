@@ -69,7 +69,7 @@ public class NginxHttpsSslIntegrationTest extends BrooklynAppLiveTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        localLoc = mgmt.getLocationRegistry().resolve("localhost");
+        localLoc = mgmt.getLocationRegistry().getLocationManaged("localhost");
     }
     
     private static void urlContainsPort(NginxController nginx, PortAttributeSensorAndConfigKey sensor, String portRange) {

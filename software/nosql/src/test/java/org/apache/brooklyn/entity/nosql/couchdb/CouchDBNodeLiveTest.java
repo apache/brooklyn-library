@@ -60,7 +60,7 @@ public class CouchDBNodeLiveTest extends AbstractCouchDBNodeTest {
 
         Map<String, String> properties = MutableMap.of("imageId", imageId);
         testLocation = app.getManagementContext().getLocationRegistry()
-                .resolve(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
+                .getLocationManaged(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
 
         couchdb = app.createAndManageChild(EntitySpec.create(CouchDBNode.class)
                 .configure("httpPort", "12345+")

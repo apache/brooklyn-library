@@ -66,7 +66,7 @@ public class SolrServerLiveTest extends AbstractSolrServerTest {
 
         Map<String, String> properties = MutableMap.of("imageId", imageId);
         testLocation = app.getManagementContext().getLocationRegistry()
-                .resolve(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
+                .getLocationManaged(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
         solr = app.createAndManageChild(EntitySpec.create(SolrServer.class)
                 .configure(SolrServer.SOLR_CORE_CONFIG, ImmutableMap.of("example", "classpath://solr/example.tgz")));
         app.start(ImmutableList.of(testLocation));

@@ -28,7 +28,6 @@ import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -48,7 +47,7 @@ public class MongoDBEc2LiveTest extends AbstractEc2LiveTest {
                 .configure("mongodbConfTemplateUrl", "classpath:///test-mongodb.conf"));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(entity, MongoDBServer.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, MongoDBServer.SERVICE_UP, true);
 
         String id = MongoDBTestHelper.insert(entity, "hello", "world!");
         DBObject docOut = MongoDBTestHelper.getById(entity, id);
@@ -58,7 +57,7 @@ public class MongoDBEc2LiveTest extends AbstractEc2LiveTest {
     @Test(groups = {"Live"})
     public void testWithOnlyPort22() throws Exception {
         // CentOS-6.3-x86_64-GA-EBS-02-85586466-5b6c-4495-b580-14f72b4bcf51-ami-bb9af1d2.1
-        jcloudsLocation = mgmt.getLocationRegistry().resolve(LOCATION_SPEC, ImmutableMap.of(
+        jcloudsLocation = mgmt.getLocationRegistry().getLocationManaged(LOCATION_SPEC, ImmutableMap.of(
                 "tags", ImmutableList.of(getClass().getName()),
                 "imageId", "us-east-1/ami-a96b01c0", 
                 "hardwareId", SMALL_HARDWARE_ID));

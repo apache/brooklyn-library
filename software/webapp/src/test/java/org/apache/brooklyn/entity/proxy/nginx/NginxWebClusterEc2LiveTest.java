@@ -67,7 +67,7 @@ public class NginxWebClusterEc2LiveTest {
         ManagementContext managementContext = Entities.newManagementContext(
                 ImmutableMap.of("brooklyn.location.jclouds.aws-ec2.image-id", "us-east-1/ami-2342a94a"));
         
-        loc = managementContext.getLocationRegistry().resolve("aws-ec2:us-east-1");
+        loc = managementContext.getLocationRegistry().getLocationManaged("aws-ec2:us-east-1");
         app = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
     }
 

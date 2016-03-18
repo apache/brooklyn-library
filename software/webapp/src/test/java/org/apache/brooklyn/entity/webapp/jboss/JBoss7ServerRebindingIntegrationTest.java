@@ -58,7 +58,7 @@ public class JBoss7ServerRebindingIntegrationTest extends RebindTestFixtureWithA
     public void setUp() throws Exception {
         super.setUp();
         executor = Executors.newCachedThreadPool();
-        localhostProvisioningLocation = (LocalhostMachineProvisioningLocation) origManagementContext.getLocationRegistry().resolve("localhost");
+        localhostProvisioningLocation = (LocalhostMachineProvisioningLocation) origManagementContext.getLocationRegistry().getLocationManaged("localhost");
     }
 
     @Override

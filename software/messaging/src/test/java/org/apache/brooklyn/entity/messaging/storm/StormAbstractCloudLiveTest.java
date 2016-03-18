@@ -77,7 +77,7 @@ public abstract class StormAbstractCloudLiveTest extends BrooklynAppLiveTestSupp
     public void beforeClass() throws Exception {
         mgmt = new LocalManagementContext();
         location = mgmt.getLocationRegistry()
-                .resolve(getLocation(), getFlags());
+                .getLocationManaged(getLocation(), getFlags());
         super.setUp();
     }
 

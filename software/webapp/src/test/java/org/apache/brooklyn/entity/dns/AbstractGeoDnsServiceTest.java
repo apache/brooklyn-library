@@ -52,6 +52,7 @@ import org.apache.brooklyn.core.test.entity.TestEntity;
 import org.apache.brooklyn.entity.group.DynamicFabric;
 import org.apache.brooklyn.entity.group.DynamicGroup;
 import org.apache.brooklyn.entity.group.DynamicRegionsFabric;
+import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.CollectionFunctionals;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.slf4j.Logger;
@@ -59,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.ssh.SshMachineLocation;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -112,18 +112,14 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         northParent = newSimulatedLocation("North parent", NORTH_LATITUDE, NORTH_LONGITUDE);
         northChildWithLocation = newSshMachineLocation("North child", "localhost", NORTH_IP, northParent, NORTH_LATITUDE, NORTH_LONGITUDE);
         ((BasicLocationRegistry) mgmt.getLocationRegistry()).registerResolver(new LocationResolver() {
+            @Override public boolean isEnabled() { return true; }
             @Override
-            public Location newLocationFromString(Map locationFlags, String spec, LocationRegistry registry) {
+            public LocationSpec<? extends Location> newLocationSpecFromString(String spec, Map<?, ?> locationFlags, LocationRegistry registry) {
                 if (!spec.equals("test:north")) throw new IllegalStateException("unsupported");
-                return northChildWithLocation;
+                return newSshMachineLocationSpec("North child", "localhost", NORTH_IP, northParent, NORTH_LATITUDE, NORTH_LONGITUDE);
             }
-            @Override
-            public void init(ManagementContext managementContext) {
-            }
-            @Override
-            public String getPrefix() {
-                return "test";
-            }
+            @Override public void init(ManagementContext managementContext) {}
+            @Override public String getPrefix() { return "test"; }
             @Override
             public boolean accepts(String spec, LocationRegistry registry) {
                 return spec.startsWith(getPrefix());
@@ -159,13 +155,16 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
     }
     
     private Location newSshMachineLocation(String name, String hostname, String address, Location parent, double lat, double lon) {
-        return mgmt.getLocationManager().createLocation(LocationSpec.create(SshMachineLocation.class)
+        return mgmt.getLocationManager().createLocation(newSshMachineLocationSpec(name, hostname, address, parent, lat, lon));
+    }
+    private LocationSpec<SshMachineLocation> newSshMachineLocationSpec(String name, String hostname, String address, Location parent, double lat, double lon) {
+        return LocationSpec.create(SshMachineLocation.class)
                 .parent(parent)
                 .displayName(name)
                 .configure("hostname", hostname)
                 .configure("address", address)
                 .configure("latitude", lat)
-                .configure("longitude", lon));
+                .configure("longitude", lon);
     }
     
     @Test

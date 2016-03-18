@@ -110,7 +110,7 @@ public class LoadTest {
         webServerUrl = launcher.getServerDetails().getWebServerUrl();
         managementContext = launcher.getServerDetails().getManagementContext();
 
-        localhost = managementContext.getLocationRegistry().resolve("localhost");
+        localhost = managementContext.getLocationRegistry().getLocationManaged("localhost");
         
         provisioningTimes = Collections.synchronizedList(Lists.<Duration>newArrayList());
 

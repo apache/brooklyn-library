@@ -91,7 +91,7 @@ public class MariaDbLiveRackspaceTest extends MariaDbIntegrationTest {
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.image-id");
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageId");
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.inboundPorts", Arrays.asList(22, 3306));
-        JcloudsLocation jcloudsLocation = (JcloudsLocation) managementContext.getLocationRegistry().resolve("jclouds:rackspace-cloudservers-uk");
+        JcloudsLocation jcloudsLocation = (JcloudsLocation) managementContext.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
 
         tapp.start(ImmutableList.of(jcloudsLocation));
 

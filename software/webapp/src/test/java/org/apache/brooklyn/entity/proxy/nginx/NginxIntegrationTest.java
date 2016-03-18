@@ -64,7 +64,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        localLoc = mgmt.getLocationRegistry().resolve("localhost");
+        localLoc = mgmt.getLocationRegistry().getLocationManaged("localhost");
     }
 
     public String getTestWar() {

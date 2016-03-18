@@ -195,6 +195,6 @@ public class MySqlClusterIntegrationTest extends BrooklynAppLiveTestSupport {
     }
 
     private Location getLocation() {
-        return mgmt.getLocationRegistry().resolve(TEST_LOCATION);
+        return mgmt.getLocationRegistry().getLocationManaged(TEST_LOCATION);
     }
 }

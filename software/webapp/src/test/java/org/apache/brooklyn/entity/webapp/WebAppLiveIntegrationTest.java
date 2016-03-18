@@ -22,6 +22,7 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.PortRange;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss6Server;
@@ -29,10 +30,7 @@ import org.apache.brooklyn.entity.webapp.jboss.JBoss6ServerImpl;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7ServerImpl;
 import org.apache.brooklyn.entity.webapp.tomcat.TomcatServer;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -76,7 +74,7 @@ public class WebAppLiveIntegrationTest extends BrooklynAppUnitTestSupport {
     @Override
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        loc = mgmt.getLocationRegistry().resolve("aws-ec2:us-east-1", ImmutableMap.of(
+        loc = mgmt.getLocationRegistry().getLocationManaged("aws-ec2:us-east-1", ImmutableMap.of(
                 "imagel-id", "us-east-1/ami-2342a94a",
                 "image-owner", "411009282317"));
     }
@@ -85,7 +83,7 @@ public class WebAppLiveIntegrationTest extends BrooklynAppUnitTestSupport {
     public void testStartsWebAppInAws(final EntitySpec<JavaWebAppSoftwareProcess> spec) {
         JavaWebAppSoftwareProcess server = app.createAndManageChild(spec);
         server.start(ImmutableList.of(loc));
-        EntityTestUtils.assertAttributeEqualsEventually(ImmutableMap.of("timeout", Duration.seconds(75)),
+        EntityAsserts.assertAttributeEqualsEventually(ImmutableMap.of("timeout", Duration.seconds(75)),
                 server, Attributes.SERVICE_UP, Boolean.TRUE);
     }
 }

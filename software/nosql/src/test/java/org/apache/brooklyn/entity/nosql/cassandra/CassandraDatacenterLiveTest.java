@@ -83,7 +83,7 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        testLocation = mgmt.getLocationRegistry().resolve(provider);
+        testLocation = mgmt.getLocationRegistry().getLocationManaged(provider);
     }
 
     @AfterMethod(alwaysRun=true)

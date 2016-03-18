@@ -52,7 +52,7 @@ public class CouchDBClusterLiveTest {
     @BeforeMethod(alwaysRun = true)
     public void setup() {
         app = ApplicationBuilder.newManagedApp(TestApplication.class);
-        testLocation = app.getManagementContext().getLocationRegistry().resolve(provider);
+        testLocation = app.getManagementContext().getLocationRegistry().getLocationManaged(provider);
     }
 
     @AfterMethod(alwaysRun = true)

@@ -73,7 +73,7 @@ public class TomcatServerEc2LiveTest extends AbstractEc2LiveTest {
     @Test(groups = {"Live"})
     public void testWithOnlyPort22() throws Exception {
         // CentOS-6.3-x86_64-GA-EBS-02-85586466-5b6c-4495-b580-14f72b4bcf51-ami-bb9af1d2.1
-        jcloudsLocation = mgmt.getLocationRegistry().resolve(LOCATION_SPEC, ImmutableMap.of(
+        jcloudsLocation = mgmt.getLocationRegistry().getLocationManaged(LOCATION_SPEC, ImmutableMap.of(
                 "tags", ImmutableList.of(getClass().getName()),
                 "imageId", "us-east-1/ami-a96b01c0", 
                 "hardwareId", SMALL_HARDWARE_ID));

@@ -118,6 +118,7 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
         }
 
         DynamicTasks.queue(AnsiblePlaybookTasks.installAnsible(installDir, false));
+        DynamicTasks.queue(AnsiblePlaybookTasks.setUpHostsFile(false));
 
         if (getExtraVars() != null) {
             DynamicTasks.queue(AnsiblePlaybookTasks.configureExtraVars(getRunDir(), extraVars, false));

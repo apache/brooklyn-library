@@ -9,22 +9,25 @@ location:
     templateOptions:
       subnetId: subnet-a10e96c4
       securityGroupIds: [['sg-a2d0c2c7']]
-      mapNewVolumeToDeviceName: ["/dev/sda1", 100, true]
+      mapNewVolumeToDeviceName: ["/dev/sda1", 60, true]
 
 services:
 - type: org.apache.brooklyn.entity.software.base.VanillaWindowsProcess
   brooklyn.config:
     templates.install:
+      classpath://org/apache/brooklyn/entity/database/mssql/Custom-Enable-CredSSP.ps1: "C:\\Custom-Enable-CredSSP.ps1"
       classpath://org/apache/brooklyn/entity/database/mssql/ConfigurationFile.ini: "C:\\ConfigurationFile.ini"
       classpath://org/apache/brooklyn/entity/database/mssql/installmssql.ps1: "C:\\installmssql.ps1"
       classpath://org/apache/brooklyn/entity/database/mssql/configuremssql.ps1: "C:\\configuremssql.ps1"
       classpath://org/apache/brooklyn/entity/database/mssql/launchmssql.bat: "C:\\launchmssql.bat"
       classpath://org/apache/brooklyn/entity/database/mssql/stopmssql.bat: "C:\\stopmssql.bat"
-    install.command: powershell -command "C:\\installmssql.ps1"
+    install.command: powershell -command "C:\\Custom-Enable-CredSSP.ps1" && powershell -command "C:\\installmssql.ps1"
     customize.command: powershell -command "C:\\configuremssql.ps1"
     launch.command: "C:\\launchmssql.bat"
     stop.command: "C:\\stopmssql.bat"
-    checkRunning.command: echo true
+    checkRunning.powershell.command: |
+      $service = Get-Service -Name MSSQLSERVER
+      If ( (-not $service) -or ($service.Status -ne 'Running') ) { exit 1 }
 
     ## NOTE: Values must be supplied for the following
     mssql.download.url:

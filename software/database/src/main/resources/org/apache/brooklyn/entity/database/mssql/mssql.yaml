@@ -15,13 +15,13 @@ services:
 - type: org.apache.brooklyn.entity.software.base.VanillaWindowsProcess
   brooklyn.config:
     templates.install:
-      classpath://org/apache/brooklyn/entity/database/mssql/Custom-Enable-CredSSP.ps1: "C:\\Custom-Enable-CredSSP.ps1"
+      classpath://org/apache/brooklyn/software/base/custom-enable-credssp.ps1: "C:\\custom-enable-credssp.ps1"
       classpath://org/apache/brooklyn/entity/database/mssql/ConfigurationFile.ini: "C:\\ConfigurationFile.ini"
       classpath://org/apache/brooklyn/entity/database/mssql/installmssql.ps1: "C:\\installmssql.ps1"
       classpath://org/apache/brooklyn/entity/database/mssql/configuremssql.ps1: "C:\\configuremssql.ps1"
       classpath://org/apache/brooklyn/entity/database/mssql/launchmssql.bat: "C:\\launchmssql.bat"
       classpath://org/apache/brooklyn/entity/database/mssql/stopmssql.bat: "C:\\stopmssql.bat"
-    install.command: powershell -command "C:\\Custom-Enable-CredSSP.ps1" && powershell -command "C:\\installmssql.ps1"
+    install.command: powershell -command "C:\\custom-enable-credssp.ps1" && powershell -command "C:\\installmssql.ps1"
     customize.command: powershell -command "C:\\configuremssql.ps1"
     launch.command: "C:\\launchmssql.bat"
     stop.command: "C:\\stopmssql.bat"

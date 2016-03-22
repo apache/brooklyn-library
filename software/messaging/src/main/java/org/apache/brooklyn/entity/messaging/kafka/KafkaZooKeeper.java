@@ -23,6 +23,7 @@ import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.annotation.Effector;
 import org.apache.brooklyn.core.annotation.EffectorParam;
 import org.apache.brooklyn.core.config.BasicConfigKey;
+import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
@@ -51,6 +52,13 @@ public interface KafkaZooKeeper extends ZooKeeperNode, Kafka {
     ConfigKey<String> KAFKA_ZOOKEEPER_CONFIG_TEMPLATE = new BasicConfigKey<String>(String.class,
             "kafka.zookeeper.configTemplate", "Kafka zookeeper configuration template (in freemarker format)",
             "classpath://org/apache/brooklyn/entity/messaging/kafka/zookeeper.properties");
+
+    // This is defined by both ZooKeeperNode ("zookeeper-%s") and Kafka ("kafka_%s").
+    // The latter is correct.
+    @SetFromFlag("archiveNameFormat")
+    ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(
+            SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT,
+            "kafka_%s");
 
     @Effector(description = "Create a topic with a single partition and only one replica")
     void createTopic(@EffectorParam(name = "topic") String topic);

@@ -19,6 +19,8 @@
 package org.apache.brooklyn.entity.nosql.elasticsearch;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,9 +33,12 @@ import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.feed.http.HttpValueFunctions;
+import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.test.EntityTestUtils;
+import org.apache.brooklyn.util.http.HttpAsserts;
 import org.apache.brooklyn.util.http.HttpTool;
 import org.apache.brooklyn.util.http.HttpToolResponse;
+import org.apache.brooklyn.util.net.Networking;
 import org.apache.http.client.methods.HttpGet;
 import org.bouncycastle.util.Strings;
 import org.testng.annotations.AfterMethod;
@@ -43,6 +48,7 @@ import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocati
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.net.HostAndPort;
 
 public class ElasticSearchNodeIntegrationTest {
     
@@ -65,8 +71,11 @@ public class ElasticSearchNodeIntegrationTest {
     public void testStartupAndShutdown() {
         elasticSearchNode = app.createAndManageChild(EntitySpec.create(ElasticSearchNode.class));
         app.start(ImmutableList.of(testLocation));
+        String url = elasticSearchNode.sensors().get(ElasticSearchNode.DATASTORE_URL);
         
         EntityTestUtils.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, true);
+        assertNotNull(url);
+        assertTrue(Networking.isReachable(HostAndPort.fromParts(URI.create(url).getHost(), URI.create(url).getPort())));
         
         elasticSearchNode.stop();
         

@@ -70,7 +70,11 @@ public class ElasticSearchNodeImpl extends SoftwareProcessImpl implements Elasti
     protected void connectSensors() {
         super.connectSensors();
         Integer rawPort = getAttribute(HTTP_PORT);
+        String hostname = getAttribute(HOSTNAME);
         checkNotNull(rawPort, "HTTP_PORT sensors not set for %s; is an acceptable port available?", this);
+        
+        sensors().set(DATASTORE_URL, String.format("http://%s:%s", hostname, rawPort));
+        
         HostAndPort hp = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, rawPort);
         Function<Maybe<JsonElement>, String> getNodeId = new Function<Maybe<JsonElement>, String>() {
             @Override public String apply(Maybe<JsonElement> input) {
@@ -80,7 +84,7 @@ public class ElasticSearchNodeImpl extends SoftwareProcessImpl implements Elasti
                 return input.get().getAsJsonObject().entrySet().iterator().next().getKey();
             }
         };
-        
+
         if (isHttpMonitoringEnabled()) {
             boolean retrieveUsageMetrics = getConfig(RETRIEVE_USAGE_METRICS);
 

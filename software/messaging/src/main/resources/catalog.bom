@@ -1,0 +1,78 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+brooklyn.catalog:
+    version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
+    items:
+    - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQBroker
+      item:
+        type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQBroker
+        name: ActiveMQ Broker
+        description: ActiveMQ is an open source message broker which fully implements the Java Message Service 1.1 (JMS)
+    - id: org.apache.brooklyn.entity.messaging.qpid.QpidBroker
+      item:
+        type: org.apache.brooklyn.entity.messaging.qpid.QpidBroker
+        name: Qpid Broker
+        description: Apache Qpid is an open-source messaging system, implementing the Advanced Message Queuing Protocol (AMQP)
+    - id: org.apache.brooklyn.entity.messaging.storm.Storm
+      item:
+        type: org.apache.brooklyn.entity.messaging.storm.Storm
+        name: Storm Node
+        description: Apache Storm is a distributed realtime computation system. 
+    - id: org.apache.brooklyn.entity.messaging.kafka.KafkaCluster
+      item:
+        type: org.apache.brooklyn.entity.messaging.kafka.KafkaCluster
+        name: Kafka
+        description: Apache Kafka is a distributed publish-subscribe messaging system
+    - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQQueue
+      item:
+        type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQQueue
+    - id: org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble
+      item:
+        type: org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble
+        name: ZooKeeper ensemble
+        description: A cluster of ZooKeeper servers. 
+    - id: org.apache.brooklyn.entity.messaging.kafka.KafkaZooKeeper
+      item:
+        type: org.apache.brooklyn.entity.messaging.kafka.KafkaZooKeeper
+    - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQTopic
+      item:
+        type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQTopic
+    - id: org.apache.brooklyn.entity.messaging.qpid.QpidQueue
+      item:
+        type: org.apache.brooklyn.entity.messaging.qpid.QpidQueue
+    - id: org.apache.brooklyn.entity.zookeeper.ZooKeeperNode
+      item:
+        type: org.apache.brooklyn.entity.zookeeper.ZooKeeperNode
+        name: ZooKeeper Node
+        description: Apache ZooKeeper is a server which enables 
+    - id: org.apache.brooklyn.entity.messaging.rabbit.RabbitBroker
+      item:
+        type: org.apache.brooklyn.entity.messaging.rabbit.RabbitBroker
+        name: RabbitMQ Broker
+        description: RabbitMQ is an open source message broker software (i.e. message-oriented middleware) that implements the Advanced Message Queuing Protocol (AMQP) standard
+    - id: org.apache.brooklyn.entity.messaging.kafka.KafkaBroker
+      item:
+        type: org.apache.brooklyn.entity.messaging.kafka.KafkaBroker
+    - id: org.apache.brooklyn.entity.messaging.qpid.QpidTopic
+      item:
+        type: org.apache.brooklyn.entity.messaging.qpid.QpidTopic
+    - id: org.apache.brooklyn.entity.messaging.storm.StormDeployment
+      item:
+        type: org.apache.brooklyn.entity.messaging.storm.StormDeployment
+        name: Storm Deployment
+        description: A Storm cluster. Apache Storm is a distributed realtime computation system. 

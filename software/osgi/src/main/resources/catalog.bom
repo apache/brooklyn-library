@@ -18,6 +18,8 @@
 brooklyn.catalog:
     version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
     items:
-    - id: com.example.HelloEntity
+    - id: org.apache.brooklyn.entity.osgi.karaf.KarafContainer
       item:
-        type: com.example.HelloEntity
+        type: org.apache.brooklyn.entity.osgi.karaf.KarafContainer
+        name: Karaf
+        description: Apache Karaf is a small OSGi based runtime which provides a lightweight container onto which various components and applications can be deployed.

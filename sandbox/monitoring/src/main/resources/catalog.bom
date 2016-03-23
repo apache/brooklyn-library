@@ -18,6 +18,6 @@
 brooklyn.catalog:
     version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
     items:
-    - id: com.example.HelloEntity
+    - id: org.apache.brooklyn.entity.monitoring.zabbix.ZabbixServer
       item:
-        type: com.example.HelloEntity
+        type: org.apache.brooklyn.entity.monitoring.zabbix.ZabbixServer

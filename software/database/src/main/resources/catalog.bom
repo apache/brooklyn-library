@@ -1,0 +1,46 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+brooklyn.catalog:
+    version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
+    items:
+    - id: org.apache.brooklyn.entity.database.crate.CrateNode
+      item:
+        type: org.apache.brooklyn.entity.database.crate.CrateNode
+    - id: org.apache.brooklyn.entity.database.mysql.MySqlNode
+      item:
+        type: org.apache.brooklyn.entity.database.mysql.MySqlNode
+        name: MySql Node
+        description: MySql is an open source relational database management system (RDBMS)
+    - id: org.apache.brooklyn.entity.database.mysql.MySqlCluster
+      item:
+        type: org.apache.brooklyn.entity.database.mysql.MySqlCluster
+        name: MySql Master-Slave cluster
+        description: Sets up a cluster of MySQL nodes using master-slave relation and binary logging
+    - id: org.apache.brooklyn.entity.database.postgresql.PostgreSqlNode
+      item:
+        type: org.apache.brooklyn.entity.database.postgresql.PostgreSqlNode
+        name: PostgreSQL Node
+        description: PostgreSQL is an object-relational database management system (ORDBMS)
+    - id: org.apache.brooklyn.entity.database.rubyrep.RubyRepNode
+      item:
+        type: org.apache.brooklyn.entity.database.rubyrep.RubyRepNode
+    - id: org.apache.brooklyn.entity.database.mariadb.MariaDbNode
+      item:
+        type: org.apache.brooklyn.entity.database.mariadb.MariaDbNode
+        name: MariaDB Node
+        description: MariaDB is an open source relational database management system (RDBMS)

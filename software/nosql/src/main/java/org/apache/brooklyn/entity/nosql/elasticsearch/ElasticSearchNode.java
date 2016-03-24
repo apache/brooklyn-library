@@ -86,6 +86,9 @@ public interface ElasticSearchNode extends SoftwareProcess, DatastoreMixins.HasD
     StringAttributeSensorAndConfigKey CLUSTER_NAME = new StringAttributeSensorAndConfigKey("elasticsearch.node.cluster.name", 
             "Cluster name (or elasticsearch selected if not set", null);
 
+    @SetFromFlag("useHttpMonitoring")
+    ConfigKey<Boolean> USE_HTTP_MONITORING = ConfigKeys.newConfigKey("httpMonitoring.enabled", "HTTP(S) monitoring enabled", Boolean.TRUE);
+
     AttributeSensor<String> NODE_ID = Sensors.newStringSensor("elasticsearch.node.id");
     AttributeSensor<Integer> DOCUMENT_COUNT = Sensors.newIntegerSensor("elasticsearch.node.docs.count");
     AttributeSensor<Integer> STORE_BYTES = Sensors.newIntegerSensor("elasticsearch.node.store.bytes");

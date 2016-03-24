@@ -21,14 +21,20 @@ package org.apache.brooklyn.entity.webapp.nodejs;
 import static org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppFixtureIntegrationTest.APP_FILE;
 import static org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppFixtureIntegrationTest.APP_NAME;
 import static org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppFixtureIntegrationTest.GIT_REPO_URL;
+import static org.testng.Assert.assertNotNull;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.EntityAsserts;
+import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.HttpTestUtils;
+import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
+import org.apache.brooklyn.util.http.HttpAsserts;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * A simple test of installing+running on AWS-EC2, using various OS distros and versions.
@@ -46,8 +52,8 @@ public class NodeJsWebAppEc2LiveTest extends AbstractEc2LiveTest {
 
         String url = server.getAttribute(NodeJsWebAppService.ROOT_URL);
 
-        HttpTestUtils.assertHttpStatusCodeEventuallyEquals(url, 200);
-        HttpTestUtils.assertContentContainsText(url, "Hello");
+        HttpAsserts.assertHttpStatusCodeEventuallyEquals(url, 200);
+        HttpAsserts.assertContentContainsText(url, "Hello");
     }
 
     @Test(groups = {"Live", "Live-sanity"})
@@ -56,4 +62,29 @@ public class NodeJsWebAppEc2LiveTest extends AbstractEc2LiveTest {
         super.test_Ubuntu_12_0();
     }
 
+    @Test(groups = {"Live"})
+    public void testWithOnlyPort22() throws Exception {
+        // CentOS-6.3-x86_64-GA-EBS-02-85586466-5b6c-4495-b580-14f72b4bcf51-ami-bb9af1d2.1
+        jcloudsLocation = mgmt.getLocationRegistry().getLocationManaged(LOCATION_SPEC, ImmutableMap.of(
+                "tags", ImmutableList.of(getClass().getName()),
+                "imageId", "us-east-1/ami-a96b01c0", 
+                "hardwareId", SMALL_HARDWARE_ID));
+
+        final NodeJsWebAppService server = app.createAndManageChild(EntitySpec.create(NodeJsWebAppService.class)
+                .configure("gitRepoUrl", GIT_REPO_URL)
+                .configure("appFileName", APP_FILE)
+                .configure("appName", APP_NAME)
+                .configure(JBoss7Server.USE_HTTP_MONITORING, false)
+                .configure(JBoss7Server.OPEN_IPTABLES, true));
+        
+        app.start(ImmutableList.of(jcloudsLocation));
+        
+        EntityAsserts.assertAttributeEqualsEventually(server, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(server, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+        
+        String url = server.getAttribute(NodeJsWebAppService.ROOT_URL);
+        assertNotNull(url);
+        
+        assertViaSshLocalUrlListeningEventually(server, url);
+    }
 }

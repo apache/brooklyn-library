@@ -148,7 +148,7 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
     public String getPassword() {
         String result = getAttribute(MySqlNode.PASSWORD);
         if (Strings.isBlank(result)) {
-            result = Identifiers.makeRandomId(6);
+            result = Identifiers.makeRandomId(12);
             sensors().set(MySqlNode.PASSWORD, result);
         }
         return result;

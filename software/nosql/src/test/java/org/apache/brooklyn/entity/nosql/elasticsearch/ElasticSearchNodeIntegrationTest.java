@@ -19,6 +19,8 @@
 package org.apache.brooklyn.entity.nosql.elasticsearch;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,51 +28,47 @@ import java.net.URISyntaxException;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.feed.http.HttpValueFunctions;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.http.HttpTool;
 import org.apache.brooklyn.util.http.HttpToolResponse;
+import org.apache.brooklyn.util.net.Networking;
 import org.apache.http.client.methods.HttpGet;
 import org.bouncycastle.util.Strings;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.net.HostAndPort;
 
-public class ElasticSearchNodeIntegrationTest {
+public class ElasticSearchNodeIntegrationTest extends BrooklynAppLiveTestSupport {
     
-    protected TestApplication app;
     protected Location testLocation;
     protected ElasticSearchNode elasticSearchNode;
 
     @BeforeMethod(alwaysRun = true)
-    public void setup() throws Exception {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
-        testLocation = new LocalhostMachineProvisioningLocation();
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        testLocation = app.newLocalhostProvisioningLocation();
     }
 
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() {
-        Entities.destroyAll(app.getManagementContext());
-    }
-    
     @Test(groups = {"Integration"})
     public void testStartupAndShutdown() {
         elasticSearchNode = app.createAndManageChild(EntitySpec.create(ElasticSearchNode.class));
         app.start(ImmutableList.of(testLocation));
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, true);
+        String url = elasticSearchNode.sensors().get(ElasticSearchNode.DATASTORE_URL);
+        assertNotNull(url);
+        assertTrue(Networking.isReachable(HostAndPort.fromParts(URI.create(url).getHost(), URI.create(url).getPort())));
         
         elasticSearchNode.stop();
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, false);
     }
     
     @Test(groups = {"Integration"})
@@ -78,9 +76,9 @@ public class ElasticSearchNodeIntegrationTest {
         elasticSearchNode = app.createAndManageChild(EntitySpec.create(ElasticSearchNode.class));
         app.start(ImmutableList.of(testLocation));
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchNode, Startable.SERVICE_UP, true);
         
-        EntityTestUtils.assertAttributeEquals(elasticSearchNode, ElasticSearchNode.DOCUMENT_COUNT, 0);
+        EntityAsserts.assertAttributeEquals(elasticSearchNode, ElasticSearchNode.DOCUMENT_COUNT, 0);
         
         String baseUri = "http://" + elasticSearchNode.getAttribute(Attributes.HOSTNAME) + ":" + elasticSearchNode.getAttribute(Attributes.HTTP_PORT);
         
@@ -106,6 +104,6 @@ public class ElasticSearchNodeIntegrationTest {
         assertEquals(getResponse.getResponseCode(), 200);
         assertEquals(HttpValueFunctions.jsonContents("foo", String.class).apply(getResponse), "bar");
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchNode, ElasticSearchNode.DOCUMENT_COUNT, 1);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchNode, ElasticSearchNode.DOCUMENT_COUNT, 1);
     }
 }

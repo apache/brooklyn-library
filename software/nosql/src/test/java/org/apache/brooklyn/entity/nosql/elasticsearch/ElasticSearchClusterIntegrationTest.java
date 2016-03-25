@@ -28,12 +28,12 @@ import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.feed.http.HttpValueFunctions;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.http.HttpTool;
 import org.apache.brooklyn.util.http.HttpToolResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -49,6 +49,7 @@ import com.google.common.collect.ImmutableMap;
 public class ElasticSearchClusterIntegrationTest extends BrooklynAppLiveTestSupport {
 
     // FIXME Exception in thread "main" java.lang.UnsupportedClassVersionError: org/elasticsearch/bootstrap/Elasticsearch : Unsupported major.minor version 51.0
+    // Happens if PATH points at a java that is older than Java 1.7.
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchClusterIntegrationTest.class);
 
@@ -68,11 +69,11 @@ public class ElasticSearchClusterIntegrationTest extends BrooklynAppLiveTestSupp
                 .configure(DynamicCluster.INITIAL_SIZE, 3));
         app.start(ImmutableList.of(testLocation));
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchCluster, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchCluster, Startable.SERVICE_UP, true);
         
         elasticSearchCluster.stop();
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchCluster, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchCluster, Startable.SERVICE_UP, false);
     }
     
     @Test(groups = {"Integration"})
@@ -81,7 +82,7 @@ public class ElasticSearchClusterIntegrationTest extends BrooklynAppLiveTestSupp
                 .configure(DynamicCluster.INITIAL_SIZE, 3));
         app.start(ImmutableList.of(testLocation));
         
-        EntityTestUtils.assertAttributeEqualsEventually(elasticSearchCluster, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(elasticSearchCluster, Startable.SERVICE_UP, true);
         assertEquals(elasticSearchCluster.getMembers().size(), 3);
         assertEquals(clusterDocumentCount(), 0);
         

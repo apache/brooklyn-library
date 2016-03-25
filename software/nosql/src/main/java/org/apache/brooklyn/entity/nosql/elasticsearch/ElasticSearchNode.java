@@ -29,6 +29,7 @@ import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey.StringAt
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.database.DatastoreMixins;
+import org.apache.brooklyn.entity.java.UsesJava;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.WebAppServiceConstants;
 import org.apache.brooklyn.util.core.ResourcePredicates;
@@ -41,7 +42,7 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
         + "It provides a distributed, multitenant-capable full-text search engine with a RESTful web interface and "
         + "schema-free JSON documents.")
 @ImplementedBy(ElasticSearchNodeImpl.class)
-public interface ElasticSearchNode extends SoftwareProcess, DatastoreMixins.HasDatastoreUrl {
+public interface ElasticSearchNode extends SoftwareProcess, UsesJava, DatastoreMixins.HasDatastoreUrl {
 
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "1.2.1");

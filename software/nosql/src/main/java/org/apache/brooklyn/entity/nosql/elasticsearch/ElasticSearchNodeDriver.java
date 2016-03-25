@@ -18,8 +18,8 @@
  */
 package org.apache.brooklyn.entity.nosql.elasticsearch;
 
-import org.apache.brooklyn.entity.software.base.SoftwareProcessDriver;
+import org.apache.brooklyn.entity.java.JavaSoftwareProcessDriver;
 
-public interface ElasticSearchNodeDriver extends SoftwareProcessDriver {
+public interface ElasticSearchNodeDriver extends JavaSoftwareProcessDriver {
 
 }

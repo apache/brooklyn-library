@@ -24,8 +24,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.config.ConfigKey;
+import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -33,9 +33,9 @@ import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 
-public class ElasticSearchNodeSshDriver extends AbstractSoftwareProcessSshDriver implements ElasticSearchNodeDriver {
+public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver implements ElasticSearchNodeDriver {
 
-    public ElasticSearchNodeSshDriver(EntityLocal entity, SshMachineLocation machine) {
+    public ElasticSearchNodeSshDriver(ElasticSearchNodeImpl entity, SshMachineLocation machine) {
         super(entity, machine);
     }
 
@@ -45,7 +45,6 @@ public class ElasticSearchNodeSshDriver extends AbstractSoftwareProcessSshDriver
         String saveAs = resolver.getFilename();
         
         List<String> commands = ImmutableList.<String>builder()
-            .add(BashCommands.installJavaLatestOrWarn())
             .addAll(BashCommands.commandsToDownloadUrlsAs(urls, saveAs))
             .add(String.format("tar zxvf %s", saveAs))
             .build();
@@ -127,4 +126,9 @@ public class ElasticSearchNodeSshDriver extends AbstractSoftwareProcessSshDriver
         newScript(MutableMap.of("usePidFile", true), KILLING).execute();
     }
 
+    @Override
+    protected String getLogFileLocation() {
+        String  logFileLocation = entity.config().get(ElasticSearchNode.LOG_DIR);
+        return (logFileLocation != null) ? logFileLocation : Os.mergePaths(getRunDir(), "logs");
+    }
 }

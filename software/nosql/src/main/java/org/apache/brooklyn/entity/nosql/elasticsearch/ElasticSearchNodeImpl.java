@@ -80,26 +80,39 @@ public class ElasticSearchNodeImpl extends SoftwareProcessImpl implements Elasti
                 return input.get().getAsJsonObject().entrySet().iterator().next().getKey();
             }
         };
-        httpFeed = HttpFeed.builder()
-            .entity(this)
-            .period(1000)
-            .baseUri(String.format("http://%s:%s/_nodes/_local/stats", hp.getHostText(), hp.getPort()))
-            .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
-                .onSuccess(HttpValueFunctions.responseCodeEquals(200))
-                .onFailureOrException(Functions.constant(false)))
-            .poll(new HttpPollConfig<String>(NODE_ID)
-                .onSuccess(Functionals.chain(HttpValueFunctions.jsonContents(), MaybeFunctions.<JsonElement>wrap(), JsonFunctions.walkM("nodes"), getNodeId))
-                .onFailureOrException(Functions.constant("")))
-            .poll(getSensorFromNodeStat(NODE_NAME, "name"))
-            .poll(getSensorFromNodeStat(DOCUMENT_COUNT, "indices", "docs", "count"))
-            .poll(getSensorFromNodeStat(STORE_BYTES, "indices", "store", "size_in_bytes"))
-            .poll(getSensorFromNodeStat(GET_TOTAL, "indices", "get", "total"))
-            .poll(getSensorFromNodeStat(GET_TIME_IN_MILLIS, "indices", "get", "time_in_millis"))
-            .poll(getSensorFromNodeStat(SEARCH_QUERY_TOTAL, "indices", "search", "query_total"))
-            .poll(getSensorFromNodeStat(SEARCH_QUERY_TIME_IN_MILLIS, "indices", "search", "query_time_in_millis"))
-            .poll(new HttpPollConfig<String>(CLUSTER_NAME)
-                .onSuccess(HttpValueFunctions.jsonContents("cluster_name", String.class)))
-            .build();
+        
+        if (isHttpMonitoringEnabled()) {
+            boolean retrieveUsageMetrics = getConfig(RETRIEVE_USAGE_METRICS);
+
+            httpFeed = HttpFeed.builder()
+                    .entity(this)
+                    .period(1000)
+                    .baseUri(String.format("http://%s:%s/_nodes/_local/stats", hp.getHostText(), hp.getPort()))
+                    .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
+                        .onSuccess(HttpValueFunctions.responseCodeEquals(200))
+                        .onFailureOrException(Functions.constant(false)))
+                    .poll(new HttpPollConfig<String>(NODE_ID)
+                        .onSuccess(Functionals.chain(HttpValueFunctions.jsonContents(), MaybeFunctions.<JsonElement>wrap(), JsonFunctions.walkM("nodes"), getNodeId))
+                        .onFailureOrException(Functions.constant("")))
+                    .poll(new HttpPollConfig<String>(CLUSTER_NAME)
+                            .onSuccess(HttpValueFunctions.jsonContents("cluster_name", String.class)))
+                    .poll(getSensorFromNodeStat(NODE_NAME, "name"))
+                    .poll(getSensorFromNodeStat(DOCUMENT_COUNT, "indices", "docs", "count")
+                            .enabled(retrieveUsageMetrics))
+                    .poll(getSensorFromNodeStat(STORE_BYTES, "indices", "store", "size_in_bytes")
+                            .enabled(retrieveUsageMetrics))
+                    .poll(getSensorFromNodeStat(GET_TOTAL, "indices", "get", "total")
+                            .enabled(retrieveUsageMetrics))
+                    .poll(getSensorFromNodeStat(GET_TIME_IN_MILLIS, "indices", "get", "time_in_millis")
+                            .enabled(retrieveUsageMetrics))
+                    .poll(getSensorFromNodeStat(SEARCH_QUERY_TOTAL, "indices", "search", "query_total")
+                            .enabled(retrieveUsageMetrics))
+                    .poll(getSensorFromNodeStat(SEARCH_QUERY_TIME_IN_MILLIS, "indices", "search", "query_time_in_millis")
+                            .enabled(retrieveUsageMetrics))
+                    .build();
+        } else {
+            connectServiceUpIsRunning();
+        }
     }
     
     @Override
@@ -107,5 +120,11 @@ public class ElasticSearchNodeImpl extends SoftwareProcessImpl implements Elasti
         if (httpFeed != null) {
             httpFeed.stop();
         }
+        disconnectServiceUpIsRunning();
+        super.disconnectSensors();
+    }
+    
+    protected boolean isHttpMonitoringEnabled() {
+        return Boolean.TRUE.equals(getConfig(USE_HTTP_MONITORING));
     }
 }

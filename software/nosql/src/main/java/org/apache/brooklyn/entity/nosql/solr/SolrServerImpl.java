@@ -18,7 +18,9 @@
  */
 package org.apache.brooklyn.entity.nosql.solr;
 
-import org.apache.brooklyn.core.entity.Attributes;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
 import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
 import org.apache.brooklyn.feed.http.HttpFeed;
@@ -27,9 +29,6 @@ import org.apache.brooklyn.feed.http.HttpValueFunctions;
 
 import com.google.common.base.Functions;
 import com.google.common.net.HostAndPort;
-
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of {@link SolrServer}.
@@ -57,14 +56,18 @@ public class SolrServerImpl extends SoftwareProcessImpl implements SolrServer {
         String solrUri = String.format("http://%s:%d/solr", hp.getHostText(), hp.getPort());
         sensors().set(MAIN_URI, URI.create(solrUri));
 
-        httpFeed = HttpFeed.builder()
-                .entity(this)
-                .period(500, TimeUnit.MILLISECONDS)
-                .baseUri(solrUri)
-                .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
-                        .onSuccess(HttpValueFunctions.responseCodeEquals(200))
-                        .onFailureOrException(Functions.constant(false)))
-                .build();
+        if (isHttpMonitoringEnabled()) {
+            httpFeed = HttpFeed.builder()
+                    .entity(this)
+                    .period(500, TimeUnit.MILLISECONDS)
+                    .baseUri(solrUri)
+                    .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
+                            .onSuccess(HttpValueFunctions.responseCodeEquals(200))
+                            .onFailureOrException(Functions.constant(false)))
+                    .build();
+        } else {
+            connectServiceUpIsRunning();
+        }
     }
 
     @Override
@@ -72,5 +75,10 @@ public class SolrServerImpl extends SoftwareProcessImpl implements SolrServer {
         super.disconnectSensors();
 
         if (httpFeed != null) httpFeed.stop();
+        disconnectServiceUpIsRunning();
+    }
+    
+    protected boolean isHttpMonitoringEnabled() {
+        return Boolean.TRUE.equals(getConfig(USE_HTTP_MONITORING));
     }
 }

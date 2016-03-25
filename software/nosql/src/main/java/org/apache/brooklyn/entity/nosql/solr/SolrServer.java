@@ -21,9 +21,6 @@ package org.apache.brooklyn.entity.nosql.solr;
 import java.net.URI;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
-
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -40,6 +37,9 @@ import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.time.Duration;
+
+import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a Solr node.
@@ -79,6 +79,9 @@ public interface SolrServer extends SoftwareProcess, UsesJava, UsesJmx, UsesJava
             Maps.<String, String>newHashMap());
 
     ConfigKey<Duration> START_TIMEOUT = ConfigKeys.newConfigKeyWithDefault(BrooklynConfigKeys.START_TIMEOUT, Duration.FIVE_MINUTES);
+
+    @SetFromFlag("useHttpMonitoring")
+    ConfigKey<Boolean> USE_HTTP_MONITORING = ConfigKeys.newConfigKey("httpMonitoring.enabled", "HTTP(S) monitoring enabled", Boolean.TRUE);
 
     AttributeSensor<URI> MAIN_URI = Attributes.MAIN_URI;
 

@@ -56,17 +56,23 @@ public class NodeJsWebAppServiceImpl extends SoftwareProcessImpl implements Node
 
         HostAndPort accessible = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, getHttpPort());
         String nodeJsUrl = String.format("http://%s:%d", accessible.getHostText(), accessible.getPort());
-        LOG.info("Connecting to {}", nodeJsUrl);
 
-        httpFeed = HttpFeed.builder()
-                .entity(this)
-                .baseUri(nodeJsUrl)
-                .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
-                        .suburl(getConfig(NodeJsWebAppService.SERVICE_UP_PATH))
-                        .checkSuccess(Predicates.alwaysTrue())
-                        .onSuccess(HttpValueFunctions.responseCodeEquals(200))
-                        .setOnException(false))
-                .build();
+        if (isHttpMonitoringEnabled()) {
+            LOG.info("Connecting to {}", nodeJsUrl);
+            
+            httpFeed = HttpFeed.builder()
+                    .entity(this)
+                    .baseUri(nodeJsUrl)
+                    .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
+                            .suburl(getConfig(NodeJsWebAppService.SERVICE_UP_PATH))
+                            .checkSuccess(Predicates.alwaysTrue())
+                            .onSuccess(HttpValueFunctions.responseCodeEquals(200))
+                            .setOnException(false))
+                    .build();
+            
+        } else {
+            connectServiceUpIsRunning();
+        }
 
         WebAppServiceMethods.connectWebAppServerPolicies(this);
     }
@@ -74,6 +80,7 @@ public class NodeJsWebAppServiceImpl extends SoftwareProcessImpl implements Node
     @Override
     public void disconnectSensors() {
         if (httpFeed != null) httpFeed.stop();
+        disconnectServiceUpIsRunning();
         super.disconnectSensors();
     }
 
@@ -84,7 +91,11 @@ public class NodeJsWebAppServiceImpl extends SoftwareProcessImpl implements Node
         sensors().set(REQUESTS_PER_SECOND_LAST, 0D);
         sensors().set(REQUESTS_PER_SECOND_IN_WINDOW, 0D);
     }
-
+    
+    protected boolean isHttpMonitoringEnabled() {
+        return Boolean.TRUE.equals(getConfig(USE_HTTP_MONITORING));
+    }
+    
     @Override
     public Integer getHttpPort() { return getAttribute(Attributes.HTTP_PORT); }
 

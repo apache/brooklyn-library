@@ -64,6 +64,7 @@ public class NodeJsWebAppServiceImpl extends SoftwareProcessImpl implements Node
                     .entity(this)
                     .baseUri(nodeJsUrl)
                     .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
+                            .suppressDuplicates(true)
                             .suburl(getConfig(NodeJsWebAppService.SERVICE_UP_PATH))
                             .checkSuccess(Predicates.alwaysTrue())
                             .onSuccess(HttpValueFunctions.responseCodeEquals(200))

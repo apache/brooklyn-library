@@ -184,13 +184,13 @@ public class ControlledDynamicWebAppClusterImpl extends DynamicGroupImpl impleme
 
     @SuppressWarnings("unchecked")
     @Override
-    public synchronized ConfigurableEntityFactory<WebAppService> getFactory() {
+    public ConfigurableEntityFactory<WebAppService> getFactory() {
         return (ConfigurableEntityFactory<WebAppService>) getAttribute(FACTORY);
     }
     
     // TODO convert to an entity reference which is serializable
     @Override
-    public synchronized DynamicWebAppCluster getCluster() {
+    public DynamicWebAppCluster getCluster() {
         return getAttribute(CLUSTER);
     }
     

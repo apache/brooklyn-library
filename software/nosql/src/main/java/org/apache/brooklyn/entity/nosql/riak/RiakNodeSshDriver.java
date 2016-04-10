@@ -25,7 +25,6 @@ import static org.apache.brooklyn.util.ssh.BashCommands.addSbinPathCommand;
 import static org.apache.brooklyn.util.ssh.BashCommands.alternatives;
 import static org.apache.brooklyn.util.ssh.BashCommands.chainGroup;
 import static org.apache.brooklyn.util.ssh.BashCommands.commandToDownloadUrlAs;
-import static org.apache.brooklyn.util.ssh.BashCommands.ifExecutableElse;
 import static org.apache.brooklyn.util.ssh.BashCommands.ifNotExecutable;
 import static org.apache.brooklyn.util.ssh.BashCommands.ok;
 import static org.apache.brooklyn.util.ssh.BashCommands.sbinPath;
@@ -40,7 +39,6 @@ import java.util.Map;
 import org.apache.brooklyn.api.location.OsDetails;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.lifecycle.ScriptHelper;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
@@ -48,7 +46,6 @@ import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
 import org.apache.brooklyn.util.core.task.ssh.SshTasks;
 import org.apache.brooklyn.util.net.Urls;
-import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
@@ -192,7 +189,7 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
         return ImmutableList.<String>builder()
                 .add(osDetails.getName().toLowerCase().contains("debian") ? addSbinPathCommand() : "")
                 .add(ifNotExecutable("curl", INSTALL_CURL))
-                .addAll(ifExecutableElse("yum", installDebianBased(), installRpmBased()))
+                .addAll(BashCommands.ifExecutableDoesNotExistElse("yum", installDebianBased(), installRpmBased()))
                 .build();
     }
 

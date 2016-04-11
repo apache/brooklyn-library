@@ -48,12 +48,14 @@ import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.enricher.stock.Enrichers;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.group.DynamicClusterImpl;
+import org.apache.brooklyn.entity.group.RemovalStrategy;
 import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableSet;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -127,7 +129,7 @@ public class MongoDBReplicaSetImpl extends DynamicClusterImpl implements MongoDB
      * {@link Function} for use as the cluster's removal strategy. Chooses any entity with
      * {@link MongoDBServer#IS_PRIMARY_FOR_REPLICA_SET} true last of all.
      */
-    private static final Function<Collection<Entity>, Entity> NON_PRIMARY_REMOVAL_STRATEGY = new Function<Collection<Entity>, Entity>() {
+    private static final RemovalStrategy NON_PRIMARY_REMOVAL_STRATEGY = new RemovalStrategy() {
         @Override
         public Entity apply(@Nullable Collection<Entity> entities) {
             checkArgument(entities != null && entities.size() > 0, "Expect list of MongoDBServers to have at least one entry");
@@ -157,7 +159,7 @@ public class MongoDBReplicaSetImpl extends DynamicClusterImpl implements MongoDB
 
     /** @return {@link #NON_PRIMARY_REMOVAL_STRATEGY} */
     @Override
-    public Function<Collection<Entity>, Entity> getRemovalStrategy() {
+    protected Function<Collection<Entity>, Entity> getRemovalStrategy() {
         return NON_PRIMARY_REMOVAL_STRATEGY;
     }
 

@@ -101,15 +101,15 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
        MutableMap<String, String> installPackageFlags = MutableMap.of(
                "yum", "js-devel openssl-devel libicu-devel libcurl-devel erlang-erts erlang-public_key erlang-eunit erlang-sasl erlang-os_mon erlang-asn1 erlang-xmerl",
                "apt", "erlang-nox erlang-dev libicu-dev libmozjs185-dev libcurl4-openssl-dev",
-               "zypper", "libopenssl-devel pcre-devel",
+               "zypper", "erlang libicu-devel js-devel libopenssl-devel pcre-devel",
                "port", "icu erlang spidermonkey curl");
 
        List<String> cmds = Lists.newArrayList();
 
        cmds.add(BashCommands.INSTALL_TAR);
-       cmds.add(BashCommands.alternatives(
-               BashCommands.ifExecutableElse0("apt-get", BashCommands.installPackage("build-essential")),
-               BashCommands.ifExecutableElse0("yum", BashCommands.sudo("yum -y --nogpgcheck groupinstall \"Development Tools\""))));
+       cmds.add(BashCommands.ifExecutableElse0("apt-get", BashCommands.installPackage("build-essential")));
+       cmds.add(BashCommands.ifExecutableElse0("yum", BashCommands.sudo("yum -y --nogpgcheck groupinstall \"Development Tools\"")));
+       cmds.add(BashCommands.ifExecutableElse0("zypper", BashCommands.sudo(getZypperRepository())));
        cmds.add(BashCommands.installPackage(installGccPackageFlags, "couchdb-prerequisites-gcc"));
        cmds.add(BashCommands.installPackage(installMakePackageFlags, "couchdb-prerequisites-make"));
        cmds.add(BashCommands.installPackage(installPackageFlags, "couchdb-prerequisites"));
@@ -213,5 +213,32 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
                 .body.append(String.format("./bin/couchdb -p %s -k", getPidFile()))
                 .failOnNonZeroResultCode()
                 .execute();
+    }
+
+    private String getZypperRepository() {
+        OsDetails osDetails = getMachine().getMachineDetails().getOsDetails();
+
+        String osMajorVersion = osDetails.getVersion();
+
+        String command = "zypper --non-interactive addrepo -f \"http://download.opensuse.org/repositories/home:/csbuild:/DBA/%1$s/\" %1$s";
+
+        switch (osMajorVersion) {
+            case "11.4":
+                command = format(command, "SLE_11_SP4");
+                break;
+            case "12.0":
+                command = format(command, "SLE_12");
+                break;
+            case "13.1":
+                command = format(command, "openSUSE_13.1");
+                break;
+            case "13.2":
+                command = format(command, "openSUSE_13.2");
+                break;
+            default:
+                command = "echo UNSUPPORTED SuSE version && exit 1";
+        }
+
+        return command;
     }
 }

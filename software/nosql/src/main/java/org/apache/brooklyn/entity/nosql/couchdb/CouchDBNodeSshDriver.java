@@ -119,10 +119,11 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
        cmds.add(format("cd %s", getExpandedInstallDir()));
 
        StringBuilder configureCommand = new StringBuilder("./configure")
-               .append(format(" --prefix=%s", getRunDir()))
+               .append(format(" --prefix=%s/dist", getExpandedInstallDir()))
                .append(" --with-erlang=/usr/lib64/erlang/usr/include ");
 
        cmds.addAll(ImmutableList.of(
+               "mkdir -p dist",
                configureCommand.toString(),
                "make install"));
 
@@ -181,7 +182,11 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
         log.info("Customizing {} (Cluster {})", entity, getClusterName());
         Networking.checkPortsValid(getPortMap());
 
-        newScript(CUSTOMIZING).execute();
+        newScript(CUSTOMIZING)
+        .body.append(
+                format("mkdir -p %s", getRunDir()),
+                format("cp -R %s/dist/{bin,etc,lib,share,var} %s", getExpandedInstallDir(), getRunDir()))
+        .execute();
 
         // Copy the configuration files across
         String destinationConfigFile = Os.mergePathsUnix(getRunDir(), getCouchDBConfigFileName());

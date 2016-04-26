@@ -40,7 +40,7 @@ public interface CouchDBNode extends SoftwareProcess, WebAppService {
 
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "http://www-eu.apache.org/dist/couchdb/source/${version}/apache-couchdb-${version}.tar.gz");
+            "http://www.mirrorservice.org/sites/ftp.apache.org/couchdb/source/${version}/apache-couchdb-${version}.tar.gz");
 
     @SetFromFlag("archiveNameFormat")
     ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-couchdb-%s");

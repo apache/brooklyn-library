@@ -35,6 +35,11 @@ import static org.apache.brooklyn.util.ssh.BashCommands.warn;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidParameterException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -320,6 +325,16 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
                 "\"CREATE DATABASE %s OWNER %s\"",
                 StringEscapes.escapeSql(getDatabaseName()),
                 StringEscapes.escapeSql(getUsername()));
+
+        String createRolesAdditionalCommand = "";
+
+        if (entity.getConfig(PostgreSqlNode.ROLES) != null && !entity.getConfig(PostgreSqlNode.ROLES).isEmpty()) {
+            String createRolesQuery = buildCreateRolesQuery();
+            createRolesAdditionalCommand =
+                    sudoAsUser("postgres", getInstallDir() + "/bin/psql -p " + entity.getAttribute(PostgreSqlNode.POSTGRESQL_PORT) +
+                            " --command="+ createRolesQuery);
+        }
+
         newScript("initializing user and database")
         .body.append(
                 "cd " + getInstallDir(),
@@ -328,8 +343,50 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
                         " --command="+ createUserCommand),
                 sudoAsUser("postgres", getInstallDir() + "/bin/psql -p " + entity.getAttribute(PostgreSqlNode.POSTGRESQL_PORT) + 
                                 " --command="+ createDatabaseCommand),
+                createRolesAdditionalCommand,
                 callPgctl("stop", true))
                 .failOnNonZeroResultCode().execute();
+    }
+
+    private String buildCreateRolesQuery() {
+        Map<String, Map> roles = entity.getConfig(PostgreSqlNode.ROLES);
+        StringBuilder builder = new StringBuilder("\"");
+
+        for (Map.Entry role: roles.entrySet()) {
+            builder.append(String.format("CREATE ROLE %s", validateInput((String) role.getKey())));
+            if (((Map) role.getValue()).containsKey(PostgreSqlNode.ROLE_PROPERTIES_KEY)) {
+                builder.append(String.format(" WITH %s; ", validateInput((String) ((Map) role.getValue()).get("properties"))));
+            } else {
+                builder.append(";");
+            }
+
+            if (((Map) role.getValue()).containsKey(PostgreSqlNode.ROLE_PRIVILEGES_KEY)) {
+                if ( ((Map) role.getValue()).get(PostgreSqlNode.ROLE_PRIVILEGES_KEY) instanceof List) {
+                    for (Object privilege: (List) ((Map) role.getValue()).get(PostgreSqlNode.ROLE_PRIVILEGES_KEY)) {
+                        builder.append(String.format("GRANT %s TO %s; ", validateInput((String) privilege), validateInput((String) role.getKey())));
+                    }
+                } else {
+                    builder.append(String.format("GRANT %s TO %s; ",
+                            validateInput((String) ((Map) role.getValue()).get(PostgreSqlNode.ROLE_PRIVILEGES_KEY)), validateInput((String) role.getKey())));
+                }
+            }
+        }
+
+        builder.append("\"");
+
+        return builder.toString();
+    }
+
+    private String validateInput(String input) {
+        String regex = "[A-Za-z_,\\s]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find() && matcher.start() == 0 && matcher.end() == input.length()) {
+            return input;
+        }
+
+        throw new InvalidParameterException("Query input seems to be insecure. Make sure you pass a valid value.");
     }
     
     private String getConfigOrDefault(BasicAttributeSensorAndConfigKey<String> key, String def) {

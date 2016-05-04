@@ -24,6 +24,7 @@ import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.objs.HasShortName;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
+import org.apache.brooklyn.core.config.MapConfigKey;
 import org.apache.brooklyn.core.effector.Effectors;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
@@ -33,6 +34,8 @@ import org.apache.brooklyn.entity.database.DatastoreMixins;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
+
+import java.util.Map;
 
 /**
  * PostgreSQL database node entity.
@@ -90,6 +93,23 @@ public interface PostgreSqlNode extends SoftwareProcess, HasShortName, Datastore
             String.class, "postgresql.username", "Username of the database user");
     
     String DEFAULT_USERNAME = "postgresqluser";
+
+    @SetFromFlag("roles")
+    ConfigKey<Map<String, Map>> ROLES = new MapConfigKey(Map.class, "postgresql.roles",
+            "Set roles with properties and permissions. Shoud be a map with keys equal to role names and values a map of the type:" +
+                  "key equal to `properties` and value - the role properties that should be in the query after `WITH` statement" +
+                    "key equal to `privileges` and value - the `GRANT` query value between the `GRANT` and `TO` statements.\n" +
+                    "Example:\n " +
+                    "Developer:\n" +
+                    "  properties: CREATEDB LOGIN\n" +
+                    "  privileges: [\"SELECT, INSERT, UPDATE, DELETE ON DATABASE postgres\", \"EXECUTE ON ALL FUNCTIONS IN SCHEMA public\"]\n" +
+                    "Analyst:\n" +
+                    "  privileges: SELECT ON ALL TABLES IN SCHEMA public"
+    );
+
+    String ROLE_PROPERTIES_KEY = "properties";
+
+    String ROLE_PRIVILEGES_KEY = "privileges";
     
     @SetFromFlag("password")
     BasicAttributeSensorAndConfigKey<String> PASSWORD = new BasicAttributeSensorAndConfigKey<>(

@@ -75,7 +75,7 @@ public class MySqlNodeEffectors {
             DynamicTasks.queue(
                     SshTasks.newSshExecTaskFactory(machine, 
                                     "cd "+entity().getAttribute(MySqlNode.RUN_DIR),
-                                    "sed -i'' -e 's@^\\(\\s*password\\s*=\\s*\\).*$@\\1" + newPass.replace("\\", "\\\\") + "@g' mymysql.cnf")
+                                    "sed -i.bak 's/\\(password.*\\)=.*/\\1= " + newPass.replace("\\", "\\\\") + "/' mymysql.cnf")
                             .requiringExitCodeZero()
                             .summary("Change root password"));
             return null;

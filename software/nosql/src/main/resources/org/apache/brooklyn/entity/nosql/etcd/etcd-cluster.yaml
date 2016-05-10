@@ -10,9 +10,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+id: etcd-application
+name: "Etcd Application"
+
 location:
   jclouds:aws-ec2:
-    region: us-east-1
+    region: eu-west-1
+    loginUser: "ubuntu"
+    loginUser.privateKeyFile: "~/.ssh/amazon.pem"
+    keyPair: "amazon"
+    templateOptions:
+      securityGroupIds: [ "sg-123456" ]
 
 services:
 - type: etcd-cluster

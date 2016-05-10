@@ -20,12 +20,12 @@ brooklyn.catalog:
       An individual etcd key-value store node.
     item:
       type: org.apache.brooklyn.entity.nosql.etcd.EtcdNode
-      brooklyn.enrichers:
-      - type: org.apache.brooklyn.enricher.stock.Transformer
+      brooklyn.initializers:
+      - type: org.apache.brooklyn.core.sensor.StaticSensor
         brooklyn.config:
-          enricher.sourceSensor: $brooklyn:sensor("host.address")
-          enricher.targetSensor: $brooklyn:sensor("etcd.authority")
-          enricher.targetValue:
+          name: etcd.authority
+          targetType: java.lang.String
+          static.value:
             $brooklyn:formatString:
             - "%s:%d"
             - $brooklyn:attributeWhenReady("host.address")

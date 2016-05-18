@@ -98,15 +98,15 @@ public abstract class AbstractGeoDnsServiceImpl extends AbstractEntity implement
     }
 
     @Override
-    public void onManagementBecomingMaster() {
-        super.onManagementBecomingMaster();
+    public void onManagementStarted() {
+        super.onManagementStarted();
         startTracker();
     }
 
     @Override
-    public void onManagementNoLongerMaster() {
+    public void onManagementStopped() {
         endTracker();
-        super.onManagementNoLongerMaster();
+        super.onManagementStopped();
     }
 
     @Override

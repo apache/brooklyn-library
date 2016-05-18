@@ -76,7 +76,8 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
     // Ensure our configure() method gets called; may be able to remove this if/when the framework detects this
     // and invokes the configure() method automatically?
     @Override
-    public void onManagementBecomingMaster() {
+    public void onManagementStarted() {
+        super.onManagementStarted();
         try {
             applyConfig();
         } catch (Exception e) {
@@ -84,13 +85,13 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
             log.error("Geoscaling did not come up correctly: "+e, e);
             ServiceStateLogic.setExpectedState(this, Lifecycle.ON_FIRE);
         }
-        super.onManagementBecomingMaster();
     }
 
     boolean isConfigured = false;
-    
+
+    @Override
     public synchronized void applyConfig() {        
-        randomizeSmartSubdomainName = config().get(RANDOMIZE_SUBDOMAIN_NAME);
+        randomizeSmartSubdomainName = Boolean.TRUE.equals(config().get(RANDOMIZE_SUBDOMAIN_NAME));
         username = config().get(GEOSCALING_USERNAME);
         password = config().get(GEOSCALING_PASSWORD);
         primaryDomainName = config().get(GEOSCALING_PRIMARY_DOMAIN_NAME);
@@ -100,7 +101,7 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
         checkNotNull(username, "The GeoScaling username is not specified");
         checkNotNull(password, "The GeoScaling password is not specified");
         checkNotNull(primaryDomainName, "The GeoScaling primary domain name is not specified");
-        
+
         if (randomizeSmartSubdomainName) {
             // if no smart subdomain specified, but random is, use something random
             if (smartSubdomainName != null) smartSubdomainName += "-";

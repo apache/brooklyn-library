@@ -30,6 +30,8 @@ import org.apache.brooklyn.entity.dns.AbstractGeoDnsService;
 import org.apache.brooklyn.entity.webapp.WebAppServiceConstants;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 
+import com.google.common.base.Predicates;
+
 /**
  * A geo-DNS service using geoscaling.com.
  * <p>
@@ -52,16 +54,22 @@ public interface GeoscalingDnsService extends AbstractGeoDnsService {
             "randomize.subdomain.name");
 
     @SetFromFlag("username")
-    ConfigKey<String> GEOSCALING_USERNAME = ConfigKeys.newStringConfigKey(
-            "geoscaling.username");
+    ConfigKey<String> GEOSCALING_USERNAME = ConfigKeys.builder(String.class)
+            .name("geoscaling.username")
+            .constraint(Predicates.notNull())
+            .build();
 
     @SetFromFlag("password")
-    ConfigKey<String> GEOSCALING_PASSWORD = ConfigKeys.newStringConfigKey(
-            "geoscaling.password");
+    ConfigKey<String> GEOSCALING_PASSWORD = ConfigKeys.builder(String.class)
+            .name("geoscaling.password")
+            .constraint(Predicates.notNull())
+            .build();
 
     @SetFromFlag("primaryDomainName")
-    ConfigKey<String> GEOSCALING_PRIMARY_DOMAIN_NAME = ConfigKeys.newStringConfigKey(
-            "geoscaling.primary.domain.name");
+    ConfigKey<String> GEOSCALING_PRIMARY_DOMAIN_NAME = ConfigKeys.builder(String.class)
+            .name("geoscaling.primary.domain.name")
+            .constraint(Predicates.notNull())
+            .build();
 
     @SetFromFlag("smartSubdomainName")
     ConfigKey<String> GEOSCALING_SMART_SUBDOMAIN_NAME = ConfigKeys.newStringConfigKey(

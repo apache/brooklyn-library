@@ -20,8 +20,8 @@ package org.apache.brooklyn.entity.messaging.qpid;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -37,7 +37,7 @@ public class QpidEc2LiveTest extends AbstractEc2LiveTest {
                 .configure("rmiRegistryPort", "9910+"));
         
         qpid.start(ImmutableList.of(loc));
-        EntityTestUtils.assertAttributeEqualsEventually(qpid, QpidBroker.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(qpid, QpidBroker.SERVICE_UP, true);
     }
     
     @Test(enabled=false)

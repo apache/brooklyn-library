@@ -20,8 +20,8 @@ package org.apache.brooklyn.entity.osgi.karaf;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.text.Identifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class KarafContainerEc2LiveTest extends AbstractEc2LiveTest {
         
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, KarafContainer.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, KarafContainer.SERVICE_UP, true);
     }
     
     @Test(enabled=false)

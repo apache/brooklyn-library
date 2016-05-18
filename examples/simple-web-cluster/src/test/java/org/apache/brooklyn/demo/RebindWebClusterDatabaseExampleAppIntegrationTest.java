@@ -23,6 +23,7 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.sensor.Enricher;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.StartableApplication;
 import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixture;
@@ -32,7 +33,6 @@ import org.apache.brooklyn.entity.webapp.ControlledDynamicWebAppCluster;
 import org.apache.brooklyn.entity.webapp.DynamicWebAppCluster;
 import org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.WebAppMonitor;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -162,7 +162,7 @@ public class RebindWebClusterDatabaseExampleAppIntegrationTest extends RebindTes
         AutoScalerPolicy autoScalerPolicy = (AutoScalerPolicy) Iterables.find(webCluster.policies(), Predicates.instanceOf(AutoScalerPolicy.class));
         
         autoScalerPolicy.config().set(AutoScalerPolicy.MIN_POOL_SIZE, 3);
-        EntityTestUtils.assertGroupSizeEqualsEventually(web, 3);
+        EntityAsserts.assertGroupSizeEqualsEventually(web, 3);
         final Collection<Entity> webMembersAfterGrow = web.getMembers();
         
         for (final Entity appserver : webMembersAfterGrow) {
@@ -182,15 +182,15 @@ public class RebindWebClusterDatabaseExampleAppIntegrationTest extends RebindTes
 
         // Check we see evidence of the enrichers having an effect.
         // Relying on WebAppMonitor to stimulate activity.
-        EntityTestUtils.assertAttributeEqualsEventually(app, WebClusterDatabaseExampleApp.APPSERVERS_COUNT, 3);
-        EntityTestUtils.assertAttributeChangesEventually(web, DynamicWebAppCluster.REQUESTS_PER_SECOND_IN_WINDOW);
-        EntityTestUtils.assertAttributeChangesEventually(app, DynamicWebAppCluster.REQUESTS_PER_SECOND_IN_WINDOW);
-        EntityTestUtils.assertAttributeChangesEventually(web, HttpLatencyDetector.REQUEST_LATENCY_IN_SECONDS_MOST_RECENT);
-        EntityTestUtils.assertAttributeChangesEventually(web, HttpLatencyDetector.REQUEST_LATENCY_IN_SECONDS_IN_WINDOW);
+        EntityAsserts.assertAttributeEqualsEventually(app, WebClusterDatabaseExampleApp.APPSERVERS_COUNT, 3);
+        EntityAsserts.assertAttributeChangesEventually(web, DynamicWebAppCluster.REQUESTS_PER_SECOND_IN_WINDOW);
+        EntityAsserts.assertAttributeChangesEventually(app, DynamicWebAppCluster.REQUESTS_PER_SECOND_IN_WINDOW);
+        EntityAsserts.assertAttributeChangesEventually(web, HttpLatencyDetector.REQUEST_LATENCY_IN_SECONDS_MOST_RECENT);
+        EntityAsserts.assertAttributeChangesEventually(web, HttpLatencyDetector.REQUEST_LATENCY_IN_SECONDS_IN_WINDOW);
 
         // Restore the web-cluster to its original size of 2
         autoScalerPolicy.config().set(AutoScalerPolicy.MIN_POOL_SIZE, 2);
-        EntityTestUtils.assertGroupSizeEqualsEventually(web, 2);
+        EntityAsserts.assertGroupSizeEqualsEventually(web, 2);
         
         final Entity removedAppserver = Iterables.getOnlyElement(Sets.difference(ImmutableSet.copyOf(webMembersAfterGrow), ImmutableSet.copyOf(web.getMembers())));
         Asserts.succeedsEventually(new Runnable() {

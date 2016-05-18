@@ -32,10 +32,10 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.core.file.ArchiveBuilder;
@@ -119,11 +119,11 @@ public abstract class StormAbstractCloudLiveTest extends BrooklynAppLiveTestSupp
             log.info("Started Storm deployment on '" + getLocation() + "'");
             app.start(ImmutableList.of(location));
             Entities.dumpInfo(app);
-            EntityTestUtils.assertAttributeEqualsEventually(app, Startable.SERVICE_UP, true);
-            EntityTestUtils.assertAttributeEqualsEventually(zooKeeperEnsemble, Startable.SERVICE_UP, true);
-            EntityTestUtils.assertAttributeEqualsEventually(nimbus, Startable.SERVICE_UP, true);
-            EntityTestUtils.assertAttributeEqualsEventually(supervisor, Startable.SERVICE_UP, true);
-            EntityTestUtils.assertAttributeEqualsEventually(ui, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(app, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(zooKeeperEnsemble, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(nimbus, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(supervisor, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(ui, Startable.SERVICE_UP, true);
             
             StormTopology stormTopology = createTopology();
             submitTopology(stormTopology, "myExclamation", 3, true, 60000);

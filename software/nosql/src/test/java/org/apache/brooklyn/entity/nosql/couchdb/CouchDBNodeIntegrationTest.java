@@ -19,9 +19,8 @@
 package org.apache.brooklyn.entity.nosql.couchdb;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.nosql.couchdb.CouchDBNode;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -42,11 +41,11 @@ public class CouchDBNodeIntegrationTest extends AbstractCouchDBNodeTest {
                 .configure("httpPort", "8000+"));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
 
         couchdb.stop();
 
-        EntityTestUtils.assertAttributeEquals(couchdb, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEquals(couchdb, Startable.SERVICE_UP, false);
     }
 
     /**
@@ -58,7 +57,7 @@ public class CouchDBNodeIntegrationTest extends AbstractCouchDBNodeTest {
                 .configure("httpPort", "8000+"));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
 
         JcouchdbSupport jcouchdb = new JcouchdbSupport(couchdb);
         jcouchdb.jcouchdbTest();

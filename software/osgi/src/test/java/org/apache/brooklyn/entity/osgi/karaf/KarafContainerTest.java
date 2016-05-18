@@ -29,9 +29,9 @@ import org.apache.brooklyn.api.location.NoMachinesAvailableException;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.apache.brooklyn.util.text.Identifiers;
@@ -64,14 +64,14 @@ public class KarafContainerTest extends BrooklynAppLiveTestSupport {
                 .configure("displayName", "Karaf Test"));
         
         app.start(ImmutableList.of(localhost));
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, true);
         
         Entities.dumpInfo(karaf);
         final int pid = karaf.getAttribute(KarafContainer.KARAF_PID);
         Entities.submit(app, SshEffectorTasks.requirePidRunning(pid).machine(localhost.obtain())).get();
         
         karaf.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
         
         Asserts.succeedsEventually(new Runnable() {
             public void run() {
@@ -92,10 +92,10 @@ public class KarafContainerTest extends BrooklynAppLiveTestSupport {
                 .configure("jmxPort", "9099+"));
         
         app.start(ImmutableList.of(localhost));
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, true);
         
         karaf.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
     }
     
     @Test(groups = {"Integration", "WIP"})
@@ -108,10 +108,10 @@ public class KarafContainerTest extends BrooklynAppLiveTestSupport {
             // NB: now the above parameters have the opposite semantics to before
         
         app.start(ImmutableList.of(localhost));
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, true);
         
         karaf.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
     }
     
     // FIXME Test failing in jenkins; not sure why. The karaf log shows the mbeans never being

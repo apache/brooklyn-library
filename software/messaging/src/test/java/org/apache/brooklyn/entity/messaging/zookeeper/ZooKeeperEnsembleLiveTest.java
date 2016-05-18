@@ -20,6 +20,7 @@ package org.apache.brooklyn.entity.messaging.zookeeper;
 
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
@@ -33,7 +34,6 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -90,17 +90,17 @@ public class ZooKeeperEnsembleLiveTest {
 
             app.start(ImmutableList.of(testLocation));
 
-            EntityTestUtils.assertAttributeEqualsEventually(cluster, ZooKeeperEnsemble.GROUP_SIZE, 3);
+            EntityAsserts.assertAttributeEqualsEventually(cluster, ZooKeeperEnsemble.GROUP_SIZE, 3);
             Entities.dumpInfo(app);
 
-            EntityTestUtils.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
             for(Entity zkNode : cluster.getMembers()) {
                 assertTrue(isSocketOpen((ZooKeeperNode) zkNode));
             }
             cluster.resize(1);
-            EntityTestUtils.assertAttributeEqualsEventually(cluster, ZooKeeperEnsemble.GROUP_SIZE, 1);
+            EntityAsserts.assertAttributeEqualsEventually(cluster, ZooKeeperEnsemble.GROUP_SIZE, 1);
             Entities.dumpInfo(app);
-            EntityTestUtils.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
             for (Entity zkNode : cluster.getMembers()) {
                 assertTrue(isSocketOpen((ZooKeeperNode) zkNode));
             }

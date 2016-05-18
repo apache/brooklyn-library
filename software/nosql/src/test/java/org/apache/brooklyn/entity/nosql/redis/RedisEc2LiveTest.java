@@ -29,7 +29,6 @@ import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -47,12 +46,12 @@ public class RedisEc2LiveTest extends AbstractEc2LiveTest {
     protected void doTest(Location loc) throws Exception {
         RedisStore redis = app.createAndManageChild(EntitySpec.create(RedisStore.class));
         app.start(ImmutableList.of(loc));
-        EntityTestUtils.assertAttributeEqualsEventually(redis, RedisStore.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(redis, RedisStore.SERVICE_UP, true);
 
         JedisSupport support = new JedisSupport(redis);
         support.redisTest();
         // Confirm sensors are valid
-        EntityTestUtils.assertPredicateEventuallyTrue(redis, new Predicate<RedisStore>() {
+        EntityAsserts.assertPredicateEventuallyTrue(redis, new Predicate<RedisStore>() {
             @Override public boolean apply(@Nullable RedisStore input) {
                 return input != null &&
                         input.getAttribute(RedisStore.UPTIME) > 0 &&

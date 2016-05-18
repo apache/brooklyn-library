@@ -23,10 +23,10 @@ import java.util.Map;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.group.DynamicCluster;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -67,8 +67,8 @@ public class CouchbaseSyncGatewayEc2LiveTest extends AbstractEc2LiveTest {
         );
         
         app.start(ImmutableList.of(loc));
-        
-        EntityTestUtils.assertAttributeEqualsEventually(gateway, Startable.SERVICE_UP, true);
+
+        EntityAsserts.assertAttributeEqualsEventually(gateway, Startable.SERVICE_UP, true);
     }
     
     

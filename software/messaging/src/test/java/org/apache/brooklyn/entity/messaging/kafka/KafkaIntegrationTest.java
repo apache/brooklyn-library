@@ -28,11 +28,11 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.time.Duration;
 import org.testng.annotations.AfterMethod;
@@ -74,7 +74,7 @@ public class KafkaIntegrationTest {
         final KafkaZooKeeper zookeeper = app.createAndManageChild(EntitySpec.create(KafkaZooKeeper.class));
 
         zookeeper.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(ImmutableMap.of("timeout", 60*1000), zookeeper, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(ImmutableMap.of("timeout", 60*1000), zookeeper, Startable.SERVICE_UP, true);
 
         zookeeper.stop();
         assertFalse(zookeeper.getAttribute(Startable.SERVICE_UP));
@@ -89,10 +89,10 @@ public class KafkaIntegrationTest {
         final KafkaBroker broker = app.createAndManageChild(EntitySpec.create(KafkaBroker.class).configure(KafkaBroker.ZOOKEEPER, zookeeper));
 
         zookeeper.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(ImmutableMap.of("timeout", 60*1000), zookeeper, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(ImmutableMap.of("timeout", 60 * 1000), zookeeper, Startable.SERVICE_UP, true);
 
         broker.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(ImmutableMap.of("timeout", 60*1000), broker, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(ImmutableMap.of("timeout", 60*1000), broker, Startable.SERVICE_UP, true);
 
         zookeeper.stop();
         assertFalse(zookeeper.getAttribute(Startable.SERVICE_UP));

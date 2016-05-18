@@ -26,11 +26,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.WebAppMonitor;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
@@ -105,7 +105,7 @@ public class JBoss7ServerRebindingIntegrationTest extends RebindTestFixtureWithA
         assertEquals(newServer.getAttribute(JBoss7Server.MANAGEMENT_HTTP_PORT), origServer.getAttribute(JBoss7Server.MANAGEMENT_HTTP_PORT));
         assertEquals(newServer.getAttribute(JBoss7Server.DEPLOYED_WARS), origServer.getAttribute(JBoss7Server.DEPLOYED_WARS));
         
-        EntityTestUtils.assertAttributeEqualsEventually(newServer, SoftwareProcess.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(newServer, SoftwareProcess.SERVICE_UP, true);
         HttpTestUtils.assertHttpStatusCodeEventuallyEquals(newRootUrl, 200);
 
         // confirm that deploy() effector affects the correct jboss server 
@@ -114,10 +114,10 @@ public class JBoss7ServerRebindingIntegrationTest extends RebindTestFixtureWithA
         
         // check we see evidence of the enrichers and sensor-feeds having an effect.
         // Relying on WebAppMonitor to cause these to change.
-        EntityTestUtils.assertAttributeChangesEventually(newServer, JBoss7Server.REQUEST_COUNT);
-        EntityTestUtils.assertAttributeChangesEventually(newServer, JBoss7Server.REQUESTS_PER_SECOND_IN_WINDOW);
-        EntityTestUtils.assertAttributeChangesEventually(newServer, JBoss7Server.REQUESTS_PER_SECOND_IN_WINDOW);
-        EntityTestUtils.assertAttributeChangesEventually(newServer, JBoss7Server.PROCESSING_TIME_FRACTION_IN_WINDOW);
+        EntityAsserts.assertAttributeChangesEventually(newServer, JBoss7Server.REQUEST_COUNT);
+        EntityAsserts.assertAttributeChangesEventually(newServer, JBoss7Server.REQUESTS_PER_SECOND_IN_WINDOW);
+        EntityAsserts.assertAttributeChangesEventually(newServer, JBoss7Server.REQUESTS_PER_SECOND_IN_WINDOW);
+        EntityAsserts.assertAttributeChangesEventually(newServer, JBoss7Server.PROCESSING_TIME_FRACTION_IN_WINDOW);
         
         assertEquals(monitor.getFailures(), 0);
     }

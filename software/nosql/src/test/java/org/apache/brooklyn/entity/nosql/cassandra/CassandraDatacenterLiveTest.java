@@ -35,11 +35,11 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.nosql.cassandra.AstyanaxSupport.AstyanaxSample;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.text.Identifiers;
 import org.apache.brooklyn.util.time.Duration;
@@ -149,7 +149,7 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
         app.start(ImmutableList.of(testLocation));
 
         // Check cluster is up and healthy
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, CassandraDatacenter.GROUP_SIZE, 2);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, CassandraDatacenter.GROUP_SIZE, 2);
         Entities.dumpInfo(app);
         List<CassandraNode> members = castToCassandraNodes(cluster.getMembers());
         assertNodesConsistent(members);
@@ -190,11 +190,11 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
             public void run() {
                 for (Entity n : nodes) {
                     CassandraNode node = (CassandraNode) n;
-                    EntityTestUtils.assertAttributeEquals(node, Startable.SERVICE_UP, true);
+                    EntityAsserts.assertAttributeEquals(node, Startable.SERVICE_UP, true);
                     String errmsg = "node="+node+"; hostname="+node.getAttribute(Attributes.HOSTNAME)+"; port="+node.getThriftPort();
                     assertTrue(isSocketOpen(node), errmsg);
                     assertTrue(areVersionsConsistent(node), errmsg);
-                    EntityTestUtils.assertAttributeEquals(node, CassandraNode.LIVE_NODE_COUNT, expectedLiveNodeCount);
+                    EntityAsserts.assertAttributeEquals(node, CassandraNode.LIVE_NODE_COUNT, expectedLiveNodeCount);
                 }
             }});
     }
@@ -205,9 +205,9 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
             public void run() {
                 Set<BigInteger> alltokens = Sets.newLinkedHashSet();
                 for (Entity node : nodes) {
-                    EntityTestUtils.assertAttributeEquals(node, Startable.SERVICE_UP, true);
-                    EntityTestUtils.assertConfigEquals(node, CassandraNode.NUM_TOKENS_PER_NODE, 1);
-                    EntityTestUtils.assertAttributeEquals(node, CassandraNode.PEERS, numNodes);
+                    EntityAsserts.assertAttributeEquals(node, Startable.SERVICE_UP, true);
+                    EntityAsserts.assertConfigEquals(node, CassandraNode.NUM_TOKENS_PER_NODE, 1);
+                    EntityAsserts.assertAttributeEquals(node, CassandraNode.PEERS, numNodes);
                     Set<BigInteger> tokens = node.getAttribute(CassandraNode.TOKENS);
                     assertNotNull(tokens);
                     alltokens.addAll(tokens);
@@ -225,9 +225,9 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
             public void run() {
                 Set<BigInteger> alltokens = Sets.newLinkedHashSet();
                 for (Entity node : nodes) {
-                    EntityTestUtils.assertAttributeEquals(node, Startable.SERVICE_UP, true);
-                    EntityTestUtils.assertAttributeEquals(node, CassandraNode.PEERS, tokensPerNode*numNodes);
-                    EntityTestUtils.assertConfigEquals(node, CassandraNode.NUM_TOKENS_PER_NODE, 256);
+                    EntityAsserts.assertAttributeEquals(node, Startable.SERVICE_UP, true);
+                    EntityAsserts.assertAttributeEquals(node, CassandraNode.PEERS, tokensPerNode*numNodes);
+                    EntityAsserts.assertConfigEquals(node, CassandraNode.NUM_TOKENS_PER_NODE, 256);
                     Set<BigInteger> tokens = node.getAttribute(CassandraNode.TOKENS);
                     assertNotNull(tokens);
                     assertEquals(tokens.size(), tokensPerNode, "tokens="+tokens);

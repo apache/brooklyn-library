@@ -27,12 +27,12 @@ import java.util.concurrent.Callable;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -66,7 +66,7 @@ public class RedisClusterIntegrationTest {
                 .configure(DynamicCluster.INITIAL_SIZE, 3));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
 
         RedisStore master = cluster.getMaster();
         List<RedisSlave> slaves = ImmutableList.<RedisSlave>copyOf((Collection)cluster.getSlaves().getMembers());
@@ -89,7 +89,7 @@ public class RedisClusterIntegrationTest {
         // Check that stopping slave will not stop anything else
         // (it used to stop master because wasn't supplying port!)
         slaves.get(0).stop();
-        EntityTestUtils.assertAttributeEqualsEventually(slaves.get(0), Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(slaves.get(0), Startable.SERVICE_UP, false);
         
         assertEquals(master.getAttribute(Startable.SERVICE_UP), Boolean.TRUE);
         for (RedisSlave slave : slaves.subList(1, slaves.size())) {
@@ -99,7 +99,7 @@ public class RedisClusterIntegrationTest {
         // Check that stopping cluster will stop everything
         cluster.stop();
 
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, false);
         assertEquals(master.getAttribute(Startable.SERVICE_UP), Boolean.FALSE);
         for (RedisSlave slave : slaves) {
             assertEquals(slave.getAttribute(Startable.SERVICE_UP), Boolean.FALSE);

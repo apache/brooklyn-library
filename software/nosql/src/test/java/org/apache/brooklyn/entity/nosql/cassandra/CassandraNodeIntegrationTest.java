@@ -27,12 +27,11 @@ import java.util.Map;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
-import org.apache.brooklyn.entity.nosql.cassandra.CassandraNode;
 import org.apache.brooklyn.entity.nosql.cassandra.AstyanaxSupport.AstyanaxSample;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.NetworkingTestUtils;
 import org.apache.brooklyn.util.math.MathPredicates;
 import org.slf4j.Logger;
@@ -97,12 +96,12 @@ public class CassandraNodeIntegrationTest extends AbstractCassandraNodeTest {
                 .configure("rmiRegistryPort", "19001+"));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, true);
         Entities.dumpInfo(app);
 
         cassandra.stop();
 
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, false);
     }
 
     /**
@@ -116,7 +115,7 @@ public class CassandraNodeIntegrationTest extends AbstractCassandraNodeTest {
                 .configure("thriftPort", "9876+"));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, true);
 
         AstyanaxSample astyanax = new AstyanaxSample(cassandra);
         astyanax.astyanaxTest();
@@ -145,7 +144,7 @@ public class CassandraNodeIntegrationTest extends AbstractCassandraNodeTest {
                 .configure("rmiRegistryPort", "19001+"));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, true);
         Entities.dumpInfo(app);
 
         AstyanaxSample astyanax = new AstyanaxSample(cassandra);
@@ -166,10 +165,10 @@ public class CassandraNodeIntegrationTest extends AbstractCassandraNodeTest {
         
                 assertNotNull(cassandra.getAttribute(CassandraNode.READ_PENDING));
                 assertNotNull(cassandra.getAttribute(CassandraNode.READ_ACTIVE));
-                EntityTestUtils.assertAttribute(cassandra, CassandraNode.READ_COMPLETED, MathPredicates.greaterThanOrEqual(1));
+                EntityAsserts.assertAttribute(cassandra, CassandraNode.READ_COMPLETED, MathPredicates.greaterThanOrEqual(1));
                 assertNotNull(cassandra.getAttribute(CassandraNode.WRITE_PENDING));
                 assertNotNull(cassandra.getAttribute(CassandraNode.WRITE_ACTIVE));
-                EntityTestUtils.assertAttribute(cassandra, CassandraNode.WRITE_COMPLETED, MathPredicates.greaterThanOrEqual(1));
+                EntityAsserts.assertAttribute(cassandra, CassandraNode.WRITE_COMPLETED, MathPredicates.greaterThanOrEqual(1));
                 
                 assertNotNull(cassandra.getAttribute(CassandraNode.READS_PER_SECOND_LAST));
                 assertNotNull(cassandra.getAttribute(CassandraNode.WRITES_PER_SECOND_LAST));
@@ -179,11 +178,11 @@ public class CassandraNodeIntegrationTest extends AbstractCassandraNodeTest {
                 assertNotNull(cassandra.getAttribute(CassandraNode.WRITES_PER_SECOND_IN_WINDOW));
                 
                 // an example MXBean
-                EntityTestUtils.assertAttribute(cassandra, CassandraNode.MAX_HEAP_MEMORY, MathPredicates.greaterThanOrEqual(1));
+                EntityAsserts.assertAttribute(cassandra, CassandraNode.MAX_HEAP_MEMORY, MathPredicates.greaterThanOrEqual(1));
             }});
 
         cassandra.stop();
 
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, Startable.SERVICE_UP, false);
     }
 }

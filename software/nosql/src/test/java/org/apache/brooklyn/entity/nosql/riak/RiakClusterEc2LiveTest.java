@@ -21,8 +21,8 @@ package org.apache.brooklyn.entity.nosql.riak;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -42,20 +42,20 @@ public class RiakClusterEc2LiveTest extends AbstractEc2LiveTest {
                 .configure(RiakCluster.MEMBER_SPEC, EntitySpec.create(RiakNode.class)));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, RiakNode.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, RiakNode.SERVICE_UP, true);
 
         RiakNode first = (RiakNode) Iterables.get(cluster.getMembers(), 0);
         RiakNode second = (RiakNode) Iterables.get(cluster.getMembers(), 1);
 
         assertNodesUpAndInCluster(first, second);
         
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, Attributes.SERVICE_UP, true);
     }
     
     private void assertNodesUpAndInCluster(final RiakNode... nodes) {
         for (final RiakNode node : nodes) {
-            EntityTestUtils.assertAttributeEqualsEventually(node, RiakNode.SERVICE_UP, true);
-            EntityTestUtils.assertAttributeEqualsEventually(node, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true);
+            EntityAsserts.assertAttributeEqualsEventually(node, RiakNode.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(node, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true);
         }
     }
 

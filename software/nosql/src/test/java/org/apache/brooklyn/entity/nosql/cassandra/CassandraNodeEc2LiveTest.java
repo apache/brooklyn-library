@@ -28,7 +28,6 @@ import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.nosql.cassandra.AstyanaxSupport.AstyanaxSample;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -49,7 +48,7 @@ public class CassandraNodeEc2LiveTest extends AbstractEc2LiveTest {
                 .configure("clusterName", "TestCluster"));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, CassandraNode.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, CassandraNode.SERVICE_UP, true);
 
         AstyanaxSample astyanax = new AstyanaxSample(cassandra);
         astyanax.astyanaxTest();

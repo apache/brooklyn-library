@@ -22,9 +22,9 @@ import static org.testng.Assert.assertFalse;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -222,7 +222,7 @@ public class RiakNodeIntegrationTest {
                 .configure(RiakNode.SUGGESTED_VERSION, "2.1.1"));
         app.start(ImmutableList.of(localhostProvisioningLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
         entity.stop();
         assertFalse(entity.getAttribute(Startable.SERVICE_UP));
     }

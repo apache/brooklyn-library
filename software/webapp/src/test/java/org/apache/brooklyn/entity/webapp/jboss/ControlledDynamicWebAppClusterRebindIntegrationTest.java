@@ -18,7 +18,6 @@
  */
 package org.apache.brooklyn.entity.webapp.jboss;
 
-import static org.apache.brooklyn.test.EntityTestUtils.assertAttributeEqualsEventually;
 import static org.apache.brooklyn.test.HttpTestUtils.assertHttpStatusCodeEquals;
 import static org.apache.brooklyn.test.HttpTestUtils.assertHttpStatusCodeEventuallyEquals;
 import static org.testng.Assert.assertEquals;
@@ -32,6 +31,7 @@ import java.util.concurrent.Executors;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestUtils;
@@ -171,7 +171,7 @@ public class ControlledDynamicWebAppClusterRebindIntegrationTest {
         NginxController newNginx = (NginxController) Iterables.find(newApp.getChildren(), Predicates.instanceOf(NginxController.class));
         ControlledDynamicWebAppCluster newCluster = (ControlledDynamicWebAppCluster) Iterables.find(newApp.getChildren(), Predicates.instanceOf(ControlledDynamicWebAppCluster.class));
 
-        assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
         assertHttpStatusCodeEquals(rootUrl, 200);
 
         // Confirm the cluster is usable: we can scale-up

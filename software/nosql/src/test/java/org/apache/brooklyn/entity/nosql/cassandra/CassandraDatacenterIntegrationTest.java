@@ -27,11 +27,11 @@ import java.math.BigInteger;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.nosql.cassandra.TokenGenerators.PosNeg63TokenGenerator;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,15 +113,15 @@ public class CassandraDatacenterIntegrationTest extends BrooklynAppLiveTestSuppo
         
         final CassandraNode node = (CassandraNode) Iterables.get(cluster.getMembers(), 0);
         String nodeAddr = checkNotNull(node.getAttribute(CassandraNode.HOSTNAME), "hostname") + ":" + checkNotNull(node.getAttribute(CassandraNode.THRIFT_PORT), "thriftPort");
-        
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, CassandraDatacenter.GROUP_SIZE, 1);
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, CassandraDatacenter.CASSANDRA_CLUSTER_NODES, ImmutableList.of(nodeAddr));
 
-        EntityTestUtils.assertAttributeEqualsEventually(node, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, CassandraDatacenter.GROUP_SIZE, 1);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, CassandraDatacenter.CASSANDRA_CLUSTER_NODES, ImmutableList.of(nodeAddr));
+
+        EntityAsserts.assertAttributeEqualsEventually(node, Startable.SERVICE_UP, true);
         if (assertToken) {
             PosNeg63TokenGenerator tg = new PosNeg63TokenGenerator();
             tg.growingCluster(1);
-            EntityTestUtils.assertAttributeEqualsEventually(node, CassandraNode.TOKENS, ImmutableSet.of(tg.newToken().add(BigInteger.valueOf(42))));
+            EntityAsserts.assertAttributeEqualsEventually(node, CassandraNode.TOKENS, ImmutableSet.of(tg.newToken().add(BigInteger.valueOf(42))));
         }
 
         // may take some time to be consistent (with new thrift_latency checks on the node,

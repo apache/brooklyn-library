@@ -20,10 +20,10 @@ package org.apache.brooklyn.entity.proxy.nginx;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.WebAppService;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class NginxEc2LiveTest extends AbstractEc2LiveTest {
         app.start(ImmutableList.of(loc));
 
         // nginx should be up, and URL reachable
-        EntityTestUtils.assertAttributeEqualsEventually(nginx, SoftwareProcess.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(nginx, SoftwareProcess.SERVICE_UP, true);
         HttpTestUtils.assertHttpStatusCodeEventuallyEquals(nginx.getAttribute(NginxController.ROOT_URL), 404);
     }
     

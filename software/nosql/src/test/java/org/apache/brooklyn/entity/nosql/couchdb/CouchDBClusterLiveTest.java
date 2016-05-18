@@ -23,10 +23,10 @@ import static org.testng.Assert.assertEquals;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -72,14 +72,14 @@ public class CouchDBClusterLiveTest {
 
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, CouchDBCluster.GROUP_SIZE, 2);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, CouchDBCluster.GROUP_SIZE, 2);
         Entities.dumpInfo(app);
 
         CouchDBNode first = (CouchDBNode) Iterables.get(cluster.getMembers(), 0);
         CouchDBNode second = (CouchDBNode) Iterables.get(cluster.getMembers(), 1);
 
-        EntityTestUtils.assertAttributeEqualsEventually(first, Startable.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(second, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(first, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(second, Startable.SERVICE_UP, true);
 
         JcouchdbSupport jcouchdbFirst = new JcouchdbSupport(first);
         JcouchdbSupport jcouchdbSecond = new JcouchdbSupport(second);

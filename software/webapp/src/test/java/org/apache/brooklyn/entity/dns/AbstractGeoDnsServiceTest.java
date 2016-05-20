@@ -252,7 +252,18 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         assertIsNotTarget("North child");
     }
 
-    @Test
+    // TODO BROOKLYN-272, Disabled, because fails non-deterministically in jenkins:
+    //    org.apache.brooklyn.util.exceptions.PropagatedRuntimeException: failed succeeds-eventually, 69 attempts, 30003ms elapsed: AssertionError: val={R48yHLqg=<address-ignored>, eBHFc4Qd=<address-ignored>}
+    //            at org.apache.brooklyn.test.Asserts.fail(Asserts.java:721)
+    //            at org.apache.brooklyn.test.Asserts.assertTrue(Asserts.java:703)
+    //            at org.apache.brooklyn.core.entity.EntityAsserts$2.run(EntityAsserts.java:92)
+    //            at org.apache.brooklyn.test.Asserts$RunnableAdapter.call(Asserts.java:1277)
+    //            at org.apache.brooklyn.test.Asserts.succeedsEventually(Asserts.java:930)
+    //            at org.apache.brooklyn.test.Asserts.succeedsEventually(Asserts.java:854)
+    //            at org.apache.brooklyn.core.entity.EntityAsserts.assertAttributeEventually(EntityAsserts.java:89)
+    //            at org.apache.brooklyn.core.entity.EntityAsserts.assertAttributeEventually(EntityAsserts.java:84)
+    //            at org.apache.brooklyn.entity.dns.AbstractGeoDnsServiceTest.testFiltersForRunningEntities(AbstractGeoDnsServiceTest.java:263)
+    @Test(groups={"Broken"})
     public void testFiltersForRunningEntities() {
         app.start(ImmutableList.of(westChildWithLocation, eastChildWithLocationAndWithPrivateHostname));
         publishSensors(2, true, true, true);

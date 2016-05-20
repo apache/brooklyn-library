@@ -254,4 +254,9 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
         return true;
     }
 
+    @Override
+    public String toString(){
+        return getClass().getName();
+    }
+
 }

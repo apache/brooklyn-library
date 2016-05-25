@@ -28,11 +28,7 @@ New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\Microsoft SQL 
 New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\Microsoft SQL Server\DReplayClient\WorkingDir"
 
 $operationResult = Install-WindowsFeature NET-Framework-Core
-if (-Not $operationResult.Success) { exit 1 }
-
-$pass = '${attribute['windows.password']}'
-
-$exitCode = 1
+if (-Not $operationResult.Success) { exit 2 }
 
 Try {
   $WebClient = New-Object System.Net.WebClient
@@ -42,18 +38,10 @@ Try {
   $mountResult = Mount-DiskImage $Path -PassThru
   $driveLetter = (($mountResult | Get-Volume).DriveLetter) + ":\"
 
-  $secpasswd = ConvertTo-SecureString $pass -AsPlainText -Force
-  $mycreds = New-Object System.Management.Automation.PSCredential ($($env:COMPUTERNAME + "\${location.user}"), $secpasswd)
-
-  $exitCode = Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $mycreds -ScriptBlock {
-    param($driveLetter)
-    $process = Start-Process ( $driveLetter + "setup.exe") -ArgumentList "/ConfigurationFile=C:\ConfigurationFile.ini" -RedirectStandardOutput "C:\sqlout.txt" -RedirectStandardError "C:\sqlerr.txt" -Wait -PassThru -NoNewWindow
-    $process.ExitCode
-  } -Authentication CredSSP -ArgumentList $driveLetter
-
+  C:\invoke-command-credssp.ps1 -Command ( $driveLetter + "setup.exe") -ArgumentList "/ConfigurationFile=C:\ConfigurationFile.ini" -LogOutputInFile
+  exit $LastExitCode
 } Catch {
   Write-Error $_.Exception
   Write-Host 'Exception logged'
-  exit 1
+  exit 3
 }
-exit $exitCode

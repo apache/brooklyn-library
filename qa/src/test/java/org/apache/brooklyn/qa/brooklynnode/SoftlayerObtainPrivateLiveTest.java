@@ -28,6 +28,7 @@ import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.mgmt.ManagementContext;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
 import org.apache.brooklyn.core.objs.BrooklynObjectInternal.ConfigurationSupportInternal;
@@ -39,7 +40,6 @@ import org.apache.brooklyn.entity.brooklynnode.BrooklynNode.DeployBlueprintEffec
 import org.apache.brooklyn.entity.machine.MachineEntity;
 import org.apache.brooklyn.launcher.BrooklynLauncher;
 import org.apache.brooklyn.location.jclouds.JcloudsLocationConfig;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.BrooklynMavenArtifacts;
@@ -149,16 +149,16 @@ public class SoftlayerObtainPrivateLiveTest {
             BrooklynEntityMirror publicApp = deployTestApp(node, true);
             BrooklynEntityMirror privateApp = deployTestApp(node, false);
 
-            EntityTestUtils.assertAttributeEventually(TIMEOUT, publicApp, ServiceStateLogic.SERVICE_STATE_ACTUAL,
+            EntityAsserts.assertAttributeEventually(TIMEOUT, publicApp, ServiceStateLogic.SERVICE_STATE_ACTUAL,
                     Predicates.in(ImmutableList.of(Lifecycle.RUNNING, Lifecycle.ON_FIRE)));
-            EntityTestUtils.assertAttributeEventually(TIMEOUT, privateApp, ServiceStateLogic.SERVICE_STATE_ACTUAL,
+            EntityAsserts.assertAttributeEventually(TIMEOUT, privateApp, ServiceStateLogic.SERVICE_STATE_ACTUAL,
                     Predicates.in(ImmutableList.of(Lifecycle.RUNNING, Lifecycle.ON_FIRE)));
 
-            EntityTestUtils.assertAttributeEquals(publicApp, ServiceStateLogic.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
-            EntityTestUtils.assertAttributeEquals(privateApp, ServiceStateLogic.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+            EntityAsserts.assertAttributeEquals(publicApp, ServiceStateLogic.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+            EntityAsserts.assertAttributeEquals(privateApp, ServiceStateLogic.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
 
-            EntityTestUtils.assertAttributeEqualsEventually(publicApp, Attributes.SERVICE_UP, Boolean.TRUE);
-            EntityTestUtils.assertAttributeEqualsEventually(privateApp, Attributes.SERVICE_UP, Boolean.TRUE);
+            EntityAsserts.assertAttributeEqualsEventually(publicApp, Attributes.SERVICE_UP, Boolean.TRUE);
+            EntityAsserts.assertAttributeEqualsEventually(privateApp, Attributes.SERVICE_UP, Boolean.TRUE);
         } finally {
             node.invoke(BrooklynNode.STOP_NODE_AND_KILL_APPS, ImmutableMap.<String, String>of()).getUnchecked();
         }

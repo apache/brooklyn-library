@@ -21,8 +21,8 @@ package org.apache.brooklyn.entity.messaging.zookeeper;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
@@ -39,7 +39,7 @@ public class ZooKeeperEc2LiveTest extends AbstractEc2LiveTest {
         ZooKeeperNode zookeeper = app.createAndManageChild(EntitySpec.create(ZooKeeperNode.class).configure("jmxPort", "31001+"));
         app.start(ImmutableList.of(loc));
         Entities.dumpInfo(zookeeper);
-        EntityTestUtils.assertAttributeEqualsEventually(zookeeper, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(zookeeper, Startable.SERVICE_UP, true);
     }
     
     @Test(enabled=false)

@@ -40,13 +40,13 @@ import org.apache.brooklyn.camp.spi.PlatformRootSummary;
 import org.apache.brooklyn.camp.spi.collection.ResolvableLink;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.mgmt.BrooklynTaskTags;
 import org.apache.brooklyn.entity.webapp.DynamicWebAppCluster;
 import org.apache.brooklyn.entity.webapp.JavaWebAppService;
 import org.apache.brooklyn.entity.webapp.WebAppService;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.exceptions.Exceptions;
@@ -169,7 +169,7 @@ public class JavaWebAppsIntegrationTest {
             log.info("App started:");
             Entities.dumpInfo(app);
 
-            EntityTestUtils.assertAttributeEqualsEventually(app, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+            EntityAsserts.assertAttributeEqualsEventually(app, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
             Assert.assertEquals(app.getAttribute(Attributes.SERVICE_UP), Boolean.TRUE);
             
             final String url = Asserts.succeedsEventually(MutableMap.of("timeout", Duration.TEN_SECONDS), new Callable<String>() {
@@ -242,7 +242,7 @@ public class JavaWebAppsIntegrationTest {
             Assert.assertEquals(policy.getConfig(AutoScalerPolicy.METRIC_UPPER_BOUND), (Integer)100);
             Assert.assertTrue(policy.isRunning());
 
-            EntityTestUtils.assertAttributeEqualsEventually(app, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+            EntityAsserts.assertAttributeEqualsEventually(app, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
             Assert.assertEquals(app.getAttribute(Attributes.SERVICE_UP), Boolean.TRUE);
             
             final String url = Asserts.succeedsEventually(MutableMap.of("timeout", Duration.TEN_SECONDS), new Callable<String>() {

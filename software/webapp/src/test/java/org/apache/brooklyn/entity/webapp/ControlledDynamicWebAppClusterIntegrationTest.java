@@ -24,8 +24,8 @@ import static org.testng.Assert.assertNotNull;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.entity.TestJavaWebAppEntity;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
@@ -78,8 +78,8 @@ public class ControlledDynamicWebAppClusterIntegrationTest extends BrooklynAppLi
                 .configure("initialSize", 1));
         app.start(locs);
 
-        EntityTestUtils.assertAttributeEventuallyNonNull(cluster, LoadBalancer.PROXY_HTTP_PORT);
-        EntityTestUtils.assertAttributeEventuallyNonNull(cluster, LoadBalancer.PROXY_HTTPS_PORT);
+        EntityAsserts.assertAttributeEventuallyNonNull(cluster, LoadBalancer.PROXY_HTTP_PORT);
+        EntityAsserts.assertAttributeEventuallyNonNull(cluster, LoadBalancer.PROXY_HTTPS_PORT);
     }
     
     @Test(groups="Integration")
@@ -108,9 +108,9 @@ public class ControlledDynamicWebAppClusterIntegrationTest extends BrooklynAppLi
         assertNotNull(expectedHostname);
         assertNotNull(expectedRootUrl);
         
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), cluster, ControlledDynamicWebAppCluster.HOSTNAME, expectedHostname);
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), cluster, ControlledDynamicWebAppCluster.ROOT_URL, expectedRootUrl);
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), cluster, ControlledDynamicWebAppCluster.SERVICE_UP, expectedServiceUp);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), cluster, ControlledDynamicWebAppCluster.HOSTNAME, expectedHostname);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), cluster, ControlledDynamicWebAppCluster.ROOT_URL, expectedRootUrl);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), cluster, ControlledDynamicWebAppCluster.SERVICE_UP, expectedServiceUp);
     }
     
     @Test(groups="Integration")
@@ -137,7 +137,7 @@ public class ControlledDynamicWebAppClusterIntegrationTest extends BrooklynAppLi
                 .configure("initialSize", 1)
                 .configure(ControlledDynamicWebAppCluster.MEMBER_SPEC, EntitySpec.create(TestJavaWebAppEntity.class)) );
         
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
         
         RecordingSensorEventListener<Lifecycle> listener = new RecordingSensorEventListener<Lifecycle>(true);
         app.subscriptions().subscribe(cluster, Attributes.SERVICE_STATE_ACTUAL, listener);
@@ -148,7 +148,7 @@ public class ControlledDynamicWebAppClusterIntegrationTest extends BrooklynAppLi
         listener.clearEvents();
         
         app.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
         Asserts.eventually(Suppliers.ofInstance(listener), CollectionFunctionals.sizeEquals(2));
         assertEquals(listener.getEventValues(), ImmutableList.of(Lifecycle.STOPPING, Lifecycle.STOPPED), "vals="+listener.getEventValues());
     }
@@ -172,9 +172,9 @@ public class ControlledDynamicWebAppClusterIntegrationTest extends BrooklynAppLi
         });
         
         Entity tomcatServer = Iterables.getOnlyElement(cluster.getCluster().getMembers());
-        EntityTestUtils.assertAttributeEqualsEventually(tomcatServer, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(tomcatServer, Attributes.SERVICE_UP, true);
         
-        EntityTestUtils.assertAttributeEqualsContinually(nginxController, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsContinually(nginxController, Attributes.SERVICE_UP, true);
         
         app.stop();
     }

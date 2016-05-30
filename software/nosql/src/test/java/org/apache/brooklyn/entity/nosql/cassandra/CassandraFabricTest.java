@@ -31,13 +31,13 @@ import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.core.entity.AbstractEntity;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
 import org.apache.brooklyn.entity.software.base.EmptySoftwareProcess;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +93,9 @@ public class CassandraFabricTest extends BrooklynAppUnitTestSupport {
                         Sets.intersection(input, ImmutableSet.of(d2a, d2b)).size() == 1;
             }
         };
-        EntityTestUtils.assertAttributeEventually(fabric, CassandraFabric.CURRENT_SEEDS, predicate);
-        EntityTestUtils.assertAttributeEventually(d1, CassandraDatacenter.CURRENT_SEEDS, predicate);
-        EntityTestUtils.assertAttributeEventually(d2, CassandraDatacenter.CURRENT_SEEDS, predicate);
+        EntityAsserts.assertAttributeEventually(fabric, CassandraFabric.CURRENT_SEEDS, predicate);
+        EntityAsserts.assertAttributeEventually(d1, CassandraDatacenter.CURRENT_SEEDS, predicate);
+        EntityAsserts.assertAttributeEventually(d2, CassandraDatacenter.CURRENT_SEEDS, predicate);
         
         Set<Entity> seeds = fabric.getAttribute(CassandraFabric.CURRENT_SEEDS);
         assertEquals(d1.getAttribute(CassandraDatacenter.CURRENT_SEEDS), seeds);
@@ -119,15 +119,15 @@ public class CassandraFabricTest extends BrooklynAppUnitTestSupport {
         };
         t.start();
         try {
-            EntityTestUtils.assertGroupSizeEqualsEventually(fabric, 2);
+            EntityAsserts.assertGroupSizeEqualsEventually(fabric, 2);
             CassandraDatacenter d1 = (CassandraDatacenter) Iterables.get(fabric.getMembers(), 0);
             CassandraDatacenter d2 = (CassandraDatacenter) Iterables.get(fabric.getMembers(), 1);
     
-            EntityTestUtils.assertGroupSizeEqualsEventually(d1, 2);
+            EntityAsserts.assertGroupSizeEqualsEventually(d1, 2);
             final DummyCassandraNode d1a = (DummyCassandraNode) Iterables.get(d1.getMembers(), 0);
             final DummyCassandraNode d1b = (DummyCassandraNode) Iterables.get(d1.getMembers(), 1);
     
-            EntityTestUtils.assertGroupSizeEqualsEventually(d2, 2);
+            EntityAsserts.assertGroupSizeEqualsEventually(d2, 2);
             final DummyCassandraNode d2a = (DummyCassandraNode) Iterables.get(d2.getMembers(), 0);
             final DummyCassandraNode d2b = (DummyCassandraNode) Iterables.get(d2.getMembers(), 1);
 
@@ -145,9 +145,9 @@ public class CassandraFabricTest extends BrooklynAppUnitTestSupport {
                             Sets.intersection(input, ImmutableSet.of(d2a, d2b)).size() == 1;
                 }
             };
-            EntityTestUtils.assertAttributeEventually(fabric, CassandraFabric.CURRENT_SEEDS, predicate);
-            EntityTestUtils.assertAttributeEventually(d1, CassandraDatacenter.CURRENT_SEEDS, predicate);
-            EntityTestUtils.assertAttributeEventually(d2, CassandraDatacenter.CURRENT_SEEDS, predicate);
+            EntityAsserts.assertAttributeEventually(fabric, CassandraFabric.CURRENT_SEEDS, predicate);
+            EntityAsserts.assertAttributeEventually(d1, CassandraDatacenter.CURRENT_SEEDS, predicate);
+            EntityAsserts.assertAttributeEventually(d2, CassandraDatacenter.CURRENT_SEEDS, predicate);
             
             Set<Entity> seeds = fabric.getAttribute(CassandraFabric.CURRENT_SEEDS);
             assertEquals(d1.getAttribute(CassandraDatacenter.CURRENT_SEEDS), seeds);

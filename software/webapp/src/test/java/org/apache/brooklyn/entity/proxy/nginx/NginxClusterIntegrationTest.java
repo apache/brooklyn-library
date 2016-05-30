@@ -28,7 +28,7 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.entity.Group;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.mgmt.EntityManager;
-import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
@@ -38,7 +38,6 @@ import org.apache.brooklyn.entity.proxy.LoadBalancerCluster;
 import org.apache.brooklyn.entity.webapp.JavaWebAppService;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -163,13 +162,13 @@ public class NginxClusterIntegrationTest extends BrooklynAppLiveTestSupport {
                 .configure(NginxController.DOMAIN_NAME, "localhost"));
         
         app.start(ImmutableList.of(localhostProvisioningLoc));
-        EntityTestUtils.assertAttributeEqualsContinually(loadBalancerCluster, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsContinually(loadBalancerCluster, Startable.SERVICE_UP, true);
         
         loadBalancerCluster.resize(0);
-        EntityTestUtils.assertAttributeEqualsEventually(loadBalancerCluster, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(loadBalancerCluster, Startable.SERVICE_UP, false);
         
         loadBalancerCluster.resize(1);
-        EntityTestUtils.assertAttributeEqualsEventually(loadBalancerCluster, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(loadBalancerCluster, Startable.SERVICE_UP, true);
     }
     
     // Warning: test is a little brittle for if a previous run leaves something on these required ports

@@ -19,8 +19,8 @@
 package org.apache.brooklyn.entity.nosql.mongodb;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
@@ -45,15 +45,15 @@ public class MongoDBRebindIntegrationTest extends RebindTestFixtureWithApp {
         MongoDBServer origEntity = origApp.createAndManageChild(EntitySpec.create(MongoDBServer.class)
                 .configure("mongodbConfTemplateUrl", "classpath:///test-mongodb.conf"));
         origApp.start(ImmutableList.of(loc));
-        EntityTestUtils.assertAttributeEventuallyNonNull(origEntity, MongoDBServer.STATUS_BSON);
+        EntityAsserts.assertAttributeEventuallyNonNull(origEntity, MongoDBServer.STATUS_BSON);
 
         // rebind
         rebind();
         final MongoDBServer newEntity = (MongoDBServer) Iterables.find(newApp.getChildren(), Predicates.instanceOf(MongoDBServer.class));
 
         // confirm effectors still work on entity
-        EntityTestUtils.assertAttributeEqualsEventually(newEntity, MongoDBServer.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(newEntity, MongoDBServer.SERVICE_UP, true);
         newEntity.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(newEntity, MongoDBServer.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(newEntity, MongoDBServer.SERVICE_UP, false);
     }
 }

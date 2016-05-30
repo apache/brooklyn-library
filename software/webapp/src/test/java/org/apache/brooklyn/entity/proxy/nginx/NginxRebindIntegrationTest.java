@@ -18,7 +18,6 @@
  */
 package org.apache.brooklyn.entity.proxy.nginx;
 
-import static org.apache.brooklyn.test.EntityTestUtils.assertAttributeEqualsEventually;
 import static org.apache.brooklyn.test.HttpTestUtils.assertHttpStatusCodeEquals;
 import static org.apache.brooklyn.test.HttpTestUtils.assertHttpStatusCodeEventuallyEquals;
 import static org.testng.Assert.assertEquals;
@@ -34,6 +33,7 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.entity.Group;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.api.mgmt.ManagementContext;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
@@ -45,7 +45,6 @@ import org.apache.brooklyn.entity.proxy.nginx.UrlRewriteRule;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.WebAppMonitor;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.slf4j.Logger;
@@ -140,14 +139,14 @@ public class NginxRebindIntegrationTest extends RebindTestFixtureWithApp {
         final NginxController newNginx = (NginxController) Iterables.find(newApp.getChildren(), Predicates.instanceOf(NginxController.class));
 
         assertEquals(newNginx.getConfigFile(), origConfigFile);
-        
-        EntityTestUtils.assertAttributeEqualsEventually(newNginx, NginxController.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, NginxController.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
         assertEquals(newNginx.getAttribute(NginxController.PROXY_HTTP_PORT), (Integer)nginxPort);
         assertEquals(newNginx.getAttribute(NginxController.ROOT_URL), rootUrl);
         assertEquals(newNginx.getAttribute(NginxController.PROXY_HTTP_PORT), origNginx.getAttribute(NginxController.PROXY_HTTP_PORT));
         assertEquals(newNginx.getConfig(NginxController.STICKY), origNginx.getConfig(NginxController.STICKY));
-        
-        assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
+
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
         assertHttpStatusCodeEventuallyEquals(rootUrl, 404);
         
         assertEquals(monitor.getFailures(), 0);
@@ -231,9 +230,9 @@ public class NginxRebindIntegrationTest extends RebindTestFixtureWithApp {
                 Map<Entity, String> newNginxMemebers = newNginx.getAttribute(NginxController.SERVER_POOL_TARGETS);
                 assertEquals(newNginxMemebers.keySet(), ImmutableSet.of(newServer));
             }});
-        
-        
-        assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
+
+
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
         assertHttpStatusCodeEventuallyEquals(rootUrl, 200);
 
         assertEquals(newNginx.getConfigFile(), origConfigFile);
@@ -338,8 +337,8 @@ public class NginxRebindIntegrationTest extends RebindTestFixtureWithApp {
         final NginxController newNginx = (NginxController) Iterables.find(newApp.getChildren(), Predicates.instanceOf(NginxController.class));
         DynamicCluster newServerPool = (DynamicCluster) newManagementContext.getEntityManager().getEntity(origServerPool.getId());
         Tomcat8Server newServer = (Tomcat8Server) Iterables.getOnlyElement(newServerPool.getMembers());
-        
-        assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
+
+        EntityAsserts.assertAttributeEqualsEventually(newNginx, SoftwareProcess.SERVICE_UP, true);
         assertHttpStatusCodeEventuallyEquals(mappingGroupUrl, 200);
         
         assertEquals(newNginx.getConfigFile(), origConfigFile);

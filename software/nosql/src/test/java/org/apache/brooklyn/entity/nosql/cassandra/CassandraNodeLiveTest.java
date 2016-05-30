@@ -21,9 +21,8 @@ package org.apache.brooklyn.entity.nosql.cassandra;
 import java.util.Map;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.entity.nosql.cassandra.CassandraNode;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.nosql.cassandra.AstyanaxSupport.AstyanaxSample;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
@@ -66,7 +65,7 @@ public class CassandraNodeLiveTest extends AbstractCassandraNodeTest {
                 .configure("thriftPort", "9876+")
                 .configure("clusterName", "TestCluster"));
         app.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(cassandra, CassandraNode.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cassandra, CassandraNode.SERVICE_UP, true);
 
         AstyanaxSample astyanax = new AstyanaxSample(cassandra);
         astyanax.astyanaxTest();

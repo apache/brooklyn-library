@@ -21,8 +21,8 @@ package org.apache.brooklyn.entity.messaging.storm;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
@@ -45,11 +45,11 @@ public class StormEc2LiveTest extends AbstractEc2LiveTest {
                 Storm.Role.UI));        
         app.start(ImmutableList.of(loc));
         Entities.dumpInfo(app);
-        
-        EntityTestUtils.assertAttributeEqualsEventually(zookeeper, Startable.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(nimbus, Startable.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(supervisor, Startable.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(ui, Startable.SERVICE_UP, true);
+
+        EntityAsserts.assertAttributeEqualsEventually(zookeeper, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(nimbus, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(supervisor, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(ui, Startable.SERVICE_UP, true);
     }
 
     @Test(enabled=false)

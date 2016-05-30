@@ -20,13 +20,13 @@ package org.apache.brooklyn.entity.nosql.mongodb.sharding;
 
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.nosql.mongodb.AbstractMongoDBServer;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBReplicaSet;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBTestHelper;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -63,7 +63,7 @@ public class MongoDBShardedDeploymentIntegrationTest extends BrooklynAppLiveTest
                 .configure(MongoDBShardedDeployment.MONGODB_CONFIG_SERVER_SPEC, EntitySpec.create(MongoDBConfigServer.class)
                         .configure(MongoDBConfigServer.MONGODB_CONF_TEMPLATE_URL, "classpath:///test-mongodb-configserver.conf")));
         app.start(ImmutableList.of(localhostProvisioningLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(deployment, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(deployment, Startable.SERVICE_UP, true);
         return deployment;
     }
     
@@ -71,7 +71,7 @@ public class MongoDBShardedDeploymentIntegrationTest extends BrooklynAppLiveTest
     public void testCanStartAndStopDeployment() {
         MongoDBShardedDeployment deployment = makeAndStartDeployment();
         deployment.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(deployment, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(deployment, Startable.SERVICE_UP, false);
     }
     
     @Test(groups = "Integration")
@@ -103,18 +103,18 @@ public class MongoDBShardedDeploymentIntegrationTest extends BrooklynAppLiveTest
     @Test(groups = "Integration")
     private void testReadAndWriteDifferentRouters() {
         MongoDBShardedDeployment deployment = makeAndStartDeployment();
-        EntityTestUtils.assertAttributeEqualsEventually(deployment, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(deployment, Startable.SERVICE_UP, true);
         MongoDBRouter router1 = (MongoDBRouter) Iterables.get(deployment.getRouterCluster().getMembers(), 0);
         MongoDBRouter router2 = (MongoDBRouter) Iterables.get(deployment.getRouterCluster().getMembers(), 1);
-        EntityTestUtils.assertAttributeEqualsEventually(router1, Startable.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(router2, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(router1, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(router2, Startable.SERVICE_UP, true);
         
         String documentId = MongoDBTestHelper.insert(router1, "meaning-of-life", 42);
         DBObject docOut = MongoDBTestHelper.getById(router2, documentId);
         Assert.assertEquals(docOut.get("meaning-of-life"), 42);
         
         for (Entity entity : Iterables.filter(app.getManagementContext().getEntityManager().getEntitiesInApplication(app), AbstractMongoDBServer.class)) {
-            EntityTestUtils.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
+            EntityAsserts.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
         }
     }
     
@@ -122,7 +122,7 @@ public class MongoDBShardedDeploymentIntegrationTest extends BrooklynAppLiveTest
         Assert.assertNotNull(entity);
         Assert.assertTrue(expectedClass.isAssignableFrom(entity.getClass()), "expected: " + expectedClass 
                 + " on interfaces, found: " + entity.getClass().getInterfaces());
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
     }
 
 }

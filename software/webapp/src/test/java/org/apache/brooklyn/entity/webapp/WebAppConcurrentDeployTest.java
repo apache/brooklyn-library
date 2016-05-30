@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Collection;
 
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.http.client.HttpClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -38,7 +39,6 @@ import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
 import org.apache.brooklyn.entity.webapp.tomcat.TomcatServer;
 import org.apache.brooklyn.test.Asserts;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -74,7 +74,7 @@ public class WebAppConcurrentDeployTest extends BrooklynAppUnitTestSupport {
     public void testConcurrentDeploys(EntitySpec<? extends JavaWebAppSoftwareProcess> webServerSpec) throws Exception {
         JavaWebAppSoftwareProcess server = app.createAndManageChild(webServerSpec);
         app.start(ImmutableList.of(loc));
-        EntityTestUtils.assertAttributeEqualsEventually(server, Attributes.SERVICE_UP, Boolean.TRUE);
+        EntityAsserts.assertAttributeEqualsEventually(server, Attributes.SERVICE_UP, Boolean.TRUE);
         Collection<Task<Void>> deploys = MutableList.of();
         for (int i = 0; i < 5; i++) {
             deploys.add(server.invoke(TomcatServer.DEPLOY, MutableMap.of("url", getTestWar(), "targetName", "/")));

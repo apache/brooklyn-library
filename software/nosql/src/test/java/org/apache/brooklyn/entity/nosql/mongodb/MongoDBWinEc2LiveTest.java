@@ -23,6 +23,7 @@ import org.apache.brooklyn.api.location.MachineProvisioningLocation;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.BrooklynConfigKeys;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.internal.BrooklynProperties;
@@ -32,7 +33,6 @@ import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.software.base.VanillaWindowsProcess;
 import org.apache.brooklyn.entity.software.base.test.location.WindowsTestFixture;
 import org.apache.brooklyn.location.winrm.WinRmMachineLocation;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -122,13 +122,13 @@ public class MongoDBWinEc2LiveTest {
 
         app.start(ImmutableList.of(machine));
         LOG.info("app started; asserting up");
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Attributes.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);
 
         entity.stop();
         LOG.info("stopping entity");
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Attributes.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.STOPPED);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Attributes.SERVICE_UP, false);
     }
 
     @Test(enabled = false)

@@ -20,8 +20,8 @@ package org.apache.brooklyn.entity.nosql.riak;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.AbstractGoogleComputeLiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -35,16 +35,16 @@ public class RiakNodeGoogleComputeLiveTest extends AbstractGoogleComputeLiveTest
                 .configure(RiakCluster.MEMBER_SPEC, EntitySpec.create(RiakNode.class)));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, RiakCluster.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, RiakCluster.SERVICE_UP, true);
 
         RiakNode first = (RiakNode) Iterables.get(cluster.getMembers(), 0);
         RiakNode second = (RiakNode) Iterables.get(cluster.getMembers(), 1);
 
-        EntityTestUtils.assertAttributeEqualsEventually(first, RiakNode.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(second, RiakNode.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(first, RiakNode.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(second, RiakNode.SERVICE_UP, true);
 
-        EntityTestUtils.assertAttributeEqualsEventually(first, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true);
-        EntityTestUtils.assertAttributeEqualsEventually(second, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true);
+        EntityAsserts.assertAttributeEqualsEventually(first, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true);
+        EntityAsserts.assertAttributeEqualsEventually(second, RiakNode.RIAK_NODE_HAS_JOINED_CLUSTER, true);
 
     }
 

@@ -19,8 +19,8 @@
 package org.apache.brooklyn.entity.database.postgresql;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
@@ -50,8 +50,8 @@ public class PostgreSqlRebindIntegrationTest extends RebindTestFixtureWithApp {
         final PostgreSqlNode newEntity = (PostgreSqlNode) Iterables.find(newApp.getChildren(), Predicates.instanceOf(PostgreSqlNode.class));
 
         // confirm effectors still work on entity
-        EntityTestUtils.assertAttributeEqualsEventually(newEntity, PostgreSqlNode.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(newEntity, PostgreSqlNode.SERVICE_UP, true);
         newEntity.stop();
-        EntityTestUtils.assertAttributeEqualsEventually(newEntity, PostgreSqlNode.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(newEntity, PostgreSqlNode.SERVICE_UP, false);
     }
 }

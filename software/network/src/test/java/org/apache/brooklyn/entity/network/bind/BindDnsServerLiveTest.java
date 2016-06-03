@@ -18,14 +18,13 @@
  */
 package org.apache.brooklyn.entity.network.bind;
 
-import static org.apache.brooklyn.test.EntityTestUtils.assertAttributeEqualsEventually;
 import static org.testng.Assert.assertEquals;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.sensor.EnricherSpec;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.software.base.EmptySoftwareProcess;
@@ -61,7 +60,7 @@ public class BindDnsServerLiveTest {
                 .configure(BindDnsServer.HOSTNAME_SENSOR, PrefixAndIdEnricher.SENSOR)));
 
         app.start(ImmutableList.of(testLocation));
-        assertAttributeEqualsEventually(dns, Attributes.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(dns, Attributes.SERVICE_UP, true);
 
         logDnsMappings(dns);
         assertEquals(dns.getAttribute(BindDnsServer.ADDRESS_MAPPINGS).entries().size(), 1);

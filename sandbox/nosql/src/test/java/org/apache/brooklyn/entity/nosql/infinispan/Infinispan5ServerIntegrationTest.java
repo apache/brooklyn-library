@@ -30,7 +30,6 @@ import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.test.entity.TestApplicationImpl;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.repeat.Repeater;
 import org.apache.brooklyn.util.time.Duration;
@@ -96,7 +95,7 @@ class Infinispan5ServerIntegrationTest {
             final Infinispan5Server infini = new Infinispan5Server(ImmutableMap.of("parent", app));
             infini.config().set(Infinispan5Server.PORT.getConfigKey(), PortRanges.fromInteger(DEFAULT_PORT));
             infini.start(ImmutableList.of(new LocalhostMachineProvisioningLocation(ImmutableMap.of("name","london"))));
-            EntityTestUtils.assertAttributeEqualsEventually(infini, Infinispan5Server.SERVICE_UP, Boolean.TRUE);
+            EntityAsserts.assertAttributeEqualsEventually(infini, Infinispan5Server.SERVICE_UP, Boolean.TRUE);
         } finally {
             Entities.destroy(app);
         }

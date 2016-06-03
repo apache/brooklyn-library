@@ -24,12 +24,12 @@ import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.entity.trait.Changeable;
 import org.apache.brooklyn.core.location.SimulatedLocation;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.group.DynamicGroup;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.entity.TestJavaWebAppEntity;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class DynamicWebAppFabricTest {
             ((EntityInternal)member).sensors().set(DynamicGroup.GROUP_SIZE, 1);
             ((TestJavaWebAppEntity)member).spoofRequest();
         }
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT, 2);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT, 2);
         
         // Note this is time-sensitive: need to do the next two sends before the previous one has dropped out
         // of the time-window.
@@ -89,7 +89,7 @@ public class DynamicWebAppFabricTest {
                 ((TestJavaWebAppEntity)member).spoofRequest();
             }
         }
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT_PER_NODE, 3d);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT_PER_NODE, 3d);
     }
     
     @Test
@@ -107,7 +107,7 @@ public class DynamicWebAppFabricTest {
                 ((TestJavaWebAppEntity)node).spoofRequest();
             }
         }
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT, 4);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT, 4);
         
         // Note this is time-sensitive: need to do the next two sends before the previous one has dropped out
         // of the time-window.
@@ -118,6 +118,6 @@ public class DynamicWebAppFabricTest {
                 }
             }
         }
-        EntityTestUtils.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT_PER_NODE, 3d);
+        EntityAsserts.assertAttributeEqualsEventually(MutableMap.of("timeout", TIMEOUT_MS), fabric, DynamicWebAppFabric.REQUEST_COUNT_PER_NODE, 3d);
     }
 }

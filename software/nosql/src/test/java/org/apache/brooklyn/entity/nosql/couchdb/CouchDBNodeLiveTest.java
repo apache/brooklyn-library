@@ -21,9 +21,8 @@ package org.apache.brooklyn.entity.nosql.couchdb;
 import java.util.Map;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.nosql.couchdb.CouchDBNode;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
@@ -66,7 +65,7 @@ public class CouchDBNodeLiveTest extends AbstractCouchDBNodeTest {
                 .configure("httpPort", "12345+")
                 .configure("clusterName", "TestCluster"));
         app.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
 
         JcouchdbSupport jcouchdb = new JcouchdbSupport(couchdb);
         jcouchdb.jcouchdbTest();

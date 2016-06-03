@@ -23,10 +23,10 @@ import static org.testng.Assert.assertFalse;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -57,7 +57,7 @@ public class MongoDBIntegrationTest {
                 .configure("mongodbConfTemplateUrl", "classpath:///test-mongodb.conf"));
         app.start(ImmutableList.of(localhostProvisioningLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
         entity.stop();
         assertFalse(entity.getAttribute(Startable.SERVICE_UP));
     }
@@ -78,13 +78,13 @@ public class MongoDBIntegrationTest {
         MongoDBServer entity = app.createAndManageChild(EntitySpec.create(MongoDBServer.class)
                 .configure("mongodbConfTemplateUrl", "classpath:///test-mongodb.conf"));
         app.start(ImmutableList.of(localhostProvisioningLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, Startable.SERVICE_UP, true);
 
-        EntityTestUtils.assertAttributeEventuallyNonNull(entity, MongoDBServer.OPCOUNTERS_INSERTS);
+        EntityAsserts.assertAttributeEventuallyNonNull(entity, MongoDBServer.OPCOUNTERS_INSERTS);
         Long initialInserts = entity.getAttribute(MongoDBServer.OPCOUNTERS_INSERTS);
         MongoDBTestHelper.insert(entity, "a", Boolean.TRUE);
         MongoDBTestHelper.insert(entity, "b", Boolean.FALSE);
-        EntityTestUtils.assertAttributeEqualsEventually(entity, MongoDBServer.OPCOUNTERS_INSERTS, initialInserts + 2);
+        EntityAsserts.assertAttributeEqualsEventually(entity, MongoDBServer.OPCOUNTERS_INSERTS, initialInserts + 2);
     }
 
 }

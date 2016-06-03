@@ -30,9 +30,9 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -52,8 +52,8 @@ public class ActiveMQEc2LiveTest extends AbstractEc2LiveTest {
         ActiveMQBroker activeMQ = app.createAndManageChild(EntitySpec.create(ActiveMQBroker.class).configure("queue", queueName));
         
         app.start(ImmutableList.of(loc));
-        
-        EntityTestUtils.assertAttributeEqualsEventually(activeMQ, Startable.SERVICE_UP, true);
+
+        EntityAsserts.assertAttributeEqualsEventually(activeMQ, Startable.SERVICE_UP, true);
 
         // Check queue created
         assertEquals(ImmutableList.copyOf(activeMQ.getQueueNames()), ImmutableList.of(queueName));
@@ -67,11 +67,11 @@ public class ActiveMQEc2LiveTest extends AbstractEc2LiveTest {
         // Connect to broker using JMS and send messages
         Connection connection = getActiveMQConnection(activeMQ);
         clearQueue(connection, queueName);
-        EntityTestUtils.assertAttributeEqualsEventually(queue, ActiveMQQueue.QUEUE_DEPTH_MESSAGES, 0);
+        EntityAsserts.assertAttributeEqualsEventually(queue, ActiveMQQueue.QUEUE_DEPTH_MESSAGES, 0);
         sendMessages(connection, number, queueName, content);
 
         // Check messages arrived
-        EntityTestUtils.assertAttributeEqualsEventually(queue, ActiveMQQueue.QUEUE_DEPTH_MESSAGES, number);
+        EntityAsserts.assertAttributeEqualsEventually(queue, ActiveMQQueue.QUEUE_DEPTH_MESSAGES, number);
 
         connection.close();
     }

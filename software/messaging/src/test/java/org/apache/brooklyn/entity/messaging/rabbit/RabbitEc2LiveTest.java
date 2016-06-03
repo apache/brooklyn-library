@@ -30,7 +30,6 @@ import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.messaging.MessageBroker;
 import org.apache.brooklyn.entity.messaging.amqp.AmqpExchange;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
@@ -53,7 +52,7 @@ public class RabbitEc2LiveTest extends AbstractEc2LiveTest {
     protected void doTest(Location loc) throws Exception {
         RabbitBroker rabbit = app.createAndManageChild(EntitySpec.create(RabbitBroker.class));
         rabbit.start(ImmutableList.of(loc));
-        EntityTestUtils.assertAttributeEqualsEventually(rabbit, RabbitBroker.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(rabbit, RabbitBroker.SERVICE_UP, true);
 
         byte[] content = "MessageBody".getBytes(Charsets.UTF_8);
         String queue = "queueName";

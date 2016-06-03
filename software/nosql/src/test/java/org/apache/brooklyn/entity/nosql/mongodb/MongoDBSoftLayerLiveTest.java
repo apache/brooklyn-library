@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.entity.AbstractSoftlayerLiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -42,7 +42,7 @@ public class MongoDBSoftLayerLiveTest extends AbstractSoftlayerLiveTest {
                 .configure("mongodbConfTemplateUrl", "classpath:///test-mongodb.conf"));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(entity, MongoDBServer.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(entity, MongoDBServer.SERVICE_UP, true);
 
         String id = MongoDBTestHelper.insert(entity, "hello", "world!");
         DBObject docOut = MongoDBTestHelper.getById(entity, id);

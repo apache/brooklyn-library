@@ -23,9 +23,8 @@ import static org.testng.Assert.assertTrue;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.nosql.solr.SolrServer;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.solr.common.SolrDocument;
 import org.testng.annotations.Test;
@@ -49,12 +48,12 @@ public class SolrServerIntegrationTest extends AbstractSolrServerTest {
         solr = app.createAndManageChild(EntitySpec.create(SolrServer.class));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, true);
         Entities.dumpInfo(app);
 
         solr.stop();
 
-        EntityTestUtils.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, false);
     }
 
     /**
@@ -66,7 +65,7 @@ public class SolrServerIntegrationTest extends AbstractSolrServerTest {
                 .configure(SolrServer.SOLR_CORE_CONFIG, ImmutableMap.of("example", "classpath://solr/example.tgz")));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, true);
 
         SolrJSupport client = new SolrJSupport(solr, "example");
 

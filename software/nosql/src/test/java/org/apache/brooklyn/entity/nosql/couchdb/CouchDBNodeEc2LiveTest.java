@@ -20,9 +20,9 @@ package org.apache.brooklyn.entity.nosql.couchdb;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class CouchDBNodeEc2LiveTest extends AbstractEc2LiveTest {
                 .configure("httpPort", "8000+"));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(couchdb, Startable.SERVICE_UP, true);
 
         JcouchdbSupport jcouchdb = new JcouchdbSupport(couchdb);
         jcouchdb.jcouchdbTest();

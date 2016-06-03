@@ -26,10 +26,10 @@ import java.io.IOException;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -87,7 +87,7 @@ public class RabbitIntegrationTest {
     public void canStartupAndShutdown() throws Exception {
         rabbit = app.createAndManageChild(EntitySpec.create(RabbitBroker.class));
         rabbit.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(rabbit, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(rabbit, Startable.SERVICE_UP, true);
         rabbit.stop();
         assertFalse(rabbit.getAttribute(Startable.SERVICE_UP));
     }
@@ -99,7 +99,7 @@ public class RabbitIntegrationTest {
     public void testClientConnection() throws Exception {
         rabbit = app.createAndManageChild(EntitySpec.create(RabbitBroker.class));
         rabbit.start(ImmutableList.of(testLocation));
-        EntityTestUtils.assertAttributeEqualsEventually(rabbit, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(rabbit, Startable.SERVICE_UP, true);
 
         byte[] content = "MessageBody".getBytes(Charsets.UTF_8);
         String queue = "queueName";

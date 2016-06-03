@@ -23,10 +23,10 @@ import javax.annotation.Nullable;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.time.Duration;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -64,11 +64,11 @@ public class RedisIntegrationTest {
         redis = app.createAndManageChild(EntitySpec.create(RedisStore.class));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, true);
 
         redis.stop();
 
-        EntityTestUtils.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, false);
     }
 
     /**
@@ -79,7 +79,7 @@ public class RedisIntegrationTest {
         redis = app.createAndManageChild(EntitySpec.create(RedisStore.class));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, true);
 
         JedisSupport support = new JedisSupport(redis);
         support.redisTest();
@@ -94,7 +94,7 @@ public class RedisIntegrationTest {
                 .configure(RedisStore.REDIS_PORT, PortRanges.fromString("10000+")));
         app.start(ImmutableList.of(loc));
 
-        EntityTestUtils.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(redis, Startable.SERVICE_UP, true);
         JedisSupport support = new JedisSupport(redis);
         support.redisTest();
 
@@ -102,7 +102,7 @@ public class RedisIntegrationTest {
         // call to `info server` (for obtaining uptime) which took 26 seconds; then 4 seconds later 
         // this assert failed (with it checking every 500ms). The response did correctly contain
         // `uptime_in_seconds:27`.
-        EntityTestUtils.assertPredicateEventuallyTrue(ImmutableMap.of("timeout", Duration.FIVE_MINUTES), redis, new Predicate<RedisStore>() {
+        EntityAsserts.assertPredicateEventuallyTrue(ImmutableMap.of("timeout", Duration.FIVE_MINUTES), redis, new Predicate<RedisStore>() {
             @Override public boolean apply(@Nullable RedisStore input) {
                 return input != null &&
                         input.getAttribute(RedisStore.UPTIME) > 0 &&

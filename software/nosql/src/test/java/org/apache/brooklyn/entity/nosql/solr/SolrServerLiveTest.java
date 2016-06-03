@@ -24,9 +24,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.Map;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.nosql.solr.SolrServer;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.solr.common.SolrDocument;
@@ -71,7 +70,7 @@ public class SolrServerLiveTest extends AbstractSolrServerTest {
                 .configure(SolrServer.SOLR_CORE_CONFIG, ImmutableMap.of("example", "classpath://solr/example.tgz")));
         app.start(ImmutableList.of(testLocation));
 
-        EntityTestUtils.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(solr, Startable.SERVICE_UP, true);
 
         SolrJSupport client = new SolrJSupport(solr, "example");
 

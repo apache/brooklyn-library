@@ -42,6 +42,7 @@ services:
         # from which to take sensors; in that mode you can specify `propagate` as a list of sensors whose names are unchanged,
         # instead of (or in addition to) this map 
         brooklyn.config:
+          producer: $brooklyn:component("this", "ignored")
           sensorMapping:
             $brooklyn:sensor("url"): $brooklyn:sensor("org.apache.brooklyn.core.entity.Attributes", "main.uri")
   brooklyn.enrichers:
@@ -72,3 +73,4 @@ brooklyn.enrichers:
   # Propagator will do all but the usual lifecycle defaults, handy at the root!
   brooklyn.config:
     producer: $brooklyn:entity("cluster")
+    propagatingAll: true

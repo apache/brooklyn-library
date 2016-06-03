@@ -25,11 +25,11 @@ import java.math.BigInteger;
 import java.util.Set;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
 import org.apache.brooklyn.entity.proxy.nginx.NginxController;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -75,7 +75,7 @@ public class CassandraDatacenterRebindIntegrationTest extends RebindTestFixtureW
         origApp.start(ImmutableList.of(localhostProvisioningLocation));
         CassandraNode origNode = (CassandraNode) Iterables.get(origDatacenter.getMembers(), 0);
 
-        EntityTestUtils.assertAttributeEqualsEventually(origDatacenter, CassandraDatacenter.GROUP_SIZE, 1);
+        EntityAsserts.assertAttributeEqualsEventually(origDatacenter, CassandraDatacenter.GROUP_SIZE, 1);
         CassandraDatacenterLiveTest.assertNodesConsistent(ImmutableList.of(origNode));
         CassandraDatacenterLiveTest.assertSingleTokenConsistent(ImmutableList.of(origNode));
         CassandraDatacenterLiveTest.checkConnectionRepeatedly(2, 5, ImmutableList.of(origNode));
@@ -87,9 +87,9 @@ public class CassandraDatacenterRebindIntegrationTest extends RebindTestFixtureW
         final CassandraDatacenter newDatacenter = (CassandraDatacenter) Iterables.find(newApp.getChildren(), Predicates.instanceOf(CassandraDatacenter.class));
         final CassandraNode newNode = (CassandraNode) Iterables.find(newDatacenter.getMembers(), Predicates.instanceOf(CassandraNode.class));
         
-        EntityTestUtils.assertAttributeEqualsEventually(newDatacenter, CassandraDatacenter.GROUP_SIZE, 1);
-        EntityTestUtils.assertAttributeEqualsEventually(newNode, Startable.SERVICE_UP, true);
-        EntityTestUtils.assertAttributeEqualsEventually(newNode, CassandraNode.TOKENS, origTokens);
+        EntityAsserts.assertAttributeEqualsEventually(newDatacenter, CassandraDatacenter.GROUP_SIZE, 1);
+        EntityAsserts.assertAttributeEqualsEventually(newNode, Startable.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(newNode, CassandraNode.TOKENS, origTokens);
         CassandraDatacenterLiveTest.assertNodesConsistent(ImmutableList.of(newNode));
         CassandraDatacenterLiveTest.assertSingleTokenConsistent(ImmutableList.of(newNode));
         CassandraDatacenterLiveTest.checkConnectionRepeatedly(2, 5, ImmutableList.of(newNode));

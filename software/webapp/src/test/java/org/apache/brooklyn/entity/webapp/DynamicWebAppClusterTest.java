@@ -25,10 +25,10 @@ import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.location.SimulatedLocation;
 import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.test.EntityTestUtils;
 import org.apache.brooklyn.test.entity.TestJavaWebAppEntity;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.testng.annotations.AfterMethod;
@@ -61,8 +61,8 @@ public class DynamicWebAppClusterTest {
     public void testTestJavaWebAppEntityStarts() throws Exception {
         Entity test = app.createAndManageChild(EntitySpec.create(TestJavaWebAppEntity.class));
         test.invoke(Startable.START, ImmutableMap.of("locations", ImmutableList.of(loc))).get();
-        
-        EntityTestUtils.assertAttributeEqualsEventually(test, Attributes.SERVICE_UP, true);
+
+        EntityAsserts.assertAttributeEqualsEventually(test, Attributes.SERVICE_UP, true);
     }
     
     @Test
@@ -76,14 +76,14 @@ public class DynamicWebAppClusterTest {
         for (Entity member : cluster.getMembers()) {
             ((TestJavaWebAppEntity)member).spoofRequest();
         }
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.REQUEST_COUNT, 2);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.REQUEST_COUNT, 2);
         
         for (Entity member : cluster.getMembers()) {
             for (int i = 0; i < 2; i++) {
                 ((TestJavaWebAppEntity)member).spoofRequest();
             }
         }
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.REQUEST_COUNT_PER_NODE, 3d);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.REQUEST_COUNT_PER_NODE, 3d);
     }
     
     @Test
@@ -95,23 +95,23 @@ public class DynamicWebAppClusterTest {
         app.start(ImmutableList.of(loc));
         
         // Should initially be true (now that TestJavaWebAppEntity sets true) 
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, true);
         
         // When child is !service_up, should report false
         ((EntityLocal)Iterables.get(cluster.getMembers(), 0)).sensors().set(Startable.SERVICE_UP, false);
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, false);
-        EntityTestUtils.assertAttributeEqualsContinually(MutableMap.of("timeout", SHORT_WAIT_MS), cluster, DynamicWebAppCluster.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsContinually(MutableMap.of("timeout", SHORT_WAIT_MS), cluster, DynamicWebAppCluster.SERVICE_UP, false);
         
         cluster.resize(2);
         
         // When one of the two children is service_up, should report true
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, true);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, true);
 
         // And if that serviceUp child goes away, should again report false
         Entities.unmanage(Iterables.get(cluster.getMembers(), 1));
         ((EntityLocal)Iterables.get(cluster.getMembers(), 0)).sensors().set(Startable.SERVICE_UP, false);
         
-        EntityTestUtils.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, false);
+        EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, false);
     }
     
     @Test

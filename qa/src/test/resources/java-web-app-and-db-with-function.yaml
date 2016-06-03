@@ -17,20 +17,18 @@
 # under the License.
 #
 name: java-cluster-db-example
+location: localhost
 services:
-- serviceType: org.apache.brooklyn.entity.webapp.ControlledDynamicWebAppCluster
+- type: org.apache.brooklyn.entity.webapp.ControlledDynamicWebAppCluster
   name: My Web
-  location: localhost
-  brooklyn.config:
-    wars.root: http://search.maven.org/remotecontent?filepath=io/brooklyn/example/brooklyn-example-hello-world-sql-webapp/0.7.0-M1/brooklyn-example-hello-world-sql-webapp-0.7.0-M1.war
-    http.port: 9280+
-    proxy.http.port: 9210+
-    java.sysprops: 
-      brooklyn.example.db.url: $brooklyn:formatString("jdbc:%s%s?user=%s&password=%s",
-         component("db").attributeWhenReady("datastore.url"), "visitors", "brooklyn", "br00k11n")
-- serviceType: org.apache.brooklyn.entity.database.mysql.MySqlNode
+  wars.root: http://repo1.maven.org/maven2/org/apache/brooklyn/example/brooklyn-example-hello-world-sql-webapp/0.9.0/brooklyn-example-hello-world-sql-webapp-0.9.0.war
+  http.port: 9280+
+  proxy.http.port: 9210+
+  java.sysprops: 
+    brooklyn.example.db.url: $brooklyn:formatString("jdbc:%s%s?user=%s&password=%s",
+       component("db").attributeWhenReady("datastore.url"), "visitors", "brooklyn", "br00k11n")
+
+- type: org.apache.brooklyn.entity.database.mysql.MySqlNode
   id: db
   name: My DB
-  location: localhost
-  brooklyn.config:
-    datastore.creation.script.url: classpath://visitors-creation-script.sql
+  creationScriptUrl: classpath://visitors-creation-script.sql

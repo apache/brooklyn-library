@@ -95,14 +95,17 @@ public interface PostgreSqlNode extends SoftwareProcess, HasShortName, Datastore
     String DEFAULT_USERNAME = "postgresqluser";
 
     @SetFromFlag("roles")
-    ConfigKey<Map<String, Map>> ROLES = new MapConfigKey(Map.class, "postgresql.roles",
+    @SuppressWarnings("unchecked")
+    ConfigKey<Map<String, Map<String, ?>>> ROLES = new MapConfigKey<Map<String, ?>>(
+            (Class<Map<String, ?>>)(Class<?>)Map.class,
+            "postgresql.roles",
             "Set roles with properties and permissions. Shoud be a map with keys equal to role names and values a map of the type:" +
                   "key equal to `properties` and value - the role properties that should be in the query after `WITH` statement" +
                     "key equal to `privileges` and value - the `GRANT` query value between the `GRANT` and `TO` statements.\n" +
                     "Example:\n " +
                     "Developer:\n" +
                     "  properties: CREATEDB LOGIN\n" +
-                    "  privileges: [\"SELECT, INSERT, UPDATE, DELETE ON DATABASE postgres\", \"EXECUTE ON ALL FUNCTIONS IN SCHEMA public\"]\n" +
+                    "  privileges: [\"SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public\", \"EXECUTE ON ALL FUNCTIONS IN SCHEMA public\"]\n" +
                     "Analyst:\n" +
                     "  privileges: SELECT ON ALL TABLES IN SCHEMA public"
     );

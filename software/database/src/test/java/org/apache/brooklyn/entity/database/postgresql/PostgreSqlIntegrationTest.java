@@ -18,49 +18,40 @@
  */
 package org.apache.brooklyn.entity.database.postgresql;
 
+import static org.apache.brooklyn.test.Asserts.assertEquals;
+import static org.apache.brooklyn.test.Asserts.assertTrue;
+import static org.apache.brooklyn.test.Asserts.fail;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.api.mgmt.ManagementContext;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.internal.BrooklynProperties;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
-import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.location.Machines;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
 import org.apache.brooklyn.entity.database.VogellaExampleAccess;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
+import org.apache.brooklyn.location.ssh.SshMachineLocation;
+import org.apache.brooklyn.util.ssh.BashCommands;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Runs the popular Vogella MySQL tutorial against PostgreSQL
  * from
  * http://www.vogella.de/articles/MySQLJava/article.html
  */
-public class PostgreSqlIntegrationTest {
+public class PostgreSqlIntegrationTest extends BrooklynAppLiveTestSupport {
 
     public static final Logger log = LoggerFactory.getLogger(PostgreSqlIntegrationTest.class);
     
-    protected BrooklynProperties brooklynProperties;
-    protected ManagementContext managementContext;
-    protected TestApplication tapp;
-    
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        brooklynProperties = BrooklynProperties.Factory.newDefault();
-        managementContext = new LocalManagementContext(brooklynProperties);
-        tapp = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void ensureShutDown() {
-        Entities.destroyAllCatching(managementContext);
-    }
-
     //from http://www.vogella.de/articles/MySQLJava/article.html
     public static final String CREATION_SCRIPT =
             "CREATE USER sqluser WITH PASSWORD 'sqluserpw';\n" +
@@ -79,17 +70,101 @@ public class PostgreSqlIntegrationTest {
             "GRANT ALL ON comments TO sqluser;\n" +
             "INSERT INTO COMMENTS values (1, 'lars', 'myemail@gmail.com','http://www.vogella.de', '2009-09-14 10:33:11', 'Summary','My first comment' );";
 
+    private Location loc;
+
+    @BeforeMethod(alwaysRun=true)
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        loc = app.newLocalhostProvisioningLocation();
+    }
+    
     @Test(groups = "Integration")
     public void test_localhost() throws Exception {
-        PostgreSqlNode pgsql = tapp.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+        PostgreSqlNode pgsql = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, CREATION_SCRIPT)
                 .configure(PostgreSqlNode.MAX_CONNECTIONS, 10)
                 .configure(PostgreSqlNode.SHARED_MEMORY, "512kB")); // Very low so kernel configuration not needed
 
-        tapp.start(ImmutableList.of(new LocalhostMachineProvisioningLocation()));
+        app.start(ImmutableList.of(loc));
         String url = pgsql.getAttribute(DatastoreCommon.DATASTORE_URL);
         log.info("PostgreSql started on "+url);
         new VogellaExampleAccess("org.postgresql.Driver", url).readModifyAndRevertDataBase();
         log.info("Ran vogella PostgreSql example -- SUCCESS");
+    }
+
+    @Test(groups = "Integration")
+    public void test_localhost_initialisingDb() throws Exception {
+        PostgreSqlNode pgsql = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+                .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, CREATION_SCRIPT)
+                .configure(PostgreSqlNode.MAX_CONNECTIONS, 10)
+                .configure(PostgreSqlNode.SHARED_MEMORY, "512kB") // Very low so kernel configuration not needed
+                .configure(PostgreSqlNode.INITIALIZE_DB, true)
+                ); 
+
+        app.start(ImmutableList.of(loc));
+        String url = pgsql.getAttribute(DatastoreCommon.DATASTORE_URL);
+        log.info("PostgreSql started on "+url);
+        new VogellaExampleAccess("org.postgresql.Driver", url).readModifyAndRevertDataBase();
+        log.info("Ran vogella PostgreSql example -- SUCCESS");
+    }
+
+    // Note we don't use "SELECT ON DATABASE postgres" because that gives an error, as described
+    // in http://stackoverflow.com/a/8247052/1393883
+    @Test(groups = "Integration")
+    public void test_localhost_withRoles() throws Exception {
+        PostgreSqlNode pgsql = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+                .configure(PostgreSqlNode.MAX_CONNECTIONS, 10)
+                .configure(PostgreSqlNode.SHARED_MEMORY, "512kB") // Very low so kernel configuration not needed
+                .configure(PostgreSqlNode.INITIALIZE_DB, true)
+                .configure(PostgreSqlNode.ROLES, ImmutableMap.<String, Map<String, ?>>of(
+                        "Developer", ImmutableMap.<String, Object>of(
+                                "properties", "CREATEDB LOGIN",
+                                "privileges", ImmutableList.of(
+                                        "SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public", 
+                                        "EXECUTE ON ALL FUNCTIONS IN SCHEMA public")),
+                        "Analyst", ImmutableMap.<String, Object>of(
+                                "properties", "LOGIN",
+                                "privileges", "SELECT ON ALL TABLES IN SCHEMA public")))
+                ); 
+
+        app.start(ImmutableList.of(loc));
+        String url = pgsql.getAttribute(DatastoreCommon.DATASTORE_URL);
+        log.info("PostgreSql started on "+url);
+        
+        // Use psql to get the roles and properties
+        // TODO Does not list privileges, so that is not tested.
+        SshMachineLocation machine = Machines.findUniqueMachineLocation(pgsql.getLocations(), SshMachineLocation.class).get();
+        String installDir = pgsql.sensors().get(PostgreSqlNode.INSTALL_DIR);
+        int port = pgsql.sensors().get(PostgreSqlNode.POSTGRESQL_PORT);
+        ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream stderrStream = new ByteArrayOutputStream();
+        int result = machine.execCommands(
+                ImmutableMap.of(
+                        SshMachineLocation.STDOUT.getName(), stdoutStream,
+                        SshMachineLocation.STDERR.getName(), stderrStream),
+                "checkState", 
+                ImmutableList.of(BashCommands.sudoAsUser("postgres", installDir + "/bin/psql -p " + port + " --command \"\\du\"")));
+        String stdout = new String(stdoutStream.toByteArray());
+        String stderr = new String(stderrStream.toByteArray());
+        assertEquals(result, 0, "stdout="+stdout+"; stderr="+stderr);
+        checkRole(stdout, "analyst", "");
+        checkRole(stdout, "developer", "Create DB");
+    }
+    
+    private void checkRole(String du, String role, String attrib) {
+        List<String> lines = ImmutableList.copyOf(Splitter.on("\n").trimResults().split(du));
+        boolean found = false;
+        for (String line : lines) {
+            if (line.startsWith(role)) {
+                assertTrue(line.matches(".*"+attrib+".*"), "du="+du);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            fail("Role "+role+" not found in du="+du);
+        }
+        du.split("\n");
     }
 }

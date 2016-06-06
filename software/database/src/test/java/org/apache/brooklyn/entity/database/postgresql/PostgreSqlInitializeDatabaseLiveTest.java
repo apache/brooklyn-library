@@ -59,10 +59,12 @@ public class PostgreSqlInitializeDatabaseLiveTest extends BrooklynAppLiveTestSup
     public void testDatabaseInitializaationWithRoles() {
         PostgreSqlNode server = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
                 .configure(PostgreSqlNode.INITIALIZE_DB, Boolean.TRUE)
-                .configure((CharSequence) PostgreSqlNode.ROLES, ImmutableMap.<String, Object>builder()
+                .configure(PostgreSqlNode.ROLES.getName(), ImmutableMap.<String, Object>builder()
                         .put("Admin", ImmutableMap.of("properties", "SUPERUSER",
                                 "privileges", "ALL PRIVILEGES ON ALL TABLES IN SCHEMA public"))
-                        .put("Developer", ImmutableMap.of("privileges", "[\"SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public\", \"EXECUTE ON ALL FUNCTIONS IN SCHEMA public\"]"))
+                        .put("Developer", ImmutableMap.of("privileges", ImmutableList.of(
+                                "SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public", 
+                                "EXECUTE ON ALL FUNCTIONS IN SCHEMA public")))
                         .put("Analyst", ImmutableMap.of("privileges", "SELECT ON ALL TABLES IN SCHEMA public"))
                         .build())
         );
@@ -70,7 +72,7 @@ public class PostgreSqlInitializeDatabaseLiveTest extends BrooklynAppLiveTestSup
         runTest(server);
     }
 
-    public void runTest(PostgreSqlNode server) {
+    protected void runTest(PostgreSqlNode server) {
         app.start(ImmutableList.of(jcloudsLocation));
 
         EntityAsserts.assertAttributeEqualsEventually(server, Attributes.SERVICE_UP, true);

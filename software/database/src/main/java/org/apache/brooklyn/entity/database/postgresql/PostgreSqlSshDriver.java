@@ -35,6 +35,12 @@ import static org.apache.brooklyn.util.ssh.BashCommands.warn;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidParameterException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -42,6 +48,9 @@ import org.apache.brooklyn.api.location.OsDetails;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
+import org.apache.brooklyn.entity.database.DatastoreMixins;
+import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
+import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableMap;
@@ -59,15 +68,16 @@ import org.apache.brooklyn.util.text.StringFunctions;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.brooklyn.entity.database.DatastoreMixins;
-import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
-import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 /**
@@ -320,6 +330,16 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
                 "\"CREATE DATABASE %s OWNER %s\"",
                 StringEscapes.escapeSql(getDatabaseName()),
                 StringEscapes.escapeSql(getUsername()));
+
+        String createRolesAdditionalCommand = "";
+
+        if (entity.getConfig(PostgreSqlNode.ROLES) != null && !entity.getConfig(PostgreSqlNode.ROLES).isEmpty()) {
+            String createRolesQuery = buildCreateRolesQuery();
+            createRolesAdditionalCommand =
+                    sudoAsUser("postgres", getInstallDir() + "/bin/psql -p " + entity.getAttribute(PostgreSqlNode.POSTGRESQL_PORT) +
+                            " --command="+ createRolesQuery);
+        }
+
         newScript("initializing user and database")
         .body.append(
                 "cd " + getInstallDir(),
@@ -328,18 +348,102 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
                         " --command="+ createUserCommand),
                 sudoAsUser("postgres", getInstallDir() + "/bin/psql -p " + entity.getAttribute(PostgreSqlNode.POSTGRESQL_PORT) + 
                                 " --command="+ createDatabaseCommand),
+                createRolesAdditionalCommand,
                 callPgctl("stop", true))
                 .failOnNonZeroResultCode().execute();
     }
-    
-    private String getConfigOrDefault(BasicAttributeSensorAndConfigKey<String> key, String def) {
-        String config = entity.getConfig(key);
-        if(Strings.isEmpty(config)) {
-            config = def;
-            log.debug(entity + " has no config specified for " + key + "; using default `" + def + "`");
-            entity.sensors().set(key, config);
+
+    @VisibleForTesting
+    protected String buildCreateRolesQuery() {
+        Map<String, Map<String, ?>> roles = entity.getConfig(PostgreSqlNode.ROLES);
+        StringBuilder builder = new StringBuilder("\"");
+
+        for (Map.Entry<String, ? extends Map<String, ?>> entry : roles.entrySet()) {
+            String roleName = entry.getKey();
+            Map<String, ?> roleConfig = entry.getValue();
+            if (roleConfig == null) roleConfig = ImmutableMap.of();
+            
+            if (Strings.isBlank(roleName)) {
+                throw new NullPointerException("Role name must not be blank, but got "+roles);
+            }
+            validateInput(roleName, "role name '"+roleName+"'");
+                
+            builder.append(String.format("CREATE ROLE %s", roleName));
+            
+            
+            if (roleConfig != null && roleConfig.containsKey(PostgreSqlNode.ROLE_PROPERTIES_KEY)) {
+                Object rawProps = roleConfig.get("properties");
+                String props = validateInput((String) rawProps, "role '"+roleName+"' property "+rawProps);;
+                builder.append(String.format(" WITH %s; ", props));
+            } else {
+                builder.append("; ");
+            }
+
+            if (roleConfig.containsKey(PostgreSqlNode.ROLE_PRIVILEGES_KEY)) {
+                List<String> privileges = toListOfStrings(roleConfig.get(PostgreSqlNode.ROLE_PRIVILEGES_KEY));
+                for (Object rawPrivilege : privileges) {
+                    String privilege = validateInput((String) rawPrivilege, "role '"+roleName+"' privilege "+rawPrivilege);
+                    builder.append(String.format("GRANT %s TO %s; ", privilege, roleName));
+                }
+            }
+            
+            Set<String> otherConfig = Sets.difference(roleConfig.keySet(), 
+                    ImmutableSet.of(PostgreSqlNode.ROLE_PROPERTIES_KEY, PostgreSqlNode.ROLE_PRIVILEGES_KEY));
+            if (!otherConfig.isEmpty()) {
+                throw new IllegalArgumentException("Invalid configuration for role "+roleName+", got "+roles);
+            }
         }
-        return config;
+
+        builder.append("\"");
+
+        return builder.toString();
+    }
+
+    private String validateInput(String input, String errContext) {
+        String regex = "[A-Za-z_,\\s]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        if (Strings.isBlank(input)) {
+            throw new NullPointerException("Must be non-blank for "+errContext);
+        }
+        if (matcher.find() && matcher.start() == 0 && matcher.end() == input.length()) {
+            return input;
+        }
+
+        throw new InvalidParameterException("Query input seems to be insecure. Make sure you pass a valid value for "+errContext);
+    }
+    
+    // TODO Duplicate of JcloudsLocation.toListOfStrings
+    private static List<String> toListOfStrings(Object v) {
+        List<String> result = Lists.newArrayList();
+        if (v instanceof Iterable) {
+            for (Object o : (Iterable<?>)v) {
+                result.add(o.toString());
+            }
+        } else if (v instanceof Object[]) {
+            for (int i = 0; i < ((Object[])v).length; i++) {
+                result.add(((Object[])v)[i].toString());
+            }
+        } else if (v instanceof String) {
+            result.add((String) v);
+        } else {
+            throw new IllegalArgumentException("Invalid type for List<String>: "+v+" of type "+v.getClass());
+        }
+        return result;
+    }
+
+    private String getConfigOrDefault(BasicAttributeSensorAndConfigKey<String> key, String def) {
+        String val = entity.getConfig(key);
+        if (Strings.isEmpty(val)) {
+            val = entity.sensors().get(key);
+            if (Strings.isEmpty(val)) {
+                val = def;
+                log.debug(entity + " has no config specified for " + key + "; using default `" + def + "`");
+                entity.sensors().set(key, val);
+            }
+        }
+        return val;
     }
     
     protected String getDatabaseName() {

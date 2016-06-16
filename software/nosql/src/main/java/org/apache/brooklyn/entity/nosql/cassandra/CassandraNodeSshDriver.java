@@ -301,7 +301,7 @@ public class CassandraNodeSshDriver extends JavaSoftwareProcessSshDriver impleme
                     Tasks.setBlockingDetails("Pausing to ensure Cassandra (singleton) has started before running creation script");
                     Time.sleep(Duration.seconds(20));
                     Tasks.resetBlockingDetails();
-                    executeScriptAsync(Streams.readFullyString(creationScript));
+                    executeScriptAsync(Streams.readFullyStringAndClose(creationScript));
                 }
             }
             if (isClustered() && isFirst) {

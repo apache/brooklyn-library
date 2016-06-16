@@ -22,12 +22,25 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
+
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
+
+import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.MachineProvisioningLocation;
+import org.apache.brooklyn.api.location.PortRange;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
@@ -39,22 +52,20 @@ import org.apache.brooklyn.entity.webapp.WebAppServiceMethods;
 import org.apache.brooklyn.feed.http.HttpFeed;
 import org.apache.brooklyn.feed.http.HttpPollConfig;
 import org.apache.brooklyn.feed.http.HttpValueFunctions;
-import org.apache.brooklyn.util.collections.MutableSet;
+import org.apache.brooklyn.location.jclouds.JcloudsMachineLocation;
+import org.apache.brooklyn.location.jclouds.JcloudsSshMachineLocation;
+import org.apache.brooklyn.location.jclouds.networking.JcloudsLocationSecurityGroupCustomizer;
+import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.core.config.ConfigBag;
 import org.apache.brooklyn.util.guava.Functionals;
+import org.apache.brooklyn.util.net.Cidr;
 import org.apache.brooklyn.util.time.Duration;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
-import com.google.common.collect.Range;
-import com.google.common.net.HostAndPort;
 
 public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
 
-    private volatile HttpFeed httpFeed;
+    private static final Logger LOG = LoggerFactory.getLogger(RiakNodeImpl.class);
+
+    private transient HttpFeed httpFeed;
 
     @Override
     public RiakNodeDriver getDriver() {
@@ -99,16 +110,58 @@ public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
 
     @Override
     protected Collection<Integer> getRequiredOpenPorts() {
-        // TODO this creates a huge list of inbound ports; much better to define on a security group using range syntax!
-        int erlangRangeStart = getConfig(ERLANG_PORT_RANGE_START).iterator().next();
-        int erlangRangeEnd = getConfig(ERLANG_PORT_RANGE_END).iterator().next();
+        PortRange erlangPorts = config().get(ERLANG_PORT_RANGE);
+        Integer erlangRangeStart = config().get(ERLANG_PORT_RANGE_START);
+        Integer erlangRangeEnd = config().get(ERLANG_PORT_RANGE_END);
+        if (erlangRangeStart == null) erlangRangeStart = Iterables.get(erlangPorts, 0);
+        if (erlangRangeEnd == null) erlangRangeEnd = Iterables.getLast(erlangPorts);
+        sensors().set(ERLANG_PORT_RANGE_START, erlangRangeStart);
+        sensors().set(ERLANG_PORT_RANGE_END, erlangRangeEnd);
 
-        Set<Integer> ports = MutableSet.copyOf(super.getRequiredOpenPorts());
-        Set<Integer> erlangPorts = ContiguousSet.create(Range.open(erlangRangeStart, erlangRangeEnd), DiscreteDomain.integers());
-        ports.addAll(erlangPorts);
+        boolean configureInternalNetworking = config().get(CONFIGURE_INTERNAL_NETWORKING);
+        if (configureInternalNetworking) {
+            configureInternalNetworking();
+        }
 
-        return ports;
+        return super.getRequiredOpenPorts();
     }
+
+    private void configureInternalNetworking() {
+        Location location = getDriver().getLocation();
+        if (!(location instanceof JcloudsSshMachineLocation)) {
+            LOG.info("Not running in a JcloudsSshMachineLocation, not adding IP permissions to {}", this);
+            return;
+        }
+        JcloudsMachineLocation machine = (JcloudsMachineLocation) location;
+        JcloudsLocationSecurityGroupCustomizer customizer = JcloudsLocationSecurityGroupCustomizer.getInstance(getApplicationId());
+
+        synchronized (getParent()) {
+            String cidr = Cidr.UNIVERSAL.toString(); // TODO configure with a more restrictive CIDR
+            Collection<IpPermission> permissions = MutableList.<IpPermission>builder()
+                    .add(IpPermission.builder()
+                            .ipProtocol(IpProtocol.TCP)
+                            .fromPort(sensors().get(ERLANG_PORT_RANGE_START))
+                            .toPort(sensors().get(ERLANG_PORT_RANGE_END))
+                            .cidrBlock(cidr)
+                            .build())
+                    .add(IpPermission.builder()
+                            .ipProtocol(IpProtocol.TCP)
+                            .fromPort(config().get(HANDOFF_LISTENER_PORT))
+                            .toPort(config().get(HANDOFF_LISTENER_PORT))
+                            .cidrBlock(cidr)
+                            .build())
+                    .add(IpPermission.builder()
+                            .ipProtocol(IpProtocol.TCP)
+                            .fromPort(config().get(EPMD_LISTENER_PORT))
+                            .toPort(config().get(EPMD_LISTENER_PORT))
+                            .cidrBlock(cidr)
+                            .build())
+                     .build();
+            LOG.debug("Applying custom security groups to {}: {}", machine, permissions);
+            customizer.addPermissionsToLocation(machine, permissions);
+        }
+    }
+
 
     @Override
     public void connectSensors() {
@@ -248,6 +301,7 @@ public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
     protected boolean isHttpMonitoringEnabled() {
         return Boolean.TRUE.equals(getConfig(USE_HTTP_MONITORING));
     }
+
     @Override
     public Integer getRiakWebPort() {
         return getAttribute(RiakNode.RIAK_WEB_PORT);
@@ -260,12 +314,12 @@ public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
 
     @Override
     public Integer getHandoffListenerPort() {
-        return getAttribute(RiakNode.HANDOFF_LISTENER_PORT);
+        return getConfig(RiakNode.HANDOFF_LISTENER_PORT);
     }
 
     @Override
     public Integer getEpmdListenerPort() {
-        return getAttribute(RiakNode.EPMD_LISTENER_PORT);
+        return getConfig(RiakNode.EPMD_LISTENER_PORT);
     }
 
     @Override

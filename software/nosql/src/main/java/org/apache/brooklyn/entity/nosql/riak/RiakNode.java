@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
+import org.apache.brooklyn.api.location.PortRange;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.annotation.Effector;
@@ -30,6 +31,7 @@ import org.apache.brooklyn.core.annotation.EffectorParam;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.effector.MethodEffector;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
@@ -107,10 +109,10 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
 
     // NB these two needed for clients to access
     @SetFromFlag("riakWebPort")
-    PortAttributeSensorAndConfigKey RIAK_WEB_PORT = new PortAttributeSensorAndConfigKey("riak.webPort", "Riak Web Port", "8098+");
+    PortAttributeSensorAndConfigKey RIAK_WEB_PORT = ConfigKeys.newPortSensorAndConfigKey("riak.web.port", "Riak Web Port", "8098+");
 
     @SetFromFlag("riakPbPort")
-    PortAttributeSensorAndConfigKey RIAK_PB_PORT = new PortAttributeSensorAndConfigKey("riak.pbPort", "Riak Protocol Buffers Port", "8087+");
+    PortAttributeSensorAndConfigKey RIAK_PB_PORT = ConfigKeys.newPortSensorAndConfigKey("riak.pb.port", "Riak Protocol Buffers Port", "8087+");
 
     @SetFromFlag("useHttpMonitoring")
     ConfigKey<Boolean> USE_HTTP_MONITORING = ConfigKeys.newConfigKey("httpMonitoring.enabled", "HTTP(S) monitoring enabled", Boolean.TRUE);
@@ -125,14 +127,37 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
 
     AttributeSensor<String> RIAK_NODE_NAME = Sensors.newStringSensor("riak.node", "Returns the riak node name as defined in vm.args");
 
-    // these needed for nodes to talk to each other, but not clients (so ideally set up in the security group for internal access)
-    PortAttributeSensorAndConfigKey HANDOFF_LISTENER_PORT = new PortAttributeSensorAndConfigKey("handoffListenerPort", "Handoff Listener Port", "8099+");
-    PortAttributeSensorAndConfigKey EPMD_LISTENER_PORT = new PortAttributeSensorAndConfigKey("epmdListenerPort", "Erlang Port Mapper Daemon Listener Port", "4369");
-    PortAttributeSensorAndConfigKey ERLANG_PORT_RANGE_START = new PortAttributeSensorAndConfigKey("erlangPortRangeStart", "Erlang Port Range Start", "6000+");
-    PortAttributeSensorAndConfigKey ERLANG_PORT_RANGE_END = new PortAttributeSensorAndConfigKey("erlangPortRangeEnd", "Erlang Port Range End", "7999+");
+    /*
+     * Needed for nodes to talk to each other, but not clients, so ideally set up in the security group for internal access and configured here.
+     * If {@link #CONFIGURE_INTERNAL_NETWORKING} is set, then a location customizer will be added to confiure the security group dynamically.
+     */
+
+    @SetFromFlag("handoffListenerPort")
+    ConfigKey<Integer> HANDOFF_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.handoff.port.internal", "Handoff Listener Port", 8099);
+
+    @SetFromFlag("epmdListenerPort")
+    ConfigKey<Integer> EPMD_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.epmd.port.internal", "Erlang Port Mapper Daemon Listener Port", 4369);
+
+    @SetFromFlag("erlangPortRange")
+    ConfigKey<PortRange> ERLANG_PORT_RANGE = ConfigKeys.newConfigKey(PortRange.class, "riak.erlang.portrange.internal", "Erlang Port Range", new PortRanges.LinearPortRange(6000, 7999));
+
+    // TODO Change {@link #ERLANG_PORT_RANGE_START} and {@link #ERLANG_PORT_RANGE_END} to sensors
+
+    /** @deprecated since 0.10.0; use {@link #ERLANG_PORT_RANGE} instead */
+    @Deprecated
+    @SetFromFlag("erlangPortRangeStart")
+    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_START = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.start.internal", "Erlang Port Range Start");
+
+    /** @deprecated since 0.10.0; use {@link #ERLANG_PORT_RANGE} instead */
+    @Deprecated
+    @SetFromFlag("erlangPortRangeEnd")
+    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_END = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.end.internal", "Erlang Port Range End");
+
+    @SetFromFlag("configInternalNetworking")
+    ConfigKey<Boolean> CONFIGURE_INTERNAL_NETWORKING = ConfigKeys.newBooleanConfigKey("riak.networking.internal", "Set up internal networking for intra-node communication", Boolean.TRUE);
 
     @SetFromFlag("searchEnabled")
-    ConfigKey<Boolean> SEARCH_ENABLED = ConfigKeys.newBooleanConfigKey("riak.search", "Deploy Solr and configure Riak to use it", false);
+    ConfigKey<Boolean> SEARCH_ENABLED = ConfigKeys.newBooleanConfigKey("riak.search", "Deploy Solr and configure Riak to use it", Boolean.FALSE);
 
     /**
      * http://docs.basho.com/riak/latest/dev/using/search/

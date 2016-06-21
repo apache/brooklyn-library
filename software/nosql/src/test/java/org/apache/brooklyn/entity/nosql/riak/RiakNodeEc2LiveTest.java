@@ -26,7 +26,7 @@ import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class RiakNodeEc2LiveTest extends AbstractEc2LiveTest {
+public class RiakNodeEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(RiakNodeEc2LiveTest.class);

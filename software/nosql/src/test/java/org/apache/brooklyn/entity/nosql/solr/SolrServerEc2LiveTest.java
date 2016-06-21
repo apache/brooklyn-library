@@ -30,7 +30,7 @@ import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.solr.common.SolrDocument;
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
-public class SolrServerEc2LiveTest extends AbstractEc2LiveTest {
+public class SolrServerEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     private static final Logger log = LoggerFactory.getLogger(SolrServerEc2LiveTest.class);
 

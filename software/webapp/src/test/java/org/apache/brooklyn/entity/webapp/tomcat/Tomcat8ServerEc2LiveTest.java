@@ -23,7 +23,7 @@ import static org.testng.Assert.assertNotNull;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * A simple test of installing+running on AWS-EC2, using various OS distros and versions. 
  */
-public class Tomcat8ServerEc2LiveTest extends AbstractEc2LiveTest {
+public class Tomcat8ServerEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     public String getTestWar() {
         TestResourceUnavailableException.throwIfResourceUnavailable(getClass(), "/hello-world.war");

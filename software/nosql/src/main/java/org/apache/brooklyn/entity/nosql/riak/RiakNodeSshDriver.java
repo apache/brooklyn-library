@@ -376,6 +376,7 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
     }
 
     protected String getRiakCmd() {
+
         return isPackageInstall() ? "riak" : Urls.mergePaths(getExpandedInstallDir(), "bin/riak");
     }
 

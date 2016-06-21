@@ -21,9 +21,9 @@ package org.apache.brooklyn.entity.network.bind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 
-public class BindDnsServerEc2LiveTest extends AbstractEc2LiveTest {
+public class BindDnsServerEc2LiveTest extends AbstractEc2ApplicationLiveTest {
     private static final Logger LOG = LoggerFactory.getLogger(BindDnsServerEc2LiveTest.class);
 
     protected void doTest(Location testLocation) throws Exception {

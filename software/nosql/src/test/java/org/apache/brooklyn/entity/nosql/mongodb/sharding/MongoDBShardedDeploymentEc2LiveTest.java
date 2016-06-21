@@ -24,7 +24,7 @@ import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBReplicaSet;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer;
 import org.apache.brooklyn.test.Asserts;
@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableMap;
  * brooklyn.jclouds.aws-ec2.maxConcurrentMachineCreations=5
  */
 @Test
-public class MongoDBShardedDeploymentEc2LiveTest extends AbstractEc2LiveTest {
+public class MongoDBShardedDeploymentEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     private static final Integer ROUTER_CLUSTER_SIZE = 2;
     private static final Integer REPLICASET_SIZE = 2;

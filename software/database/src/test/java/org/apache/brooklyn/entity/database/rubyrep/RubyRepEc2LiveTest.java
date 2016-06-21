@@ -22,12 +22,12 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
 import org.apache.brooklyn.entity.database.postgresql.PostgreSqlIntegrationTest;
 import org.apache.brooklyn.entity.database.postgresql.PostgreSqlNode;
 
-public class RubyRepEc2LiveTest extends AbstractEc2LiveTest {
+public class RubyRepEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     @Override
     protected void doTest(Location loc) throws Exception {

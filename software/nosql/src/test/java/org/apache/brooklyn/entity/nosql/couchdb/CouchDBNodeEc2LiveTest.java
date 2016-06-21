@@ -22,13 +22,13 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-public class CouchDBNodeEc2LiveTest extends AbstractEc2LiveTest {
+public class CouchDBNodeEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     private static final Logger log = LoggerFactory.getLogger(CouchDBNodeEc2LiveTest.class);
 

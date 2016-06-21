@@ -24,12 +24,12 @@ import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
 
 import com.google.common.collect.ImmutableList;
 
-public class StormEc2LiveTest extends AbstractEc2LiveTest {
+public class StormEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     /**
      * Test that can install, start and use a Storm cluster: 1 nimbus, 1 zookeeper, 1 supervisor (worker node).

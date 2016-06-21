@@ -26,7 +26,7 @@ import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.nosql.cassandra.AstyanaxSupport.AstyanaxSample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class CassandraNodeEc2LiveTest extends AbstractEc2LiveTest {
+public class CassandraNodeEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     private static final Logger log = LoggerFactory.getLogger(CassandraNodeEc2LiveTest.class);
 

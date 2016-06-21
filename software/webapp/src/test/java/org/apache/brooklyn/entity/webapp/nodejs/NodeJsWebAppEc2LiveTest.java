@@ -28,7 +28,7 @@ import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.webapp.jboss.JBoss7Server;
 import org.apache.brooklyn.util.http.HttpAsserts;
 import org.testng.annotations.Test;
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * A simple test of installing+running on AWS-EC2, using various OS distros and versions.
  */
-public class NodeJsWebAppEc2LiveTest extends AbstractEc2LiveTest {
+public class NodeJsWebAppEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     @Override
     protected void doTest(Location loc) throws Exception {

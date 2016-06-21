@@ -27,13 +27,13 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.util.collections.MutableMap;
 
 import com.google.common.collect.ImmutableList;
 
-public class KafkaLiveTest extends AbstractEc2LiveTest {
+public class KafkaLiveTest extends AbstractEc2ApplicationLiveTest {
 
     /**
      * Test that can install, start and use a Kafka cluster with two brokers.

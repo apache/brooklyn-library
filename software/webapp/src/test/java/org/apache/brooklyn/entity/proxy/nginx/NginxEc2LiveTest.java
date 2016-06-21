@@ -21,7 +21,7 @@ package org.apache.brooklyn.entity.proxy.nginx;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.WebAppService;
 import org.apache.brooklyn.test.HttpTestUtils;
@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * A simple test of installing+running on AWS-EC2, using various OS distros and versions. 
  */
-public class NginxEc2LiveTest extends AbstractEc2LiveTest {
+public class NginxEc2LiveTest extends AbstractEc2ApplicationLiveTest {
     
     /* FIXME Currently fails on:
      *   test_Debian_5:                   installation of nginx failed

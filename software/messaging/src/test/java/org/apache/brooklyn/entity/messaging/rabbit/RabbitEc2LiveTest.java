@@ -27,7 +27,7 @@ import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.location.cloud.CloudLocationConfig;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.apache.brooklyn.entity.messaging.MessageBroker;
 import org.apache.brooklyn.entity.messaging.amqp.AmqpExchange;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 
-public class RabbitEc2LiveTest extends AbstractEc2LiveTest {
+public class RabbitEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitEc2LiveTest.class);
 

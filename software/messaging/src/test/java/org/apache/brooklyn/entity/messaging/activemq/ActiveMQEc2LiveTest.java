@@ -32,12 +32,12 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.entity.AbstractEc2LiveTest;
+import org.apache.brooklyn.entity.AbstractEc2ApplicationLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 
-public class ActiveMQEc2LiveTest extends AbstractEc2LiveTest {
+public class ActiveMQEc2LiveTest extends AbstractEc2ApplicationLiveTest {
 
     /**
      * Test that can install+start, and use, ActiveMQ.

@@ -43,4 +43,4 @@ services:
     mongodb.download.url: https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.0.6-signed.msi
     mongodb.instance.name: Instance1
   provisioning.properties:
-    required.ports: 27017
+    required.ports: [27017]

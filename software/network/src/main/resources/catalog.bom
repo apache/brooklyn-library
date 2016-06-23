@@ -16,10 +16,11 @@
 # under the License.
 
 brooklyn.catalog:
-    version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
+    version: "0.10.0-SNAPSHOT" # BROOKLYN_VERSION
+    itemType: entity
     items:
     - id: org.apache.brooklyn.entity.network.bind.BindDnsServer
+      description: BIND is an Internet Domain Name Server.
       item:
         type: org.apache.brooklyn.entity.network.bind.BindDnsServer
         name: BIND
-        description: BIND is an Internet Domain Name Server.

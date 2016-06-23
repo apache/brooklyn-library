@@ -20,13 +20,13 @@
 # standalone catalog file
 
 brooklyn.catalog:
-  version: 0.10.0-SNAPSHOT   # BROOKLYN_VERSION
+  version: "0.10.0-SNAPSHOT"   # BROOKLYN_VERSION
   items:
   - id: java-cluster-db-policy-example
+    itemType: template
     name: Elastic Web + DB
     description: Sample elastic Java cluster fronted by nginx with a MySQL backend, including a scaling policy
     iconUrl: http://www.apache.org/foundation/press/kit/poweredBy/Apache_PoweredBy.png
-    itemType: template
     item:
       name: Elastic Web + DB
       services:

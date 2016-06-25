@@ -21,9 +21,11 @@ package org.apache.brooklyn.entity.nosql.riak;
 import java.net.URI;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
-import org.apache.brooklyn.api.location.PortRange;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.annotation.Effector;
@@ -31,16 +33,12 @@ import org.apache.brooklyn.core.annotation.EffectorParam;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.effector.MethodEffector;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.java.UsesJava;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 
 @Catalog(name="Riak Node", description="Riak is a distributed NoSQL key-value data store that offers "
         + "extremely high availability, fault tolerance, operational simplicity and scalability.")
@@ -133,25 +131,16 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
      */
 
     @SetFromFlag("handoffListenerPort")
-    ConfigKey<Integer> HANDOFF_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.handoff.port.internal", "Handoff Listener Port", 8099);
+    ConfigKey<Integer> HANDOFF_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.handoff.port", "Handoff Listener Port", 8099);
 
     @SetFromFlag("epmdListenerPort")
-    ConfigKey<Integer> EPMD_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.epmd.port.internal", "Erlang Port Mapper Daemon Listener Port", 4369);
+    ConfigKey<Integer> EPMD_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.epmd.port", "Erlang Port Mapper Daemon Listener Port", 4369);
 
-    @SetFromFlag("erlangPortRange")
-    ConfigKey<PortRange> ERLANG_PORT_RANGE = ConfigKeys.newConfigKey(PortRange.class, "riak.erlang.portrange.internal", "Erlang Port Range", new PortRanges.LinearPortRange(6000, 7999));
-
-    // TODO Change {@link #ERLANG_PORT_RANGE_START} and {@link #ERLANG_PORT_RANGE_END} to sensors
-
-    /** @deprecated since 0.10.0; use {@link #ERLANG_PORT_RANGE} instead */
-    @Deprecated
     @SetFromFlag("erlangPortRangeStart")
-    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_START = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.start.internal", "Erlang Port Range Start");
+    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_START = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.start", "Erlang Port Range Start");
 
-    /** @deprecated since 0.10.0; use {@link #ERLANG_PORT_RANGE} instead */
-    @Deprecated
     @SetFromFlag("erlangPortRangeEnd")
-    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_END = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.end.internal", "Erlang Port Range End");
+    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_END = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.end", "Erlang Port Range End");
 
     @SetFromFlag("configInternalNetworking")
     ConfigKey<Boolean> CONFIGURE_INTERNAL_NETWORKING = ConfigKeys.newBooleanConfigKey("riak.networking.internal", "Set up internal networking for intra-node communication", Boolean.TRUE);

@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 
 import org.jclouds.net.domain.IpPermission;
@@ -40,7 +39,6 @@ import org.jclouds.net.domain.IpProtocol;
 
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.MachineProvisioningLocation;
-import org.apache.brooklyn.api.location.PortRange;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
@@ -110,11 +108,8 @@ public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
 
     @Override
     protected Collection<Integer> getRequiredOpenPorts() {
-        PortRange erlangPorts = config().get(ERLANG_PORT_RANGE);
         Integer erlangRangeStart = config().get(ERLANG_PORT_RANGE_START);
         Integer erlangRangeEnd = config().get(ERLANG_PORT_RANGE_END);
-        if (erlangRangeStart == null) erlangRangeStart = Iterables.get(erlangPorts, 0);
-        if (erlangRangeEnd == null) erlangRangeEnd = Iterables.getLast(erlangPorts);
         sensors().set(ERLANG_PORT_RANGE_START, erlangRangeStart);
         sensors().set(ERLANG_PORT_RANGE_END, erlangRangeEnd);
 
@@ -135,33 +130,30 @@ public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
         JcloudsMachineLocation machine = (JcloudsMachineLocation) location;
         JcloudsLocationSecurityGroupCustomizer customizer = JcloudsLocationSecurityGroupCustomizer.getInstance(getApplicationId());
 
-        synchronized (getParent()) {
-            String cidr = Cidr.UNIVERSAL.toString(); // TODO configure with a more restrictive CIDR
-            Collection<IpPermission> permissions = MutableList.<IpPermission>builder()
-                    .add(IpPermission.builder()
-                            .ipProtocol(IpProtocol.TCP)
-                            .fromPort(sensors().get(ERLANG_PORT_RANGE_START))
-                            .toPort(sensors().get(ERLANG_PORT_RANGE_END))
-                            .cidrBlock(cidr)
-                            .build())
-                    .add(IpPermission.builder()
-                            .ipProtocol(IpProtocol.TCP)
-                            .fromPort(config().get(HANDOFF_LISTENER_PORT))
-                            .toPort(config().get(HANDOFF_LISTENER_PORT))
-                            .cidrBlock(cidr)
-                            .build())
-                    .add(IpPermission.builder()
-                            .ipProtocol(IpProtocol.TCP)
-                            .fromPort(config().get(EPMD_LISTENER_PORT))
-                            .toPort(config().get(EPMD_LISTENER_PORT))
-                            .cidrBlock(cidr)
-                            .build())
-                     .build();
-            LOG.debug("Applying custom security groups to {}: {}", machine, permissions);
-            customizer.addPermissionsToLocation(machine, permissions);
-        }
+        String cidr = Cidr.UNIVERSAL.toString(); // TODO configure with a more restrictive CIDR
+        Collection<IpPermission> permissions = MutableList.<IpPermission>builder()
+                .add(IpPermission.builder()
+                        .ipProtocol(IpProtocol.TCP)
+                        .fromPort(sensors().get(ERLANG_PORT_RANGE_START))
+                        .toPort(sensors().get(ERLANG_PORT_RANGE_END))
+                        .cidrBlock(cidr)
+                        .build())
+                .add(IpPermission.builder()
+                        .ipProtocol(IpProtocol.TCP)
+                        .fromPort(config().get(HANDOFF_LISTENER_PORT))
+                        .toPort(config().get(HANDOFF_LISTENER_PORT))
+                        .cidrBlock(cidr)
+                        .build())
+                .add(IpPermission.builder()
+                        .ipProtocol(IpProtocol.TCP)
+                        .fromPort(config().get(EPMD_LISTENER_PORT))
+                        .toPort(config().get(EPMD_LISTENER_PORT))
+                        .cidrBlock(cidr)
+                        .build())
+                 .build();
+        LOG.debug("Applying custom security groups to {}: {}", machine, permissions);
+        customizer.addPermissionsToLocation(machine, permissions);
     }
-
 
     @Override
     public void connectSensors() {

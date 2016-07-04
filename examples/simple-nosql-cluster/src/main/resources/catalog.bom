@@ -16,31 +16,38 @@
 # under the License.
 
 brooklyn.catalog:
-    version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
+    version: "0.10.0-SNAPSHOT" # BROOKLYN_VERSION
+    itemType: template
     items:
     - id: org.apache.brooklyn.demo.RiakClusterExample
       item:
-        type: org.apache.brooklyn.demo.RiakClusterExample
+        services:
+        - type: org.apache.brooklyn.demo.RiakClusterExample
     - id: org.apache.brooklyn.demo.CumulusRDFApplication
+      description: CumulusRDF Application on a Tomcat server using a multi-region Cassandra fabric
       item:
-        type: org.apache.brooklyn.demo.CumulusRDFApplication
-        name: Cumulus RDF Application
-        description: CumulusRDF Application on a Tomcat server using a multi-region Cassandra fabric
+        services:
+        - type: org.apache.brooklyn.demo.CumulusRDFApplication
+          name: Cumulus RDF Application
     - id: org.apache.brooklyn.demo.ResilientMongoDbApp
       item:
-        type: org.apache.brooklyn.demo.ResilientMongoDbApp
-        name: Resilient MongoDB
+        services:
+        - type: org.apache.brooklyn.demo.ResilientMongoDbApp
+          name: Resilient MongoDB
     - id: org.apache.brooklyn.demo.StormSampleApp
       item:
-        type: org.apache.brooklyn.demo.StormSampleApp
-        name: Storm Sample App
+        services:
+        - type: org.apache.brooklyn.demo.StormSampleApp
+          name: Storm Sample App
     - id: org.apache.brooklyn.demo.WideAreaCassandraCluster
+      description: Deploy a Cassandra cluster across multiple geographies.
       item:
-        type: org.apache.brooklyn.demo.WideAreaCassandraCluster
-        name: Wide Area Cassandra Cluster Application
-        description: Deploy a Cassandra cluster across multiple geographies.
+        services:
+        - type: org.apache.brooklyn.demo.WideAreaCassandraCluster
+          name: Wide Area Cassandra Cluster Application
     - id: org.apache.brooklyn.demo.HighAvailabilityCassandraCluster
+      description: Deploy a Cassandra cluster with a High Availability architecture.
       item:
-        type: org.apache.brooklyn.demo.HighAvailabilityCassandraCluster
-        name: HA Cassandra Cluster Application
-        description: Deploy a Cassandra cluster with a High Availability architecture.
+        services:
+        - type: org.apache.brooklyn.demo.HighAvailabilityCassandraCluster
+          name: HA Cassandra Cluster Application

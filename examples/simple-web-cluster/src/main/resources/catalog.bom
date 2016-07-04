@@ -16,13 +16,16 @@
 # under the License.
 
 brooklyn.catalog:
-    version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
+    version: "0.10.0-SNAPSHOT" # BROOKLYN_VERSION
+    itemType: template
     items:
     - id: org.apache.brooklyn.demo.NodeJsTodoApplication
       item:
-        type: org.apache.brooklyn.demo.NodeJsTodoApplication
-        name: NodeJS Todo
+        services:
+        - type: org.apache.brooklyn.demo.NodeJsTodoApplication
+          name: NodeJS Todo
     - id: org.apache.brooklyn.demo.WebClusterDatabaseExampleApp
       item:
-        type: org.apache.brooklyn.demo.WebClusterDatabaseExampleApp
-        name: Elastic Java Web + DB
+        services:
+        - type: org.apache.brooklyn.demo.WebClusterDatabaseExampleApp
+          name: Elastic Java Web + DB

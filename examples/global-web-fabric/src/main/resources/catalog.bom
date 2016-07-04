@@ -16,9 +16,11 @@
 # under the License.
 
 brooklyn.catalog:
-    version: 0.10.0-SNAPSHOT # BROOKLYN_VERSION
+    version: "0.10.0-SNAPSHOT" # BROOKLYN_VERSION
+    itemType: template
     items:
     - id: org.apache.brooklyn.demo.GlobalWebFabricExample
       item:
-        type: org.apache.brooklyn.demo.GlobalWebFabricExample
-        name: Global Web Fabric
+        services:
+        - type: org.apache.brooklyn.demo.GlobalWebFabricExample
+          name: Global Web Fabric

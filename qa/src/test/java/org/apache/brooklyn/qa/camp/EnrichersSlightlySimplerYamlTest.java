@@ -33,7 +33,6 @@ import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcess;
 import org.apache.brooklyn.util.collections.CollectionFunctionals;
-import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.math.MathPredicates;
 import org.apache.brooklyn.util.text.StringPredicates;
 import org.slf4j.Logger;
@@ -43,6 +42,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /** Tests some improvements to enricher classes to make them a bit more yaml friendly.
@@ -99,7 +99,7 @@ public class EnrichersSlightlySimplerYamlTest extends AbstractYamlTest {
         log.info("Started "+app+":");
         Entities.dumpInfo(app);
 
-        List<JavaWebAppSoftwareProcess> appservers = MutableList.copyOf(Entities.descendants(app, JavaWebAppSoftwareProcess.class));
+        List<JavaWebAppSoftwareProcess> appservers = ImmutableList.copyOf(Entities.descendantsAndSelf(app, JavaWebAppSoftwareProcess.class));
         Assert.assertEquals(appservers.size(), 3);
         
         EntityInternal srv0 = (EntityInternal) appservers.get(0);

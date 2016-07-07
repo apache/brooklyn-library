@@ -91,25 +91,17 @@ public abstract class JavaWebAppSshDriver extends JavaSoftwareProcessSshDriver i
         return (ssl == null) ? null : ssl.getKeyAlias();
     }
 
+    /**
+     * @deprecated since 0.10.0; please use {@link WebAppServiceMethods#inferBrooklynAccessibleRootUrl(org.apache.brooklyn.api.entity.Entity)}
+     */
+    @Deprecated
     protected String inferRootUrl() {
-        if (isProtocolEnabled("https")) {
-            Integer port = getHttpsPort();
-            checkNotNull(port, "HTTPS_PORT sensors not set; is an acceptable port available?");
-            HostAndPort accessibleAddress = BrooklynAccessUtils.getBrooklynAccessibleAddress(getEntity(), port);
-            return String.format("https://%s:%s/", accessibleAddress.getHostText(), accessibleAddress.getPort());
-        } else if (isProtocolEnabled("http")) {
-            Integer port = getHttpPort();
-            checkNotNull(port, "HTTP_PORT sensors not set; is an acceptable port available?");
-            HostAndPort accessibleAddress = BrooklynAccessUtils.getBrooklynAccessibleAddress(getEntity(), port);
-            return String.format("http://%s:%s/", accessibleAddress.getHostText(), accessibleAddress.getPort());
-        } else {
-            throw new IllegalStateException("HTTP and HTTPS protocols not enabled for "+entity+"; enabled protocols are "+getEnabledProtocols());
-        }
+        return WebAppServiceMethods.inferBrooklynAccessibleRootUrl(entity);
     }
-    
+
     @Override
     public void postLaunch() {
-        String rootUrl = inferRootUrl();
+        String rootUrl = WebAppServiceMethods.inferBrooklynAccessibleRootUrl(entity);
         entity.sensors().set(Attributes.MAIN_URI, URI.create(rootUrl));
         entity.sensors().set(WebAppService.ROOT_URL, rootUrl);
     }

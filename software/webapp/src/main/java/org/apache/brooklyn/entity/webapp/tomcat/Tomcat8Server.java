@@ -30,7 +30,7 @@ import org.apache.brooklyn.util.javalang.JavaClassNames;
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Tomcat instance.
  */
-@Catalog(name="Tomcat Server",
+@Catalog(name="Tomcat 8 Server",
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
         iconUrl="classpath:///tomcat-logo.png")
 @ImplementedBy(Tomcat8ServerImpl.class)

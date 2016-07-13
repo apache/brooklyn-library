@@ -34,7 +34,9 @@ import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 
-@Catalog(name="Monit Node", description="Monit is a free open source utility for managing and monitoring, processes, programs, files, directories and filesystems on a UNIX system")
+@Catalog(name="Monit Node", 
+        description="Monit is a free open source utility for managing and monitoring, processes, programs, files, directories and filesystems on a UNIX system",
+        iconUrl="classpath://monit-logo.png")
 @ImplementedBy(MonitNodeImpl.class)
 public interface MonitNode extends SoftwareProcess, HasShortName {
 

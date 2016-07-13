@@ -36,7 +36,8 @@ import org.apache.brooklyn.util.time.Duration;
 import com.google.common.reflect.TypeToken;
 
 @Catalog(name="Riak Cluster", description="Riak is a distributed NoSQL key-value data store that offers "
-        + "extremely high availability, fault tolerance, operational simplicity and scalability.")
+        + "extremely high availability, fault tolerance, operational simplicity and scalability.",
+        iconUrl="classpath://org/apache/brooklyn/entity/nosql/riak/riak.png")
 @ImplementedBy(RiakClusterImpl.class)
 public interface RiakCluster extends DynamicCluster {
 

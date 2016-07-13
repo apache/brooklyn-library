@@ -39,7 +39,8 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.text.ByteSizeStrings;
 
 @Catalog(name="CouchBase Node", description="Couchbase Server is an open source, distributed (shared-nothing architecture) "
-        + "NoSQL document-oriented database that is optimized for interactive applications.")
+        + "NoSQL document-oriented database that is optimized for interactive applications.",
+        iconUrl="classpath://couchbase-logo.png")
 @ImplementedBy(CouchbaseNodeImpl.class)
 public interface CouchbaseNode extends SoftwareProcess {
 

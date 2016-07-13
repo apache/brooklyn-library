@@ -38,7 +38,8 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
  */
 @Catalog(name="Storm Node", description="Apache Storm is a distributed realtime computation system. "
         + "Storm makes it easy to reliably process unbounded streams of data, doing for realtime processing "
-        + "what Hadoop did for batch processing")
+        + "what Hadoop did for batch processing",
+        iconUrl="classpath:///apache-storm-logo.png")
 @ImplementedBy(StormImpl.class)
 public interface Storm extends SoftwareProcess, UsesJmx {
 

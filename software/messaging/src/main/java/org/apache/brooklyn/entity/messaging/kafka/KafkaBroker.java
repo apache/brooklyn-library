@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.messaging.kafka;
 
+import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
@@ -36,6 +37,7 @@ import org.apache.brooklyn.util.time.Duration;
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Kafka broker instance.
  */
+@Catalog(name="Apache Kafka", iconUrl="classpath:///kafka-logo.png")
 @ImplementedBy(KafkaBrokerImpl.class)
 public interface KafkaBroker extends SoftwareProcess, MessageBroker, UsesJmx, Kafka {
 

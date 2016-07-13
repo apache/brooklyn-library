@@ -39,7 +39,7 @@ import org.apache.brooklyn.util.time.Duration;
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Tomcat instance.
  */
-@Catalog(name="Tomcat Server",
+@Catalog(name="Tomcat 7 Server",
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
         iconUrl="classpath:///tomcat-logo.png")
 @ImplementedBy(TomcatServerImpl.class)

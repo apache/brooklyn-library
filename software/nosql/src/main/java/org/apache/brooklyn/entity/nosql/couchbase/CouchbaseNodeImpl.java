@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.MachineProvisioningLocation;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.api.sensor.SensorEvent;
@@ -107,8 +108,8 @@ public class CouchbaseNodeImpl extends SoftwareProcessImpl implements CouchbaseN
         });
     }
 
-    protected Map<String, Object> obtainProvisioningFlags(@SuppressWarnings("rawtypes") MachineProvisioningLocation location) {
-        ConfigBag result = ConfigBag.newInstance(super.obtainProvisioningFlags(location));
+    protected Map<String, Object> obtainFlagsForLocation(@SuppressWarnings("rawtypes") Location location) {
+        ConfigBag result = ConfigBag.newInstance(super.obtainFlagsForLocation(location));
         result.configure(CloudLocationConfig.OS_64_BIT, true);
         return result.getAllConfig();
     }

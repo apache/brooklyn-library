@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.brooklyn.entity.webapp.WebAppServiceMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
-import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.WebAppService;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableList;
@@ -68,7 +67,7 @@ public class NodeJsWebAppSshDriver extends AbstractSoftwareProcessSshDriver impl
 
     @Override
     public void postLaunch() {
-        String rootUrl = String.format("http://%s:%d/", getHostname(), getHttpPort());
+        String rootUrl = WebAppServiceMethods.inferBrooklynAccessibleRootUrl(entity);
         entity.sensors().set(Attributes.MAIN_URI, URI.create(rootUrl));
         entity.sensors().set(WebAppService.ROOT_URL, rootUrl);
     }

@@ -41,8 +41,11 @@ public class ProxySslConfig implements Serializable {
     public static class Builder {
         @SetFromFlag protected String certificateSourceUrl;
         @SetFromFlag protected String keySourceUrl;
+        @SetFromFlag protected String clientCertificateSourceUrl;
         @SetFromFlag protected String certificateDestination;
         @SetFromFlag protected String keyDestination;
+        @SetFromFlag protected String clientCertificateDestination;
+        @SetFromFlag protected boolean verifyClient = false;
         @SetFromFlag protected boolean targetIsSsl = false;
         @SetFromFlag protected boolean reuseSessions = false;
 
@@ -52,11 +55,20 @@ public class ProxySslConfig implements Serializable {
         public Builder keySourceUrl(String val) {
             keySourceUrl = val; return this;
         }
+        public Builder clientCertificateSourceUrl(String val) {
+            clientCertificateSourceUrl = val; return this;
+        }
         public Builder certificateDestination(String val) {
             certificateDestination = val; return this;
         }
         public Builder keyDestination(String val) {
             keyDestination = val; return this;
+        }
+        public Builder clientCertificateDestination(String val) {
+            clientCertificateDestination = val; return this;
+        }
+        public Builder verifyClient(boolean val) {
+            verifyClient = val; return this;
         }
         public Builder targetIsSsl(boolean val) {
             targetIsSsl = val; return this;
@@ -79,8 +91,11 @@ public class ProxySslConfig implements Serializable {
 
     private String certificateSourceUrl;
     private String keySourceUrl;
+    private String clientCertificateSourceUrl;
     private String certificateDestination;
     private String keyDestination;
+    private String clientCertificateDestination;
+    private boolean verifyClient = false;
     private boolean targetIsSsl = false;
     private boolean reuseSessions = false;
 
@@ -89,8 +104,11 @@ public class ProxySslConfig implements Serializable {
     protected ProxySslConfig(Builder builder) {
         certificateSourceUrl = builder.certificateSourceUrl;
         keySourceUrl = builder.keySourceUrl;
+        clientCertificateSourceUrl = builder.clientCertificateSourceUrl;
         certificateDestination = builder.certificateDestination;
         keyDestination = builder.keyDestination;
+        clientCertificateDestination = builder.clientCertificateDestination;
+        verifyClient = builder.verifyClient;
         targetIsSsl = builder.targetIsSsl;
         reuseSessions = builder.reuseSessions;
     }
@@ -129,6 +147,14 @@ public class ProxySslConfig implements Serializable {
 
     public void setKeySourceUrl(String keySourceUrl) {
         this.keySourceUrl = keySourceUrl;
+    }
+
+    public String getClientCertificateSourceUrl() {
+        return clientCertificateSourceUrl;
+    }
+
+    public void setClientCertificateSourceUrl(String clientCertificateSourceUrl) {
+        this.clientCertificateSourceUrl = clientCertificateSourceUrl;
     }
 
     /**
@@ -171,6 +197,25 @@ public class ProxySslConfig implements Serializable {
         this.keyDestination = keyDestination;
     }
 
+    public String getClientCertificateDestination() {
+        return clientCertificateDestination;
+    }
+
+    public void setClientCertificateDestination(String clientCertificateDestination) {
+        this.clientCertificateDestination = clientCertificateDestination;
+    }
+
+    /**
+     * Whether to verify the client using certificates; default false.
+     */
+    public boolean getVerifyClient() {
+        return verifyClient;
+    }
+
+    public void setVerifyClient(boolean verifyClient) {
+        this.verifyClient = verifyClient;
+    }
+
     /**
      * Whether the downstream server (if mapping) also expects https; default false.
      */
@@ -197,7 +242,8 @@ public class ProxySslConfig implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(certificateSourceUrl, keySourceUrl, certificateDestination, keyDestination, reuseSessions, targetIsSsl);
+        return Objects.hashCode(certificateSourceUrl, keySourceUrl, certificateDestination, keyDestination,
+                clientCertificateSourceUrl, clientCertificateDestination, verifyClient, reuseSessions, targetIsSsl);
     }
 
     @Override
@@ -212,6 +258,9 @@ public class ProxySslConfig implements Serializable {
                 Objects.equal(certificateDestination, other.certificateDestination) &&
                 Objects.equal(keyDestination, other.keyDestination) &&
                 Objects.equal(keySourceUrl, other.keySourceUrl) &&
+                Objects.equal(clientCertificateSourceUrl, other.clientCertificateSourceUrl) &&
+                Objects.equal(clientCertificateDestination, other.clientCertificateDestination) &&
+                Objects.equal(verifyClient, other.verifyClient) &&
                 Objects.equal(reuseSessions, other.reuseSessions) &&
                 Objects.equal(targetIsSsl, other.targetIsSsl);
     }

@@ -268,7 +268,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         app.start(ImmutableList.of(westChildWithLocation, eastChildWithLocationAndWithPrivateHostname));
         publishSensors(2, true, true, true);
 
-        TestEntity problemChild = Entities.descendants(app, TestEntity.class).iterator().next();
+        TestEntity problemChild = Iterables.get(Entities.descendantsAndSelf(app, TestEntity.class), 0);
         assertAttributeEventually(geoDns, AbstractGeoDnsService.TARGETS, CollectionFunctionals.<String>mapSizeEquals(2));
         problemChild.sensors().set(Attributes.SERVICE_STATE_ACTUAL, Lifecycle.ON_FIRE);
         assertAttributeEventually(geoDns, AbstractGeoDnsService.TARGETS, CollectionFunctionals.<String>mapSizeEquals(1));
@@ -284,7 +284,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
 
         assertAttributeEventually(geoDns, AbstractGeoDnsService.TARGETS, CollectionFunctionals.<String>mapSizeEquals(2));
         final Map<String, String> targets = ImmutableMap.copyOf(geoDns.sensors().get(AbstractGeoDnsService.TARGETS));
-        TestEntity problemChild = Entities.descendants(app, TestEntity.class).iterator().next();
+        TestEntity problemChild = Iterables.get(Entities.descendantsAndSelf(app, TestEntity.class), 0);
         problemChild.sensors().set(Attributes.SERVICE_STATE_ACTUAL, Lifecycle.ON_FIRE);
         assertAttributeEqualsContinually(geoDns, AbstractGeoDnsService.TARGETS, targets);
     }

@@ -164,7 +164,7 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
         newApp = (TestApplication) RebindTestUtils.rebind(
             RebindOptions.create().newManagementContext(newManagementContext).classLoader(classLoader));
 
-        NginxController newNginx = Iterables.getOnlyElement(Entities.descendants(newApp, NginxController.class));
+        NginxController newNginx = Iterables.getOnlyElement(Entities.descendantsAndSelf(newApp, NginxController.class));
         
         Collection<Feed> newFeeds = ((EntityInternal)newNginx).feeds().getFeeds();
         LOG.info("feeds after rebind are: "+newFeeds);

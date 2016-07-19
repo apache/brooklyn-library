@@ -107,10 +107,10 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
 
     // NB these two needed for clients to access
     @SetFromFlag("riakWebPort")
-    PortAttributeSensorAndConfigKey RIAK_WEB_PORT = ConfigKeys.newPortSensorAndConfigKey("riak.web.port", "Riak Web Port", "8098+");
+    PortAttributeSensorAndConfigKey RIAK_WEB_PORT = ConfigKeys.newPortSensorAndConfigKey("riak.webPort", "Riak Web Port", "8098+");
 
     @SetFromFlag("riakPbPort")
-    PortAttributeSensorAndConfigKey RIAK_PB_PORT = ConfigKeys.newPortSensorAndConfigKey("riak.pb.port", "Riak Protocol Buffers Port", "8087+");
+    PortAttributeSensorAndConfigKey RIAK_PB_PORT = ConfigKeys.newPortSensorAndConfigKey("riak.pbPort", "Riak Protocol Buffers Port", "8087+");
 
     @SetFromFlag("useHttpMonitoring")
     ConfigKey<Boolean> USE_HTTP_MONITORING = ConfigKeys.newConfigKey("httpMonitoring.enabled", "HTTP(S) monitoring enabled", Boolean.TRUE);
@@ -131,10 +131,10 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
      */
 
     @SetFromFlag("handoffListenerPort")
-    ConfigKey<Integer> HANDOFF_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.handoff.port", "Handoff Listener Port", 8099);
+    AttributeSensorAndConfigKey<Integer, Integer> HANDOFF_LISTENER_PORT = ConfigKeys.newIntegerSensorAndConfigKey("riak.handoff.port", "Handoff Listener Port", 8099);
 
     @SetFromFlag("epmdListenerPort")
-    ConfigKey<Integer> EPMD_LISTENER_PORT = ConfigKeys.newIntegerConfigKey("riak.epmd.port", "Erlang Port Mapper Daemon Listener Port", 4369);
+    AttributeSensorAndConfigKey<Integer, Integer> EPMD_LISTENER_PORT = ConfigKeys.newIntegerSensorAndConfigKey("riak.epmd.port", "Erlang Port Mapper Daemon Listener Port", 4369);
 
     @SetFromFlag("erlangPortRangeStart")
     AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_START = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.start", "Erlang Port Range Start");

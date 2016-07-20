@@ -137,10 +137,10 @@ public interface RiakNode extends SoftwareProcess, UsesJava {
     AttributeSensorAndConfigKey<Integer, Integer> EPMD_LISTENER_PORT = ConfigKeys.newIntegerSensorAndConfigKey("riak.epmd.port", "Erlang Port Mapper Daemon Listener Port", 4369);
 
     @SetFromFlag("erlangPortRangeStart")
-    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_START = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.start", "Erlang Port Range Start");
+    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_START = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.start", "Erlang Port Range Start", 6000);
 
     @SetFromFlag("erlangPortRangeEnd")
-    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_END = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.end", "Erlang Port Range End");
+    AttributeSensorAndConfigKey<Integer, Integer> ERLANG_PORT_RANGE_END = ConfigKeys.newIntegerSensorAndConfigKey("riak.erlang.portrange.end", "Erlang Port Range End", 7999);
 
     @SetFromFlag("configInternalNetworking")
     ConfigKey<Boolean> CONFIGURE_INTERNAL_NETWORKING = ConfigKeys.newBooleanConfigKey("riak.networking.internal", "Set up internal networking for intra-node communication", Boolean.TRUE);

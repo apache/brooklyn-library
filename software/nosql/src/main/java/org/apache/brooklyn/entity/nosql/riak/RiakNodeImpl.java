@@ -113,14 +113,20 @@ public class RiakNodeImpl extends SoftwareProcessImpl implements RiakNode {
         sensors().set(ERLANG_PORT_RANGE_START, erlangRangeStart);
         sensors().set(ERLANG_PORT_RANGE_END, erlangRangeEnd);
 
-        boolean configureInternalNetworking = config().get(CONFIGURE_INTERNAL_NETWORKING);
-        if (configureInternalNetworking) {
-            configureInternalNetworking();
-        }
-
         return super.getRequiredOpenPorts();
     }
 
+    // Called after machine is provisioned, but before the driver tries to install Riak
+    @Override
+    protected void preStart() {
+        super.preStart();
+        
+        boolean configureInternalNetworking = Boolean.TRUE.equals(config().get(CONFIGURE_INTERNAL_NETWORKING));
+        if (configureInternalNetworking) {
+            configureInternalNetworking();
+        }
+    }
+    
     private void configureInternalNetworking() {
         Location location = getDriver().getLocation();
         if (!(location instanceof JcloudsSshMachineLocation)) {

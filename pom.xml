@@ -131,6 +131,7 @@
         
         <module>examples</module>
 
+        <module>karaf</module>
     </modules>
 
 </project>

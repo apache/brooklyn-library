@@ -78,6 +78,7 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             config.append("  }\n");
             config.append("  server {\n");
             config.append(getCodeForServerConfig());
+            appendCodeForProxySSLConfig(nginx.getId(), config, "    ", globalSslConfig);
             config.append("    listen "+nginx.getPort()+";\n");
             if (nginx.getDomain()!=null)
                 config.append("    server_name "+nginx.getDomain()+";\n");
@@ -146,6 +147,7 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             }
             if (localSslConfig != null) {
                 appendSslConfig(domain, config, "    ", localSslConfig, true, true);
+                appendCodeForProxySSLConfig(domain, config, "    ", localSslConfig);
             }
 
             for (UrlMapping mappingInDomain : mappingsByDomain.get(domain)) {
@@ -188,7 +190,7 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
 
     protected String getCodeForServerConfig() {
         // See http://wiki.nginx.org/HttpProxyModule
-        return ""+
+        return "" +
             // this prevents nginx from reporting version number on error pages
             "    server_tokens off;\n"+
 
@@ -201,6 +203,37 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             // http://zeroturnaround.com/labs/wordpress-protips-go-with-a-clustered-approach/#!/
             "    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n"+
             "    proxy_set_header X-Real-IP $remote_addr;\n";
+    }
+
+    protected void appendCodeForProxySSLConfig(String id, StringBuilder out, String prefix, ProxySslConfig ssl) {
+        if (ssl.getTargetIsSsl() && ssl.getVerifyClient()) {
+            // Send 403 if not verified, otherwise pass on the client certificate we received
+            out.append(prefix).append("if ($ssl_client_verify != SUCCESS) { return 403; }\n");
+            out.append(prefix).append("proxy_set_header ssl.client_cert $ssl_client_cert;\n");
+
+            // Use the configured SSL certificate and key for the proxied server
+            String cert;
+            if (Strings.isEmpty(ssl.getCertificateDestination())) {
+                cert = "" + id + ".crt";
+            } else {
+                cert = ssl.getCertificateDestination();
+            }
+            out.append(prefix);
+            out.append("proxy_ssl_certificate " + cert + ";\n");
+
+            String key;
+            if (!Strings.isEmpty(ssl.getKeyDestination())) {
+                key = ssl.getKeyDestination();
+            } else if (!Strings.isEmpty(ssl.getKeySourceUrl())) {
+                key = "" + id + ".key";
+            } else {
+                key = null;
+            }
+            if (key != null) {
+                out.append(prefix);
+                out.append("proxy_ssl_certificate_key " + key + ";\n");
+            }
+        }
     }
 
     protected String getCodeFor404() {
@@ -231,7 +264,6 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             } else {
                 cert = ssl.getCertificateDestination();
             }
-
             out.append(prefix);
             out.append("ssl_certificate " + cert + ";\n");
 
@@ -243,10 +275,24 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             } else {
                 key = null;
             }
-
             if (key != null) {
                 out.append(prefix);
                 out.append("ssl_certificate_key " + key + ";\n");
+            }
+
+            if (ssl.getVerifyClient()) {
+                out.append("ssl_verify_client on;\n");
+
+                String client;
+                if (Strings.isEmpty(ssl.getClientCertificateDestination())) {
+                    client = "" + id + ".cli";
+                } else {
+                    client = ssl.getClientCertificateDestination();
+                }
+                if (client != null) {
+                    out.append(prefix);
+                    out.append("ssl_client_certificate " + client + ";\n");
+                }
             }
 
             out.append("ssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n");

@@ -137,8 +137,6 @@ public interface NginxController extends AbstractController, HasShortName {
 
     Iterable<UrlMapping> getUrlMappings();
 
-    boolean appendSslConfig(String id, StringBuilder out, String prefix, ProxySslConfig ssl, boolean sslBlock, boolean certificateBlock);
-
     AttributeSensor<Boolean> NGINX_URL_ANSWERS_NICELY = Sensors.newBooleanSensor("nginx.url.answers.nicely");
     AttributeSensor<String> PID_FILE = Sensors.newStringSensor("nginx.pid.file", "PID file");
 

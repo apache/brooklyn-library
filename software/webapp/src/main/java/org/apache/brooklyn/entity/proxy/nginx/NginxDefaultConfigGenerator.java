@@ -18,17 +18,16 @@
  */
 package org.apache.brooklyn.entity.proxy.nginx;
 
-import static java.lang.String.format;
-
 import java.util.Collection;
 
-import org.apache.brooklyn.entity.proxy.ProxySslConfig;
-import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+
+import org.apache.brooklyn.entity.proxy.ProxySslConfig;
+import org.apache.brooklyn.util.text.Strings;
 
 /**
  * Generates the {@code server.conf} configuration file using sensors on an {@link NginxController}.
@@ -42,33 +41,37 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
     @Override
     public String generateConfigFile(NginxDriver driver, NginxController nginx) {
         StringBuilder config = new StringBuilder();
-        config.append("\n");
-        config.append(format("pid %s;\n", driver.getPidFile()));
-        config.append("events {\n");
-        config.append("  worker_connections 8196;\n");
-        config.append("}\n");
-        config.append("http {\n");
+        config.append("\n")
+                .append("pid ").append(driver.getPidFile()).append(";\n")
+                .append("events {\n")
+                .append("  worker_connections 8196;\n")
+                .append("}\n")
+                .append("http {\n")
+                .append("  map $http_upgrade $connection_upgrade {\n")
+                .append("    default Upgrade;\n")
+                .append("    ''      close;\n")
+                .append("  }\n");
 
         ProxySslConfig globalSslConfig = nginx.getSslConfig();
 
         if (nginx.isSsl()) {
             verifyConfig(globalSslConfig);
-            appendSslConfig("global", config, "    ", globalSslConfig, true, true);
+            appendSslConfig("global", config, "  ", globalSslConfig, true, true);
         }
 
         // If no servers, then defaults to returning 404
         // TODO Give nicer page back
-        if (nginx.getDomain()!=null || nginx.getServerPoolAddresses() == null || nginx.getServerPoolAddresses().isEmpty()) {
-            config.append("  server {\n");
-            config.append(getCodeForServerConfig());
-            config.append("    listen "+nginx.getPort()+";\n");
-            config.append(getCodeFor404());
-            config.append("  }\n");
+        if (Strings.isNonEmpty(nginx.getDomain()) || nginx.getServerPoolAddresses() == null || nginx.getServerPoolAddresses().isEmpty()) {
+            config.append("  server {\n")
+                    .append(getCodeForServerConfig())
+                    .append("    listen ").append(nginx.getPort()).append(";\n")
+                    .append(getCodeFor404())
+                    .append("  }\n");
         }
 
         // For basic round-robin across the server-pool
         if (nginx.getServerPoolAddresses() != null && nginx.getServerPoolAddresses().size() > 0) {
-            config.append(format("  upstream "+nginx.getId()+" {\n"));
+            config.append("  upstream ").append(nginx.getId()).append(" {\n");
             if (nginx.isSticky()){
                 config.append("    sticky;\n");
             }
@@ -81,11 +84,18 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             if (globalSslConfig != null) {
                 appendCodeForProxySSLConfig(nginx.getId(), config, "    ", globalSslConfig);
             }
-            config.append("    listen "+nginx.getPort()+";\n");
-            if (nginx.getDomain()!=null)
-                config.append("    server_name "+nginx.getDomain()+";\n");
+            config.append("    listen ").append(nginx.getPort()).append(";\n");
+            if (Strings.isNonEmpty(nginx.getDomain())) {
+                config.append("    server_name ").append(nginx.getDomain()).append(";\n");
+            }
             config.append("    location / {\n");
-            config.append("      proxy_pass "+(globalSslConfig != null && globalSslConfig.getTargetIsSsl() ? "https" : "http")+"://"+nginx.getId()+";\n");
+            config.append("      proxy_pass ");
+            if (globalSslConfig != null && globalSslConfig.getTargetIsSsl()) {
+                config.append("https");
+            } else {
+                config.append("http");
+            }
+            config.append("://").append(nginx.getId()).append(";\n");
             config.append("    }\n");
             config.append("  }\n");
         }
@@ -103,43 +113,42 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
         for (UrlMapping um : mappings) {
             Collection<String> addrs = um.getAttribute(UrlMapping.TARGET_ADDRESSES);
             if (addrs != null && addrs.size() > 0) {
-                config.append(format("  upstream "+um.getUniqueLabel()+" {\n"));
+                config.append("  upstream ").append(um.getUniqueLabel()).append(" {\n");
                 if (nginx.isSticky()){
                     config.append("    sticky;\n");
                 }
                 for (String address: addrs) {
-                    config.append("    server "+address+";\n");
+                    config.append("    server ").append(address).append(";\n");
                 }
                 config.append("  }\n");
             }
         }
 
         for (String domain : mappingsByDomain.keySet()) {
-            config.append("  server {\n");
-            config.append(getCodeForServerConfig());
-            config.append("    listen "+nginx.getPort()+";\n");
-            config.append("    server_name "+domain+";\n");
-            boolean hasRoot = false;
+            config.append("  server {\n")
+                    .append(getCodeForServerConfig())
+                    .append("    listen ").append(nginx.getPort()).append(";\n")
+                    .append("    server_name ").append(domain).append(";\n");
 
             // set up SSL
             ProxySslConfig localSslConfig = null;
             for (UrlMapping mappingInDomain : mappingsByDomain.get(domain)) {
                 ProxySslConfig sslConfig = mappingInDomain.getConfig(UrlMapping.SSL_CONFIG);
-                if (sslConfig!=null) {
+                if (sslConfig != null) {
                     verifyConfig(sslConfig);
-                    if (localSslConfig!=null) {
+                    if (localSslConfig != null) {
                         if (localSslConfig.equals(sslConfig)) {
                             //ignore identical config specified on multiple mappings
                         } else {
                             LOG.warn("{} mapping {} provides SSL config for {} when a different config had already been provided by another mapping, ignoring this one",
-                                    new Object[] {this, mappingInDomain, domain});
+                                    new Object[] { this, mappingInDomain, domain });
                         }
-                    } else if (globalSslConfig!=null) {
+                    } else if (globalSslConfig != null) {
                         if (globalSslConfig.equals(sslConfig)) {
                             //ignore identical config specified on multiple mappings
                         } else {
                             LOG.warn("{} mapping {} provides SSL config for {} when a different config had been provided at root nginx scope, ignoring this one",
-                                    new Object[] {this, mappingInDomain, domain});
+                                    new Object[] { this, mappingInDomain, domain });
                         }
                     } else {
                         //new config, is okay
@@ -152,35 +161,42 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
                 appendCodeForProxySSLConfig(domain, config, "    ", localSslConfig);
             }
 
+            boolean hasRoot = false;
             for (UrlMapping mappingInDomain : mappingsByDomain.get(domain)) {
                 // TODO Currently only supports "~" for regex. Could add support for other options,
                 // such as "~*", "^~", literals, etc.
-                boolean isRoot = mappingInDomain.getPath()==null || mappingInDomain.getPath().length()==0 || mappingInDomain.getPath().equals("/");
+                boolean isRoot = Strings.isEmpty(mappingInDomain.getPath()) || mappingInDomain.getPath().equals("/");
                 if (isRoot && hasRoot) {
-                    LOG.warn(""+this+" mapping "+mappingInDomain+" provides a duplicate / proxy, ignoring");
+                    LOG.warn("{} mapping {} provides a duplicate / proxy, ignoring", this, mappingInDomain);
                 } else {
                     hasRoot |= isRoot;
                     String location = isRoot ? "/" : "~ " + mappingInDomain.getPath();
-                    config.append("    location "+location+" {\n");
+                    config.append("    location ").append(location).append(" {\n");
                     Collection<UrlRewriteRule> rewrites = mappingInDomain.getConfig(UrlMapping.REWRITES);
                     if (rewrites != null && rewrites.size() > 0) {
                         for (UrlRewriteRule rule: rewrites) {
-                            config.append("      rewrite \"^"+rule.getFrom()+"$\" \""+rule.getTo()+"\"");
+                            config.append("      rewrite \"^").append(rule.getFrom()).append("$\" \"").append(rule.getTo()).append("\"");
                             if (rule.isBreak()) config.append(" break");
                             config.append(" ;\n");
                         }
                     }
-                    config.append("      proxy_pass "+
-                        (localSslConfig != null && localSslConfig.getTargetIsSsl() ? "https" :
-                         (localSslConfig == null && globalSslConfig != null && globalSslConfig.getTargetIsSsl()) ? "https" :
-                         "http")+
-                        "://"+mappingInDomain.getUniqueLabel()+" ;\n");
+                    config.append("      proxy_pass ");
+                    if (localSslConfig != null && localSslConfig.getTargetIsSsl()) {
+                        config.append("https");
+                    } else if (localSslConfig == null && globalSslConfig != null && globalSslConfig.getTargetIsSsl()) {
+                        config.append("https");
+                    } else {
+                        config.append("http");
+                    }
+                    config.append("://").append(mappingInDomain.getUniqueLabel()).append(" ;\n");
                     config.append("    }\n");
                 }
             }
             if (!hasRoot) {
                 //provide a root block giving 404 if there isn't one for this server
-                config.append("    location / { \n"+getCodeFor404()+"    }\n");
+                config.append("    location / { \n")
+                        .append(getCodeFor404())
+                        .append("    }\n");
             }
             config.append("  }\n");
         }
@@ -192,7 +208,7 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
 
     protected String getCodeForServerConfig() {
         // See http://wiki.nginx.org/HttpProxyModule
-        return "" +
+        return
             // this prevents nginx from reporting version number on error pages
             "    server_tokens off;\n"+
 
@@ -200,6 +216,11 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             // Not using $host, as that causes integration test to fail with a "connection refused" testing
             // url-mappings, at URL "http://localhost:${port}/atC0" (with a trailing slash it does work).
             "    proxy_set_header Host $http_host;\n"+
+
+            // Sets the HTTP protocol version for proxying and include connection upgrade headers
+            "    proxy_http_version 1.1;\n"+
+            "    proxy_set_header Upgrade $http_upgrade;\n"+
+            "    proxy_set_header Connection $connection_upgrade;\n"+
 
             // following added, as recommended for wordpress in:
             // http://zeroturnaround.com/labs/wordpress-protips-go-with-a-clustered-approach/#!/
@@ -216,24 +237,22 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             // Use the configured SSL certificate and key for the proxied server
             String cert;
             if (Strings.isEmpty(ssl.getCertificateDestination())) {
-                cert = "" + id + ".crt";
+                cert = id + ".crt";
             } else {
                 cert = ssl.getCertificateDestination();
             }
-            out.append(prefix);
-            out.append("proxy_ssl_certificate " + cert + ";\n");
+            out.append(prefix).append("proxy_ssl_certificate ").append(cert).append(";\n");
 
             String key;
-            if (!Strings.isEmpty(ssl.getKeyDestination())) {
+            if (Strings.isNonEmpty(ssl.getKeyDestination())) {
                 key = ssl.getKeyDestination();
-            } else if (!Strings.isEmpty(ssl.getKeySourceUrl())) {
-                key = "" + id + ".key";
+            } else if (Strings.isNonEmpty(ssl.getKeySourceUrl())) {
+                key = id + ".key";
             } else {
                 key = null;
             }
             if (key != null) {
-                out.append(prefix);
-                out.append("proxy_ssl_certificate_key " + key + ";\n");
+                out.append(prefix).append("proxy_ssl_certificate_key ").append(key).append(";\n");
             }
         }
     }
@@ -252,52 +271,49 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
                                    boolean sslBlock, boolean certificateBlock) {
         if (ssl == null) return false;
         if (sslBlock) {
-            out.append(prefix);
-            out.append("ssl on;\n");
+            out.append(prefix).append("ssl on;\n");
         }
         if (ssl.getReuseSessions()) {
-            out.append(prefix);
-            out.append("");
+            out.append(prefix).append("proxy_ssl_session_reuse on;\n");
+        } else {
+            out.append(prefix).append("proxy_ssl_session_reuse off;\n");
         }
         if (certificateBlock) {
             String cert;
             if (Strings.isEmpty(ssl.getCertificateDestination())) {
-                cert = "" + id + ".crt";
+                cert = id + ".crt";
             } else {
                 cert = ssl.getCertificateDestination();
             }
-            out.append(prefix);
-            out.append("ssl_certificate " + cert + ";\n");
+            out.append(prefix).append("ssl_certificate ").append(cert).append(";\n");
 
             String key;
             if (!Strings.isEmpty(ssl.getKeyDestination())) {
                 key = ssl.getKeyDestination();
             } else if (!Strings.isEmpty(ssl.getKeySourceUrl())) {
-                key = "" + id + ".key";
+                key = id + ".key";
             } else {
                 key = null;
             }
             if (key != null) {
-                out.append(prefix);
-                out.append("ssl_certificate_key " + key + ";\n");
+                out.append(prefix).append("ssl_certificate_key ").append(key).append(";\n");
             }
 
             if (ssl.getVerifyClient()) {
-                out.append("ssl_verify_client on;\n");
+                out.append(prefix).append("ssl_verify_client on;\n");
 
                 String client;
                 if (Strings.isEmpty(ssl.getClientCertificateDestination())) {
-                    client = "" + id + ".cli";
+                    client = id + ".cli";
                 } else {
                     client = ssl.getClientCertificateDestination();
                 }
                 if (client != null) {
-                    out.append(prefix);
-                    out.append("ssl_client_certificate " + client + ";\n");
+                    out.append(prefix).append("ssl_client_certificate ").append(client).append(";\n");
                 }
             }
 
-            out.append("ssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n");
+            out.append(prefix).append("ssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n");
         }
         return true;
     }

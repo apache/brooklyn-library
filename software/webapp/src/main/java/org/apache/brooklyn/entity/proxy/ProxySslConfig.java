@@ -97,7 +97,7 @@ public class ProxySslConfig implements Serializable {
     private String clientCertificateDestination;
     private boolean verifyClient = false;
     private boolean targetIsSsl = false;
-    private boolean reuseSessions = false;
+    private boolean reuseSessions = true;
 
     public ProxySslConfig() { }
 

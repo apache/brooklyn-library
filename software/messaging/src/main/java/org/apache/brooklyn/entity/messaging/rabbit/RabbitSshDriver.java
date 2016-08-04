@@ -140,7 +140,9 @@ public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements
     public void launch() {
         newScript(MutableMap.of("usePidFile", false), LAUNCHING)
             .body.append(
+                "rm console-out.log || true",
                 "nohup ./sbin/rabbitmq-server > console-out.log 2> console-err.log &",
+                "./sbin/rabbitmqctl wait ${RABBITMQ_PID_FILE}",
                 "for i in {1..60}\n" +
                     "do\n" +
                      "    grep 'Starting broker... completed' console-out.log && exit\n" +
@@ -172,7 +174,7 @@ public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements
     @Override
     public void stop() {
         newScript(MutableMap.of("usePidFile", false), STOPPING)
-                .body.append("./sbin/rabbitmqctl stop")
+                .body.append("./sbin/rabbitmqctl stop ${RABBITMQ_PID_FILE}")
                 .execute();
     }
 

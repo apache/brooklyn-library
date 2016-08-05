@@ -43,6 +43,12 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
 
     private static final Logger LOG = LoggerFactory.getLogger(MySqlNodeImpl.class);
 
+    /** This comes from mysql.cnf
+     * See http://dev.mysql.com/doc/refman/5.6/en/mysql-install-db.html and http://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html
+     * for more details.
+     * */
+    String DEFAULT_USERNAME = "root";
+
     private SshFeed feed;
 
     public MySqlNodeImpl() {
@@ -69,7 +75,7 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
     public MySqlDriver getDriver() {
         return (MySqlDriver) super.getDriver();
     }
-    
+
     @Override
     public void init() {
         super.init();
@@ -88,8 +94,8 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
     protected void connectSensors() {
         super.connectSensors();
         sensors().set(DATASTORE_URL, String.format("mysql://%s:%s/", getAttribute(HOSTNAME), getAttribute(MYSQL_PORT)));
-        
-        /*        
+        sensors().set(USER, getUser());
+        /*
          * TODO status gives us things like:
          *   Uptime: 2427  Threads: 1  Questions: 581  Slow queries: 0  Opens: 53  Flush tables: 1  Open tables: 35  Queries per second avg: 0.239
          * So can extract lots of sensors from that.
@@ -125,7 +131,7 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
             sensors().set(SERVICE_UP, true);
         }
     }
-    
+
     @Override
     protected void disconnectSensors() {
         if (feed != null) feed.stop();
@@ -145,6 +151,10 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
         return result;
     }
 
+    public String getUser() {
+        return DEFAULT_USERNAME;
+    }
+
     public String getPassword() {
         String result = getAttribute(MySqlNode.PASSWORD);
         if (Strings.isBlank(result)) {
@@ -153,7 +163,7 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
         }
         return result;
     }
-    
+
     @Override
     public String getShortName() {
         return "MySQL";

@@ -78,7 +78,9 @@ public class NginxDefaultConfigGenerator implements NginxConfigFileGenerator {
             config.append("  }\n");
             config.append("  server {\n");
             config.append(getCodeForServerConfig());
-            appendCodeForProxySSLConfig(nginx.getId(), config, "    ", globalSslConfig);
+            if (globalSslConfig != null) {
+                appendCodeForProxySSLConfig(nginx.getId(), config, "    ", globalSslConfig);
+            }
             config.append("    listen "+nginx.getPort()+";\n");
             if (nginx.getDomain()!=null)
                 config.append("    server_name "+nginx.getDomain()+";\n");

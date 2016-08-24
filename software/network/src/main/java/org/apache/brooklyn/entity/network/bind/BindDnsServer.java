@@ -135,6 +135,7 @@ public interface BindDnsServer extends SoftwareProcess {
             "bind.records.ptr", "All PTR records for the server, in form address -> name. Entries will be in REVERSE_LOOKUP_CIDR. " +
                     "Entries are guaranteed to have an inverse mapping in A_RECORDS.");
 
+    // NB must be less than 2^32, so just larger than Integer; we use current time mills / 1000
     AttributeSensor<Long> SERIAL = Sensors.newLongSensor(
             "bind.serial", "A serial number guaranteed to be valid for use in a modified domain.zone or reverse.zone file");
 

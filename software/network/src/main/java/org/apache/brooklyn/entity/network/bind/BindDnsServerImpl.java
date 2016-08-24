@@ -112,7 +112,7 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
         sensors().set(PTR_RECORDS, ImmutableMap.<String, String>of());
         sensors().set(ADDRESS_MAPPINGS, ImmutableMultimap.<String, String>of());
         synchronized (serialMutex) {
-            sensors().set(SERIAL, System.currentTimeMillis());
+            sensors().set(SERIAL, System.currentTimeMillis() / 1000);
         }
     }
 
@@ -298,7 +298,12 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
     }
 
     /**
-     * @return A serial number guaranteed to be valid for use in a modified domain.zone or reverse.zone file.
+     * Increments the serial number sensor and returns it.
+     * Increment is so that it is guaranteed to be valid for use in a 
+     * modified domain.zone or reverse.zone file.
+     * <p>
+     * The side-effect is not entirely obvious by the method name but it
+     * makes it easier to use from the freemarker templates which call it!
      */
     public long getSerial() {
         synchronized (serialMutex) {

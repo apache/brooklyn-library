@@ -20,11 +20,6 @@ package org.apache.brooklyn.entity.network.bind;
 
 import java.util.Map;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Multimap;
-import com.google.common.reflect.TypeToken;
-
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.ImplementedBy;
@@ -32,6 +27,7 @@ import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.annotation.Effector;
 import org.apache.brooklyn.core.config.ConfigKeys;
+import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
@@ -39,6 +35,11 @@ import org.apache.brooklyn.entity.group.DynamicGroup;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.net.Cidr;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Multimap;
+import com.google.common.reflect.TypeToken;
 
 /**
  * This sets up a BIND DNS server.
@@ -67,7 +68,15 @@ public interface BindDnsServer extends SoftwareProcess {
 
     @SetFromFlag("hostnameSensor")
     ConfigKey<AttributeSensor<String>> HOSTNAME_SENSOR = ConfigKeys.newConfigKey(new TypeToken<AttributeSensor<String>>() {},
-            "bind.sensor.hostname", "Sensor on managed entities that reports the hostname");
+            "bind.sensor.hostname", "Sensor on managed entities that reports the basename for the hostname");
+
+    @SetFromFlag("addressSensor")
+    ConfigKey<AttributeSensor<String>> ADDRESS_SENSOR = ConfigKeys.newConfigKey(new TypeToken<AttributeSensor<String>>() {},
+            "bind.sensor.address", "Sensor on managed entities that reports the address to register;"
+                + " host.address or host.subnet.address are common choices;"
+                + " blank (deprecated default behaviour) will inspect machines attached to entities"
+                + " but for legacy compatibility only; blueprints should set this");
+            // TODO in future might want to change default to Attributes.ADDRESS (and lose the "inspect machines" default behaviour)
 
     PortAttributeSensorAndConfigKey DNS_PORT =
             new PortAttributeSensorAndConfigKey("bind.port", "BIND DNS port for TCP and UDP", PortRanges.fromString("53"));

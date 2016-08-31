@@ -62,12 +62,15 @@ public interface MySqlNode extends SoftwareProcess, HasShortName, DatastoreCommo
     @SetFromFlag("serverConf")
     MapConfigKey<Object> MYSQL_SERVER_CONF = new MapConfigKey<Object>(
             Object.class, "mysql.server.conf", "Configuration options for mysqld");
-    
+
     ConfigKey<Object> MYSQL_SERVER_CONF_LOWER_CASE_TABLE_NAMES = MYSQL_SERVER_CONF.subKey("lower_case_table_names", "See MySQL guide. Set 1 to ignore case in table names (useful for OS portability)");
-    
+
     @SetFromFlag("serverId")
     ConfigKey<Integer> MYSQL_SERVER_ID = ConfigKeys.newIntegerConfigKey("mysql.server_id", "Corresponds to server_id option", 0);
-    
+
+    @SetFromFlag("user")
+    AttributeSensor USER = Sensors.newStringSensor("mysql.user", "Database admin user (default is `root`)");
+
     @SetFromFlag("password")
     StringAttributeSensorAndConfigKey PASSWORD = new StringAttributeSensorAndConfigKey(
             "mysql.password", "Database admin password (or randomly generated if not set)", null);
@@ -78,7 +81,7 @@ public interface MySqlNode extends SoftwareProcess, HasShortName, DatastoreCommo
 
     @SetFromFlag("generalLog")
     ConfigKey GENERAL_LOG = ConfigKeys.newBooleanConfigKey("mysql.general_log", "Enable general log", false);
-    
+
     /** @deprecated since 0.7.0 use DATASTORE_URL */ @Deprecated
     AttributeSensor<String> MYSQL_URL = DATASTORE_URL;
 

@@ -25,6 +25,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.catalog.CatalogConfig;
 import org.apache.brooklyn.api.entity.EntitySpec;
@@ -39,29 +44,25 @@ import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService;
 import org.apache.brooklyn.entity.group.DynamicRegionsFabric;
 import org.apache.brooklyn.entity.proxy.AbstractController;
-import org.apache.brooklyn.entity.webapp.ElasticJavaWebAppService;
+import org.apache.brooklyn.entity.webapp.DynamicWebAppCluster;
 import org.apache.brooklyn.entity.webapp.JavaWebAppService;
 import org.apache.brooklyn.launcher.BrooklynLauncher;
 import org.apache.brooklyn.util.CommandLineUtil;
 import org.apache.brooklyn.util.core.BrooklynMavenArtifacts;
 import org.apache.brooklyn.util.core.ResourceUtils;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 @Catalog(name="Global Web Fabric",
-description="Deploys a WAR to multiple clusters, showing how Brooklyn fabrics work",
-iconUrl="classpath://brooklyn/demo/glossy-3d-blue-web-icon.png")
+        description="Deploys a WAR to multiple clusters, showing how Brooklyn fabrics work",
+        iconUrl="classpath://brooklyn/demo/glossy-3d-blue-web-icon.png")
 public class GlobalWebFabricExample extends AbstractApplication {
 
     public static final Logger log = LoggerFactory.getLogger(GlobalWebFabricExample.class);
-    
+
     static final List<String> DEFAULT_LOCATIONS = ImmutableList.of(
             "aws-ec2:eu-west-1",
             "aws-ec2:ap-southeast-1",
             "aws-ec2:us-west-1" );
-    
+
     public static final String DEFAULT_WAR_PATH = ResourceUtils.create(GlobalWebFabricExample.class)
         // take this war, from the classpath, or via maven if not on the classpath
         .firstAvailableUrl(
@@ -71,34 +72,32 @@ public class GlobalWebFabricExample extends AbstractApplication {
 
     @CatalogConfig(label="WAR (URL)", priority=2)
     public static final ConfigKey<String> WAR_PATH = ConfigKeys.newConfigKey(
-        "app.war", "URL to the application archive which should be deployed", 
-        DEFAULT_WAR_PATH);    
+        "app.war", "URL to the application archive which should be deployed",
+        DEFAULT_WAR_PATH);
 
     // load-balancer instances must run on some port to work with GeoDNS, port 80 to work without special, so make that default
     // (but included here in case it runs on a different port on all machines, or use a range to work with multiple localhosts)
     @CatalogConfig(label="Proxy server HTTP port")
     public static final PortAttributeSensorAndConfigKey PROXY_HTTP_PORT =
         new PortAttributeSensorAndConfigKey(AbstractController.PROXY_HTTP_PORT, PortRanges.fromInteger(80));
-    
+
     @Override
     public void initApp() {
         StringConfigMap config = getManagementContext().getConfig();
-        
+
         GeoscalingDnsService geoDns = addChild(EntitySpec.create(GeoscalingDnsService.class)
                 .displayName("GeoScaling DNS")
                 .configure("username", checkNotNull(config.getFirst("brooklyn.geoscaling.username"), "username"))
                 .configure("password", checkNotNull(config.getFirst("brooklyn.geoscaling.password"), "password"))
-                .configure("primaryDomainName", checkNotNull(config.getFirst("brooklyn.geoscaling.primaryDomain"), "primaryDomain")) 
+                .configure("primaryDomainName", checkNotNull(config.getFirst("brooklyn.geoscaling.primaryDomain"), "primaryDomain"))
                 .configure("smartSubdomainName", "brooklyn"));
-        
+
         DynamicRegionsFabric webFabric = addChild(EntitySpec.create(DynamicRegionsFabric.class)
                 .displayName("Web Fabric")
-                .configure(DynamicRegionsFabric.FACTORY, new ElasticJavaWebAppService.Factory())
-                
-                //specify the WAR file to use
-                .configure(JavaWebAppService.ROOT_WAR, Entities.getRequiredUrlConfig(this, WAR_PATH)) );
+                .configure(DynamicRegionsFabric.MEMBER_SPEC, EntitySpec.create(DynamicWebAppCluster.class))
+                .configure(JavaWebAppService.ROOT_WAR, Entities.getRequiredUrlConfig(this, WAR_PATH)));
 
-        //tell GeoDNS what to monitor
+        // tell GeoDNS what to monitor
         geoDns.setTargetEntityProvider(webFabric);
     }
 
@@ -112,7 +111,7 @@ public class GlobalWebFabricExample extends AbstractApplication {
                 .webconsolePort(port)
                 .locations(Arrays.asList(locations))
                 .start();
-         
+
         Entities.dumpInfo(launcher.getApplications());
     }
 }

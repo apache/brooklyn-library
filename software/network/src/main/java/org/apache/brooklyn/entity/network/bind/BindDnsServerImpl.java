@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.policy.PolicySpec;
+import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.api.sensor.Sensor;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
@@ -105,6 +106,7 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
         super.init();
         checkNotNull(getConfig(HOSTNAME_SENSOR), "%s requires value for %s", getClass().getName(), HOSTNAME_SENSOR);
         DynamicGroup entities = addChild(EntitySpec.create(DynamicGroup.class)
+                .displayName("BIND-managed entities")
                 .configure(DynamicGroup.ENTITY_FILTER, getEntityFilter()));
         sensors().set(ENTITIES, entities);
         sensors().set(A_RECORDS, ImmutableMap.<String, String>of());
@@ -112,7 +114,7 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
         sensors().set(PTR_RECORDS, ImmutableMap.<String, String>of());
         sensors().set(ADDRESS_MAPPINGS, ImmutableMultimap.<String, String>of());
         synchronized (serialMutex) {
-            sensors().set(SERIAL, System.currentTimeMillis());
+            sensors().set(SERIAL, System.currentTimeMillis() / 1000);
         }
     }
 
@@ -163,7 +165,7 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
 
         policies().add(PolicySpec.create(MemberTrackingPolicy.class)
                 .displayName("Address tracker")
-                .configure(AbstractMembershipTrackingPolicy.SENSORS_TO_TRACK, ImmutableSet.<Sensor<?>>of(getConfig(HOSTNAME_SENSOR)))
+                .configure(AbstractMembershipTrackingPolicy.SENSORS_TO_TRACK, ImmutableSet.<Sensor<?>>of(getConfig(HOSTNAME_SENSOR), getConfig(ADDRESS_SENSOR)))
                 .configure(AbstractMembershipTrackingPolicy.GROUP, getEntities()));
     }
 
@@ -197,11 +199,14 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
             case STOPPING:
             case DESTROYED:
                 return false;
+            default:
+                return input.getAttribute(getConfig(HOSTNAME_SENSOR)) != null;
             }
-            return input.getAttribute(getConfig(HOSTNAME_SENSOR)) != null;
         }
     }
 
+    private transient boolean hasLoggedDeprecationAboutAddressSensor = false;
+    
     public void update() {
         Lifecycle serverState = getAttribute(Attributes.SERVICE_STATE_ACTUAL);
         if (Lifecycle.STOPPED.equals(serverState) || Lifecycle.STOPPING.equals(serverState)
@@ -222,17 +227,35 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
             Multimap<String, String> aRecordToCnames = MultimapBuilder.hashKeys().hashSetValues().build();
             Multimap<String, String> ipToAllNames = MultimapBuilder.hashKeys().hashSetValues().build();
 
-            for (Map.Entry<String, Entity> e : hostnameToEntity.entries()) {
-                String domainName = e.getKey();
-                Maybe<SshMachineLocation> location = Machines.findUniqueMachineLocation(e.getValue().getLocations(), SshMachineLocation.class);
-                if (!location.isPresent()) {
-                    LOG.debug("Member {} of {} does not have an SSH location so will not be configured", e.getValue(), this);
-                    continue;
-                } else if (ipToARecord.inverse().containsKey(domainName)) {
+            for (Map.Entry<String, Entity> entry : hostnameToEntity.entries()) {
+                String domainName = entry.getKey();
+                Entity entity = entry.getValue();
+                
+                String address = null;
+                
+                AttributeSensor<String> addressSensor = getConfig(ADDRESS_SENSOR);
+                if (addressSensor!=null) {
+                    address = entity.getAttribute(addressSensor);
+                    
+                } else {
+                    if (!hasLoggedDeprecationAboutAddressSensor) {
+                        LOG.warn("BIND entity "+this+" is using legacy machine inspection to determine IP address; set the "+ADDRESS_SENSOR.getName()+" config to ensure compatibility with future versions");
+                        hasLoggedDeprecationAboutAddressSensor = true;
+                    }
+                    Maybe<SshMachineLocation> location = Machines.findUniqueMachineLocation(entity.getLocations(), SshMachineLocation.class);
+                    if (!location.isPresent()) {
+                        LOG.debug("Member {} of {} does not have an hostname so will not be configured", entity, this);
+                    } else if (ipToARecord.inverse().containsKey(domainName)) {
+                        // already has a hostname, ignore (could log if domain is different?)
+                    } else {
+                        address = location.get().getAddress().getHostAddress();
+                    }
+                }
+                
+                if (Strings.isBlank(address)) {
                     continue;
                 }
-
-                String address = location.get().getAddress().getHostAddress();
+                
                 ipToAllNames.put(address, domainName);
                 if (!ipToARecord.containsKey(address)) {
                     ipToARecord.put(address, domainName);
@@ -298,7 +321,12 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
     }
 
     /**
-     * @return A serial number guaranteed to be valid for use in a modified domain.zone or reverse.zone file.
+     * Increments the serial number sensor and returns it.
+     * Increment is so that it is guaranteed to be valid for use in a 
+     * modified domain.zone or reverse.zone file.
+     * <p>
+     * The side-effect is not entirely obvious by the method name but it
+     * makes it easier to use from the freemarker templates which call it!
      */
     public long getSerial() {
         synchronized (serialMutex) {

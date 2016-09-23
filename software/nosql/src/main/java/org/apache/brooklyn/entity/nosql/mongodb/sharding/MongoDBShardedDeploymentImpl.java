@@ -96,7 +96,7 @@ public class MongoDBShardedDeploymentImpl extends AbstractEntity implements Mong
             Entities.invokeEffectorList(this, clusters, Startable.START, ImmutableMap.of("locations", locations))
                     .get();
 
-            if (getConfigRaw(MongoDBShardedDeployment.CO_LOCATED_ROUTER_GROUP, true).isPresent()) {
+            if (config().getRaw(MongoDBShardedDeployment.CO_LOCATED_ROUTER_GROUP).isPresent()) {
                 policies().add(PolicySpec.create(ColocatedRouterTrackingPolicy.class)
                         .displayName("Co-located router tracker")
                         .configure("group", getConfig(MongoDBShardedDeployment.CO_LOCATED_ROUTER_GROUP)));

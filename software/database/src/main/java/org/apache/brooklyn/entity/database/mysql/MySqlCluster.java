@@ -38,6 +38,7 @@ import com.google.common.reflect.TypeToken;
 @Catalog(name="MySql Master-Slave cluster", description="Sets up a cluster of MySQL nodes using master-slave relation and binary logging", iconUrl="classpath:///mysql-logo-110x57.png")
 public interface MySqlCluster extends DynamicCluster, HasDatastoreUrl {
     interface MySqlMaster {
+        // TODO these should be on MySqlCluster - no need to have on an interface
         ConfigKey<String> MASTER_CREATION_SCRIPT_CONTENTS = ConfigKeys.newStringConfigKey(
                 "datastore.master.creation.script.contents", "Contents of creation script to initialize the master node after initializing replication");
 

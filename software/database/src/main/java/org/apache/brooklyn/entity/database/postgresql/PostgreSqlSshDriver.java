@@ -19,7 +19,6 @@
 package org.apache.brooklyn.entity.database.postgresql;
 
 import static java.lang.String.format;
-import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
 import static org.apache.brooklyn.util.ssh.BashCommands.alternativesGroup;
 import static org.apache.brooklyn.util.ssh.BashCommands.chainGroup;
 import static org.apache.brooklyn.util.ssh.BashCommands.dontRequireTtyForSudo;
@@ -31,6 +30,7 @@ import static org.apache.brooklyn.util.ssh.BashCommands.installPackage;
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 import static org.apache.brooklyn.util.ssh.BashCommands.sudoAsUser;
 import static org.apache.brooklyn.util.ssh.BashCommands.warn;
+import static org.apache.brooklyn.util.ssh.BashCommands.commandToDownloadUrlAs;
 
 import java.io.File;
 import java.io.IOException;
@@ -226,16 +226,16 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
         }
 
         return chainGroup(
-                INSTALL_CURL,
-                sudo(format("curl http://yum.postgresql.org/%s/redhat/rhel-%s-%s/pgdg-%s%s-%s.noarch.rpm -o pgdg.rpm", majorMinorVersion, osMajorVersion, arch, osName, shortVersion, version)),
+                sudo(commandToDownloadUrlAs(
+                        format("http://yum.postgresql.org/%s/redhat/rhel-%s-%s/pgdg-%s%s-%s.noarch.rpm", majorMinorVersion, osMajorVersion, arch, osName, shortVersion, version),
+                        "pgdg.rpm")),
                 sudo("rpm -Uvh pgdg.rpm")
             );
     }
 
     private String getAptRepository() {
         return chainGroup(
-                INSTALL_CURL,
-                "curl http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | sudo tee -a apt-key add",
+                sudo("apt-key adv --fetch-keys http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc"),
                 "echo \"deb http://apt.postgresql.org/pub/repos/apt/ $(sudo lsb_release --codename --short)-pgdg main\" | sudo tee -a /etc/apt/sources.list.d/postgresql.list"
             );
     }

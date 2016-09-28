@@ -56,7 +56,7 @@ public interface RedisStore extends SoftwareProcess {
             .name("redis.config.templateUrl")
             .description("Template file (in freemarker format) for the redis.conf config file")
             .defaultValue("classpath://org/apache/brooklyn/entity/nosql/redis/redis.conf")
-            .constraint(ResourcePredicates.urlExists())
+            .constraint("required", ResourcePredicates.urlExists())
             .build();
 
     AttributeSensor<Integer> UPTIME = Sensors.newIntegerSensor("redis.uptime", "Redis uptime in seconds");

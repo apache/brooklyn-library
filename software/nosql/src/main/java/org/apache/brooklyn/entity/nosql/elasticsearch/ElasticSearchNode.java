@@ -65,7 +65,7 @@ public interface ElasticSearchNode extends SoftwareProcess, UsesJava, DatastoreM
             .name("elasticsearch.node.template.configuration.url")
             .description("URL where the elasticsearch configuration file (in freemarker format) can be found")
             .defaultValue(null)
-            .constraint(ResourcePredicates.urlIsBlankOrExists())
+            .constraint("required", ResourcePredicates.urlIsBlankOrExists())
             .build();
 
     @SetFromFlag("multicastEnabled")

@@ -56,19 +56,19 @@ public interface GeoscalingDnsService extends AbstractGeoDnsService {
     @SetFromFlag("username")
     ConfigKey<String> GEOSCALING_USERNAME = ConfigKeys.builder(String.class)
             .name("geoscaling.username")
-            .constraint(Predicates.notNull())
+            .constraint("required", Predicates.notNull())
             .build();
 
     @SetFromFlag("password")
     ConfigKey<String> GEOSCALING_PASSWORD = ConfigKeys.builder(String.class)
             .name("geoscaling.password")
-            .constraint(Predicates.notNull())
+            .constraint("required", Predicates.notNull())
             .build();
 
     @SetFromFlag("primaryDomainName")
     ConfigKey<String> GEOSCALING_PRIMARY_DOMAIN_NAME = ConfigKeys.builder(String.class)
             .name("geoscaling.primary.domain.name")
-            .constraint(Predicates.notNull())
+            .constraint("required", Predicates.notNull())
             .build();
 
     @SetFromFlag("smartSubdomainName")

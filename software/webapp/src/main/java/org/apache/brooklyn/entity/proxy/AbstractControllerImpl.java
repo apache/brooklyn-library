@@ -267,14 +267,14 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     }
     
     /** returns URL, if it can be inferred; null otherwise */
-    protected String inferUrl(boolean requireManagementAccessible) {
+    protected String inferUrl(boolean requirePortAccessible) {
         String protocol = checkNotNull(getProtocol(), "no protocol configured");
         String domain = getDomain();
         if (domain != null && domain.startsWith("*.")) {
             domain = domain.replace("*.", ""); // Strip wildcard
         }
         Integer port = checkNotNull(getPort(), "no port configured (the requested port may be in use)");
-        if (requireManagementAccessible) {
+        if (requirePortAccessible) {
             HostAndPort accessible = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, port);
             if (accessible!=null) {
                 domain = accessible.getHostText();
@@ -287,7 +287,7 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     }
 
     protected String inferUrl() {
-        return inferUrl(false);
+        return inferUrl(true);
     }
 
     @Override

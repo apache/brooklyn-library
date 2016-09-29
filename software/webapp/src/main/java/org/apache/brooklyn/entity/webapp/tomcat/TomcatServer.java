@@ -69,7 +69,7 @@ public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasSho
             .name("tomcat.serverxml")
             .description("The file to template and use as the Tomcat process' server.xml")
             .defaultValue(JavaClassNames.resolveClasspathUrl(TomcatServer.class, "server.xml"))
-            .constraint("required", ResourcePredicates.urlExists())
+            .constraint(ResourcePredicates.urlExists())
             .build();
 
     @SetFromFlag("web.xml")
@@ -77,7 +77,7 @@ public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasSho
             .name("tomcat.webxml")
             .description("The file to template and use as the Tomcat process' web.xml")
             .defaultValue(JavaClassNames.resolveClasspathUrl(TomcatServer.class, "web.xml"))
-            .constraint("required", ResourcePredicates.urlExists())
+            .constraint(ResourcePredicates.urlExists())
             .build();
 
     ConfigKey<Duration> START_TIMEOUT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.START_TIMEOUT, Duration.FIVE_MINUTES);

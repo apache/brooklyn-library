@@ -83,7 +83,7 @@ public interface JBoss7Server extends JavaWebAppSoftwareProcess, HasShortName {
             .name("webapp.jboss.templateConfigurationUrl")
             .description("Template file (in freemarker format) for the standalone.xml file")
             .defaultValue(JavaClassNames.resolveClasspathUrl(JBoss7Server.class, "jboss7-standalone.xml"))
-            .constraint("required", ResourcePredicates.urlExists())
+            .constraint(ResourcePredicates.urlExists())
             .build();
 
     @SetFromFlag("managementUser")

@@ -43,7 +43,7 @@ public interface AbstractMongoDBServer extends SoftwareProcess, Entity, MongoDBA
             .name("mongodb.config.url")
             .description("Template file (in freemarker format) for a MongoDB configuration file")
             .defaultValue("classpath://org/apache/brooklyn/entity/nosql/mongodb/default.conf")
-            .constraint("required", ResourcePredicates.urlIsBlankOrExists())
+            .constraint(ResourcePredicates.urlIsBlankOrExists())
             .build();
 
     @SetFromFlag("version")

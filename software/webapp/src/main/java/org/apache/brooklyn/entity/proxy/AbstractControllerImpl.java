@@ -33,6 +33,7 @@ import org.apache.brooklyn.api.mgmt.Task;
 import org.apache.brooklyn.api.policy.Policy;
 import org.apache.brooklyn.api.policy.PolicySpec;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
+import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
@@ -53,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -229,7 +231,15 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     public String getDomain() {
         return getAttribute(DOMAIN_NAME);
     }
-    
+
+    protected String getDomainWithoutWildcard() {
+        String domain = getDomain();
+        if (domain != null && domain.startsWith("*.")) {
+            domain = domain.replace("*.", ""); // Strip wildcard
+        }
+        return domain;
+    }
+
     @Override
     public Integer getPort() {
         if (isSsl())
@@ -265,14 +275,22 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     protected String inferProtocol() {
         return isSsl() ? "https" : "http";
     }
-    
+
+    protected String inferUrlForSubnet() {
+        String domain = getDomainWithoutWildcard();
+        if (domain==null) domain = getAttribute(Attributes.SUBNET_ADDRESS);
+        return inferUrl(domain, Optional.<Integer>absent());
+    }
+
+    protected String inferUrlForPublic() {
+        String domain = getDomainWithoutWildcard();
+        if (domain==null) domain = getAttribute(Attributes.ADDRESS);
+        return inferUrl(domain, Optional.<Integer>absent());
+    }
+
     /** returns URL, if it can be inferred; null otherwise */
     protected String inferUrl(boolean requireManagementAccessible) {
-        String protocol = checkNotNull(getProtocol(), "no protocol configured");
-        String domain = getDomain();
-        if (domain != null && domain.startsWith("*.")) {
-            domain = domain.replace("*.", ""); // Strip wildcard
-        }
+        String domain = getDomainWithoutWildcard();
         Integer port = checkNotNull(getPort(), "no port configured (the requested port may be in use)");
         if (requireManagementAccessible) {
             HostAndPort accessible = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, port);
@@ -282,8 +300,15 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
             }
         }
         if (domain==null) domain = Machines.findSubnetHostname(this).orNull();
-        if (domain==null) return null;
-        return protocol+"://"+domain+":"+port+"/"+getConfig(SERVICE_UP_URL_PATH);
+        return inferUrl(domain, Optional.of(port));
+    }
+
+    protected String inferUrl(String host, Optional<Integer> portOverride) {
+        if (host == null) return null;
+        String protocol = checkNotNull(getProtocol(), "no protocol configured");
+        int port = portOverride.isPresent() ? portOverride.get() : checkNotNull(getPort(), "no port configured (the requested port may be in use)");
+        String path = getConfig(SERVICE_UP_URL_PATH);
+        return protocol+"://"+host+":"+port+"/"+path;
     }
 
     protected String inferUrl() {
@@ -316,10 +341,24 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
         ConfigToAttributes.apply(this);
 
         sensors().set(PROTOCOL, inferProtocol());
-        sensors().set(MAIN_URI, URI.create(inferUrl()));
+        sensors().set(MAIN_URI, createUriOrNull(inferUrl()));
+        sensors().set(MAIN_URI_MAPPED_SUBNET, createUriOrNull(inferUrlForSubnet()));
+        sensors().set(MAIN_URI_MAPPED_PUBLIC, createUriOrNull(inferUrlForPublic()));
         sensors().set(ROOT_URL, inferUrl());
  
         checkNotNull(getPortNumberSensor(), "no sensor configured to infer port number");
+    }
+    
+    private URI createUriOrNull(String val) {
+        if (val == null) {
+            return null;
+        }
+        try {
+            return URI.create(val);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Invalid URI for {}: {}", this, val);
+            return null;
+        }
     }
     
     @Override

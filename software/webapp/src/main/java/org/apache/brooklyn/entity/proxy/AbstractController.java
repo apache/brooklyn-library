@@ -18,12 +18,14 @@
  */
 package org.apache.brooklyn.entity.proxy;
 
+import java.net.URI;
 import java.util.Set;
 
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
+import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.entity.group.Cluster;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
@@ -47,6 +49,9 @@ public interface AbstractController extends SoftwareProcess, LoadBalancer {
     @SetFromFlag("serviceUpUrlPath")
     ConfigKey<String> SERVICE_UP_URL_PATH = ConfigKeys.newStringConfigKey(
             "controller.config.serviceUpUrlPath", "The path that will be appended to the root URL to determine SERVICE_UP", "");
+
+    AttributeSensor<URI> MAIN_URI_MAPPED_SUBNET = Attributes.MAIN_URI_MAPPED_SUBNET;
+    AttributeSensor<URI> MAIN_URI_MAPPED_PUBLIC = Attributes.MAIN_URI_MAPPED_PUBLIC;
 
     boolean isActive();
 

@@ -33,6 +33,7 @@ import org.apache.brooklyn.api.mgmt.Task;
 import org.apache.brooklyn.api.policy.Policy;
 import org.apache.brooklyn.api.policy.PolicySpec;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
+import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
@@ -265,7 +266,33 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     protected String inferProtocol() {
         return isSsl() ? "https" : "http";
     }
-    
+
+    protected String inferUrlSubnet() {
+        String protocol = checkNotNull(getProtocol(), "no protocol configured");
+        String domain = getDomain();
+        if (domain != null && domain.startsWith("*.")) {
+            domain = domain.replace("*.", ""); // Strip wildcard
+        }
+        Integer port = checkNotNull(getPort(), "no port configured (the requested port may be in use)");
+
+        if (domain==null) domain = getAttribute(Attributes.SUBNET_ADDRESS);
+        if (domain==null) return null;
+        return protocol+"://"+domain+":"+port+"/"+getConfig(SERVICE_UP_URL_PATH);
+    }
+
+    protected String inferUrlPublic() {
+        String protocol = checkNotNull(getProtocol(), "no protocol configured");
+        String domain = getDomain();
+        if (domain != null && domain.startsWith("*.")) {
+            domain = domain.replace("*.", ""); // Strip wildcard
+        }
+        Integer port = checkNotNull(getPort(), "no port configured (the requested port may be in use)");
+
+        if (domain==null) domain = getAttribute(Attributes.ADDRESS);
+        if (domain==null) return null;
+        return protocol+"://"+domain+":"+port+"/"+getConfig(SERVICE_UP_URL_PATH);
+    }
+
     /** returns URL, if it can be inferred; null otherwise */
     protected String inferUrl(boolean requireManagementAccessible) {
         String protocol = checkNotNull(getProtocol(), "no protocol configured");
@@ -317,6 +344,8 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
 
         sensors().set(PROTOCOL, inferProtocol());
         sensors().set(MAIN_URI, URI.create(inferUrl()));
+        sensors().set(MAIN_URI_MAPPED_SUBNET, URI.create(inferUrlSubnet()));
+        sensors().set(MAIN_URI_MAPPED_PUBLIC, URI.create(inferUrlPublic()));
         sensors().set(ROOT_URL, inferUrl());
  
         checkNotNull(getPortNumberSensor(), "no sensor configured to infer port number");

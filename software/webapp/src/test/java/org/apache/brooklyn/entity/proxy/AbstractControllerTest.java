@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.net.Inet4Address;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,8 +40,10 @@ import org.apache.brooklyn.api.location.MachineProvisioningLocation;
 import org.apache.brooklyn.api.location.NoMachinesAvailableException;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.factory.EntityFactory;
 import org.apache.brooklyn.core.entity.trait.Startable;
+import org.apache.brooklyn.core.location.PortRanges;
 import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
 import org.apache.brooklyn.core.test.entity.TestEntity;
 import org.apache.brooklyn.core.test.entity.TestEntityImpl;
@@ -300,6 +303,35 @@ public class AbstractControllerTest extends BrooklynAppUnitTestSupport {
         assertTrue(u.isEmpty(), "expected no updates, but got "+u);
     }
 
+    @Test
+    public void testMainUriSensorsCorrectlyComputedWithDomain() throws Exception {
+        URI expected = URI.create("http://mydomain:8000/");
+
+        EntityAsserts.assertAttributeEquals(controller, TrackingAbstractController.MAIN_URI, expected);
+        EntityAsserts.assertAttributeEquals(controller, TrackingAbstractController.MAIN_URI_MAPPED_SUBNET, expected);
+        EntityAsserts.assertAttributeEquals(controller, TrackingAbstractController.MAIN_URI_MAPPED_PUBLIC, expected);
+    }
+
+    @Test
+    public void testMainUriSensorsCorrectlyComputedWithoutDomain() throws Exception {
+        TrackingAbstractController controller2 = app.addChild(EntitySpec.create(TrackingAbstractController.class)
+                .configure(TrackingAbstractController.SERVER_POOL, cluster)
+                .configure(TrackingAbstractController.PROXY_HTTP_PORT, PortRanges.fromInteger(8081))
+                .location(LocationSpec.create(SshMachineLocation.class)
+                        .configure("address", Inet4Address.getByName("1.1.1.1"))
+                        .configure(SshMachineLocation.PRIVATE_ADDRESSES, ImmutableList.of("2.2.2.2"))));
+        controller2.start(ImmutableList.<Location>of());
+
+        // Unfortunately the Attributes.SUBNET_HOSTNAME is 1.1.1.1, because SshMachineLocation does not implement
+        // HasSubnetHostname (see Machines.getSubnetHostname). It falls back to using the machine.getAddress().
+        // Hence the MAIN_URI uses 1.1.1.1.
+        EntityAsserts.assertAttributeEquals(controller2, Attributes.ADDRESS, "1.1.1.1");
+        EntityAsserts.assertAttributeEquals(controller2, Attributes.SUBNET_ADDRESS, "2.2.2.2");
+        EntityAsserts.assertAttributeEquals(controller2, Attributes.MAIN_URI, URI.create("http://1.1.1.1:8081/"));
+        EntityAsserts.assertAttributeEquals(controller2, Attributes.MAIN_URI_MAPPED_PUBLIC, URI.create("http://1.1.1.1:8081/"));
+        EntityAsserts.assertAttributeEquals(controller2, Attributes.MAIN_URI_MAPPED_SUBNET, URI.create("http://2.2.2.2:8081/"));
+    }
+
     private void assertEventuallyAddressesMatchCluster() {
         assertEventuallyAddressesMatch(cluster.getMembers());
     }
@@ -369,6 +401,8 @@ public class AbstractControllerTest extends BrooklynAppUnitTestSupport {
             addLocations(Arrays.asList(machine));
             sensors().set(HOSTNAME, machine.getAddress().getHostName());
             sensors().set(Attributes.SUBNET_HOSTNAME, machine.getAddress().getHostName());
+            sensors().set(Attributes.MAIN_URI_MAPPED_SUBNET, URI.create(machine.getAddress().getHostName()));
+            sensors().set(Attributes.MAIN_URI_MAPPED_PUBLIC, URI.create("http://8.8.8.8:" + sensors().get(HTTP_PORT)));
         }
         public void stop() {
             if (provisioner!=null) provisioner.release((MachineLocation) firstLocation());

@@ -105,6 +105,7 @@ public class BindDnsServerImpl extends SoftwareProcessImpl implements BindDnsSer
     public void init() {
         super.init();
         checkNotNull(getConfig(HOSTNAME_SENSOR), "%s requires value for %s", getClass().getName(), HOSTNAME_SENSOR);
+        checkNotNull(getConfig(ADDRESS_SENSOR), "%s requires value for %s", getClass().getName(), ADDRESS_SENSOR);
         DynamicGroup entities = addChild(EntitySpec.create(DynamicGroup.class)
                 .displayName("BIND-managed entities")
                 .configure(DynamicGroup.ENTITY_FILTER, getEntityFilter()));

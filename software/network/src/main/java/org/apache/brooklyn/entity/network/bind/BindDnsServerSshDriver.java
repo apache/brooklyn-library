@@ -76,7 +76,7 @@ public class BindDnsServerSshDriver extends AbstractSoftwareProcessSshDriver imp
 
         List<String> commands = Lists.newArrayList(
                 BashCommands.sudo("mkdir -p " + getDataDirectory() + " " + getDynamicDirectory() + " " + getOsSupport().getConfigDirectory()),
-                BashCommands.sudo("chown -R bind:bind " + getDataDirectory() + " " + getDynamicDirectory()),
+                BashCommands.sudo("chown -R " + getOsSupport().getUser() + ":" + getOsSupport().getUser() + " " + getDataDirectory() + " " + getDynamicDirectory()),
                 // TODO determine name of ethernet interface if not eth0?
                 IptablesCommands.insertIptablesRule(Chain.INPUT, "eth0", Protocol.UDP, dnsPort, Policy.ACCEPT),
                 IptablesCommands.insertIptablesRule(Chain.INPUT, "eth0", Protocol.TCP, dnsPort, Policy.ACCEPT),

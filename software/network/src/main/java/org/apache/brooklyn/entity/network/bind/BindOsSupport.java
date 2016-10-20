@@ -62,7 +62,7 @@ public class BindOsSupport {
                 "named",
                 "/etc/named.conf",
                 "/var/named",
-                "/var/named/data",
+                "/var/named",
                 "/var/named/named.ca",
                 "/etc/named.iscdlv.key");
     }

@@ -30,6 +30,7 @@ public class BindOsSupport {
     // Likewise would make these package-private and have no getters if Freemarker was ok with it.
     private final String packageName;
     private final String serviceName;
+    private final String user;
     private final String rootConfigFile;
     private final String configDirectory;
     private final String workingDirectory;
@@ -39,6 +40,7 @@ public class BindOsSupport {
     private BindOsSupport(
             String packageName,
             String serviceName,
+            String user,
             String rootConfigFile,
             String configDirectory,
             String workingDirectory,
@@ -46,6 +48,7 @@ public class BindOsSupport {
             String keysFile) {
         this.packageName = packageName;
         this.serviceName = serviceName;
+        this.user = user;
         this.rootConfigFile = rootConfigFile;
         this.configDirectory = configDirectory;
         this.workingDirectory = workingDirectory;
@@ -60,9 +63,10 @@ public class BindOsSupport {
         return new BindOsSupport(
                 "bind",
                 "named",
+                "named",
                 "/etc/named.conf",
                 "/var/named",
-                "/var/named/data",
+                "/var/named",
                 "/var/named/named.ca",
                 "/etc/named.iscdlv.key");
     }
@@ -74,6 +78,7 @@ public class BindOsSupport {
         return new BindOsSupport(
                 "bind9",
                 "bind9",
+                "bind",
                 "/etc/bind/named.conf",
                 "/etc/bind",
                 "/var/cache/bind",
@@ -110,4 +115,7 @@ public class BindOsSupport {
         return keysFile;
     }
 
+    public String getUser() {
+        return user;
+    }
 }

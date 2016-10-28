@@ -71,7 +71,7 @@ public class MonitNodeImpl extends SoftwareProcessImpl implements MonitNode {
             String cmd = getDriver().getStatusCmd();
             feed = SshFeed.builder()
                 .entity(this)
-                .period(Duration.FIVE_SECONDS)
+                .period(config().get(SERVICE_PROCESS_IS_RUNNING_POLL_PERIOD))
                 .machine((SshMachineLocation) machine)
                 .poll(new SshPollConfig<Boolean>(SERVICE_UP)
                     .command(cmd)

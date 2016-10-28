@@ -107,7 +107,7 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
             String cmd = getDriver().getStatusCmd();
             feed = SshFeed.builder()
                     .entity(this)
-                    .period(Duration.FIVE_SECONDS)
+                    .period(config().get(SERVICE_PROCESS_IS_RUNNING_POLL_PERIOD))
                     .machine(machine.get())
                     .poll(new SshPollConfig<Double>(QUERIES_PER_SECOND_FROM_MYSQL)
                             .command(cmd)

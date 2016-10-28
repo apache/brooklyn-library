@@ -30,4 +30,9 @@ public class ZooKeeperNodeImpl extends AbstractZooKeeperImpl implements ZooKeepe
         return ZooKeeperDriver.class;
     }
 
+    @Override
+    public void init() {
+        super.init();
+        sensors().set(ZooKeeperNode.MY_ID, 1);
+    }
 }

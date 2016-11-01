@@ -252,7 +252,7 @@ public class CouchbaseNodeImpl extends SoftwareProcessImpl implements CouchbaseN
         if (toClusterO instanceof String) {
             toClusterO = getManagementContext().lookup((String)toClusterO);
         }
-        Entity toCluster = Tasks.resolving(toClusterO, Entity.class).context(getExecutionContext()).get();
+        Entity toCluster = Tasks.resolving(toClusterO, Entity.class).context(this).get();
 
         String fromBucket = Preconditions.checkNotNull( (String)ruleArgs.getStringKey("fromBucket"), "fromBucket must be specified" );
 

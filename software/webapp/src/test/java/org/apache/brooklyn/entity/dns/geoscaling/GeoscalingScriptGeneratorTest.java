@@ -48,10 +48,22 @@ public class GeoscalingScriptGeneratorTest {
         String generatedScript = GeoscalingScriptGenerator.generateScriptString(generationTime, HOSTS);
         assertTrue(generatedScript.contains("1.2.3"));
         String expectedScript = ResourceUtils.create(this).getResourceAsString("org/apache/brooklyn/entity/dns/geoscaling/expectedScript.php");
-        assertEquals(generatedScript, expectedScript);
+        assertEqualsNormalizedEol(generatedScript, expectedScript);
         //also make sure leading slash is allowed
         String expectedScript2 = ResourceUtils.create(this).getResourceAsString("org/apache/brooklyn/entity/dns/geoscaling/expectedScript.php");
-        assertEquals(generatedScript, expectedScript);
+        assertEqualsNormalizedEol(generatedScript, expectedScript2);
     }
-    
+
+
+    private void assertEqualsNormalizedEol(String generatedScript, String expectedScript) {
+        assertEquals(normalizeEol(generatedScript), normalizeEol(expectedScript));
+    }
+
+
+    private Object normalizeEol(String str) {
+        // Remove CR in case the files are checked out on Windows.
+        // That's just to satisfy the test condition, PHP doesn't care about line endings.
+        return str.replace("\r\n", "\n");
+    }
+
 }

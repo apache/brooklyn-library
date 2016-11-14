@@ -18,16 +18,18 @@
  */
 package org.apache.brooklyn.entity.messaging.zookeeper;
 
+import static org.testng.Assert.assertEquals;
+
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
+import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.net.HostAndPort;
 
 public class ZooKeeperEc2LiveTest extends AbstractEc2LiveTest {
 
@@ -36,10 +38,17 @@ public class ZooKeeperEc2LiveTest extends AbstractEc2LiveTest {
      */
     @Override
     protected void doTest(Location loc) throws Exception {
-        ZooKeeperNode zookeeper = app.createAndManageChild(EntitySpec.create(ZooKeeperNode.class).configure("jmxPort", "31001+"));
+        ZooKeeperNode zookeeper = app.createAndManageChild(EntitySpec.create(ZooKeeperNode.class)
+                .configure("jmxPort", "31001+"));
         app.start(ImmutableList.of(loc));
-        Entities.dumpInfo(zookeeper);
         EntityAsserts.assertAttributeEqualsEventually(zookeeper, Startable.SERVICE_UP, true);
+        HostAndPort conn = HostAndPort.fromParts(
+                zookeeper.sensors().get(ZooKeeperNode.HOSTNAME),
+                zookeeper.sensors().get(ZooKeeperNode.ZOOKEEPER_PORT));
+        try (ZooKeeperTestSupport zkts = new ZooKeeperTestSupport(conn)) {
+            zkts.create("/ec2livetest", "data".getBytes());
+            assertEquals(new String(zkts.get("/ec2livetest")), "data");
+        }
     }
     
     @Test(enabled=false)

@@ -310,7 +310,6 @@ public class MySqlClusterImpl extends DynamicClusterImpl implements MySqlCluster
                 DynamicTasks.submitTopLevelTask(TaskBuilder.builder()
                         .displayName("setup master-slave replication")
                         .body(nodeInitTaskBody)
-                        .tag(BrooklynTaskTags.tagForContextEntity(node))
                         .tag(BrooklynTaskTags.NON_TRANSIENT_TASK_TAG)
                         .build(),
                         node);

@@ -98,6 +98,8 @@ public class ZooKeeperEnsembleLiveTest extends BrooklynAppLiveTestSupport {
 
         EntityAsserts.assertAttributeEqualsEventually(ensemble, ZooKeeperEnsemble.GROUP_SIZE, 3);
         EntityAsserts.assertAttributeEqualsEventually(ensemble, Startable.SERVICE_UP, true);
+        assertNotNull(ensemble.sensors().get(ZooKeeperEnsemble.ZOOKEEPER_ENDPOINTS),
+                "expected value for " + ZooKeeperEnsemble.ZOOKEEPER_ENDPOINTS + " on " + ensemble + ", was null");
         Set<Integer> nodeIds = Sets.newHashSet();
         for (Entity zkNode : ensemble.getMembers()) {
             nodeIds.add(zkNode.config().get(ZooKeeperNode.MY_ID));

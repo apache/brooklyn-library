@@ -54,9 +54,11 @@ public interface ZooKeeperEnsemble extends DynamicCluster {
             .constraint(Predicates.notNull())
             .build();
 
-    @SuppressWarnings("serial")
     AttributeSensor<List<String>> ZOOKEEPER_SERVERS = Sensors.newSensor(new TypeToken<List<String>>() { },
             "zookeeper.servers", "Hostnames to connect to cluster with");
+
+    AttributeSensor<String> ZOOKEEPER_ENDPOINTS = Sensors.newStringSensor(
+            "zookeeper.endpoints", "A comma-separated host:port list of members of the ensemble");
 
     /** @deprecated since 0.10.0 use <code>sensors().get(ZooKeeperEnsemble.CLUSTER_NAME)</code> instead */
     @Deprecated

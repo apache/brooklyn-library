@@ -18,20 +18,16 @@
  */
 package org.apache.brooklyn.entity.zookeeper;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.api.sensor.EnricherSpec;
 import org.apache.brooklyn.core.entity.Attributes;
+import org.apache.brooklyn.enricher.stock.Enrichers;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.group.DynamicClusterImpl;
 import org.apache.brooklyn.util.guava.Suppliers;
 
 import com.google.common.base.Supplier;
-
-import com.google.common.collect.Lists;
 
 public class ZooKeeperEnsembleImpl extends DynamicClusterImpl implements ZooKeeperEnsemble {
 
@@ -57,18 +53,19 @@ public class ZooKeeperEnsembleImpl extends DynamicClusterImpl implements ZooKeep
     @Override
     protected void initEnrichers() {
         super.initEnrichers();
-        
-    }
-    
-    @Override
-    public void start(Collection<? extends Location> locations) {
-        super.start(locations);
-        
-        List<String> zookeeperServers = Lists.newArrayList();
-        for (Entity zookeeper : getMembers()) {
-            zookeeperServers.add(zookeeper.getAttribute(Attributes.HOSTNAME));
-        }
-        sensors().set(ZOOKEEPER_SERVERS, zookeeperServers);
+        EnricherSpec<?> zks = Enrichers.builder()
+                .aggregating(Attributes.MAIN_URI)
+                .publishing(ZOOKEEPER_SERVERS)
+                .fromMembers()
+                .build();
+        EnricherSpec<?> zke = Enrichers.builder()
+                .joining(ZOOKEEPER_SERVERS)
+                .publishing(ZOOKEEPER_ENDPOINTS)
+                .quote(false)
+                .separator(",")
+                .build();
+        enrichers().add(zks);
+        enrichers().add(zke);
     }
 
     /**

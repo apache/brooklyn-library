@@ -26,13 +26,20 @@ public class ZooKeeperNodeImpl extends AbstractZooKeeperImpl implements ZooKeepe
     public ZooKeeperNodeImpl() {}
 
     @Override
+    public void init() {
+        super.init();
+        // MY_ID was changed from a sensor to config. Publish it as a sensor to maintain
+        // compatibility with any blueprints that reference it.
+        Integer myId = config().get(MY_ID);
+        if (myId == null) {
+            throw new NullPointerException("Require value for " + MY_ID.getName());
+        }
+        sensors().set(MY_ID, myId);
+    }
+
+    @Override
     public Class<?> getDriverInterface() {
         return ZooKeeperDriver.class;
     }
 
-    @Override
-    public void init() {
-        super.init();
-        sensors().set(ZooKeeperNode.MY_ID, 1);
-    }
 }

@@ -24,6 +24,7 @@ import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
+import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
@@ -64,12 +65,19 @@ public interface ZooKeeperNode extends SoftwareProcess {
             "zookeeper.configTemplate", "Zookeeper configuration template (in freemarker format)",
             "classpath://org/apache/brooklyn/entity/messaging/zookeeper/zoo.cfg");
 
+    @SetFromFlag("zookeeperId")
+    BasicAttributeSensorAndConfigKey<Integer> MY_ID = new BasicAttributeSensorAndConfigKey<>(Integer.class,
+            "zookeeper.myid", "ZooKeeper node's myId", 1);
+
     AttributeSensor<Long> OUTSTANDING_REQUESTS = Sensors.newLongSensor("zookeeper.outstandingRequests", "Outstanding request count");
     AttributeSensor<Long> PACKETS_RECEIVED = Sensors.newLongSensor("zookeeper.packets.received", "Total packets received");
     AttributeSensor<Long> PACKETS_SENT = Sensors.newLongSensor("zookeeper.packets.sent", "Total packets sent");
-    AttributeSensor<Integer> MY_ID = Sensors.newIntegerSensor("zookeeper.myid", "ZooKeeper node's myId");
 
+    /** @deprecated since 0.10.0 use <code>sensors().get(ZooKeeperNode.ZOOKEEPER_PORT)</code> instead */
+    @Deprecated
     Integer getZookeeperPort();
 
+    /** @deprecated since 0.10.0 use <code>sensors().get(ZooKeeperNode.HOSTNAME)</code> instead */
+    @Deprecated
     String getHostname();
 }

@@ -22,6 +22,7 @@ package org.apache.brooklyn.entity.messaging.zookeeper;
 import java.io.Closeable;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.brooklyn.location.paas.PaasLocation;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
@@ -29,6 +30,8 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.net.HostAndPort;
 
@@ -37,16 +40,20 @@ import com.google.common.net.HostAndPort;
  */
 public class ZooKeeperTestSupport implements Closeable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperTestSupport.class);
     private final ZooKeeper zk;
     private final CountDownLatch connSignal = new CountDownLatch(1);
 
-    public ZooKeeperTestSupport(HostAndPort hostAndPort) throws Exception {
+    public ZooKeeperTestSupport(final HostAndPort hostAndPort) throws Exception {
         final int sessionTimeout = 3000;
         zk = new ZooKeeper(hostAndPort.toString(), sessionTimeout, new Watcher() {
             @Override
             public void process(WatchedEvent event) {
                 if (event.getState() == Event.KeeperState.SyncConnected) {
+                    LOG.debug("Connected to ZooKeeper at {}", hostAndPort);
                     connSignal.countDown();
+                } else {
+                    LOG.info("WatchedEvent at {}: {}", hostAndPort, event.getState());
                 }
             }
         });

@@ -54,8 +54,8 @@ public class ZooKeeperSshDriver extends JavaSoftwareProcessSshDriver implements 
         return entity.getConfig(ZooKeeperNode.ZOOKEEPER_CONFIG_TEMPLATE);
     }
 
-    protected int getMyId() {
-        return entity.getAttribute(ZooKeeperNode.MY_ID);
+    protected Integer getMyId() {
+        return entity.config().get(ZooKeeperNode.MY_ID);
     }
 
     // FIXME All for one, and one for all! If any node fails then we're stuck waiting for its hostname/port forever.
@@ -64,16 +64,19 @@ public class ZooKeeperSshDriver extends JavaSoftwareProcessSshDriver implements 
     public List<ZooKeeperServerConfig> getZookeeperServers() throws ExecutionException, InterruptedException {
         List<ZooKeeperServerConfig> result = Lists.newArrayList();
 
-        if (entity.getParent().getClass().isAssignableFrom(ZooKeeperEnsemble.class)) {
+        if (entity.getParent() instanceof ZooKeeperEnsemble) {
             ZooKeeperEnsemble ensemble = (ZooKeeperEnsemble) entity.getParent();
 
             for (Entity member : ensemble.getMembers()) {
-                Integer myid = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.MY_ID).get();
+                Integer memberId = member.config().get(ZooKeeperNode.MY_ID);
+                if (memberId == null) {
+                    throw new IllegalStateException(member + " has null value for " + ZooKeeperNode.MY_ID);
+                }
                 String hostname = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.HOSTNAME).get();
                 Integer port = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.ZOOKEEPER_PORT).get();
                 Integer leaderPort = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.ZOOKEEPER_LEADER_PORT).get();
                 Integer electionPort = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.ZOOKEEPER_ELECTION_PORT).get();
-                result.add(new ZooKeeperServerConfig(myid, hostname, port, leaderPort, electionPort));
+                result.add(new ZooKeeperServerConfig(memberId, hostname, port, leaderPort, electionPort));
             }
         }
 

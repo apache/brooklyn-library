@@ -94,9 +94,9 @@ public abstract class AbstractZooKeeperImpl extends SoftwareProcessImpl implemen
 
     @Override
     public void disconnectSensors() {
-        super.disconnectSensors();
-        disconnectServiceUpIsRunning();
         if (jmxFeed != null) jmxFeed.stop();
+        disconnectServiceUpIsRunning();
+        super.disconnectSensors();
     }
 
     @Override

@@ -29,7 +29,10 @@ import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
+import org.apache.brooklyn.util.guava.Suppliers;
 
+import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.reflect.TypeToken;
 
 @Catalog(name="ZooKeeper ensemble", description="A cluster of ZooKeeper servers. "
@@ -38,15 +41,26 @@ import com.google.common.reflect.TypeToken;
 public interface ZooKeeperEnsemble extends DynamicCluster {
 
     @SetFromFlag("clusterName")
-    BasicAttributeSensorAndConfigKey<String> CLUSTER_NAME = new BasicAttributeSensorAndConfigKey<String>(String
-            .class, "zookeeper.cluster.name", "Name of the Zookeeper cluster", "BrooklynZookeeperCluster");
+    BasicAttributeSensorAndConfigKey<String> CLUSTER_NAME = new BasicAttributeSensorAndConfigKey<String>(String.class,
+            "zookeeper.cluster.name", "Name of the Zookeeper cluster", "BrooklynZookeeperCluster");
 
     @SetFromFlag("initialSize")
-    public static final ConfigKey<Integer> INITIAL_SIZE = ConfigKeys.newConfigKeyWithDefault(DynamicCluster.INITIAL_SIZE, 3);
+    ConfigKey<Integer> INITIAL_SIZE = ConfigKeys.newConfigKeyWithDefault(DynamicCluster.INITIAL_SIZE, 3);
 
-    @SuppressWarnings("serial")
+    ConfigKey<Supplier<Integer>> NODE_ID_SUPPLIER = ConfigKeys.builder(new TypeToken<Supplier<Integer>>() {})
+            .name("zookeeper.nodeId.supplier")
+            .description("Supplies values for members id in zoo.cfg")
+            .defaultValue(Suppliers.incrementing())
+            .constraint(Predicates.notNull())
+            .build();
+
     AttributeSensor<List<String>> ZOOKEEPER_SERVERS = Sensors.newSensor(new TypeToken<List<String>>() { },
             "zookeeper.servers", "Hostnames to connect to cluster with");
 
+    AttributeSensor<String> ZOOKEEPER_ENDPOINTS = Sensors.newStringSensor(
+            "zookeeper.endpoints", "A comma-separated host:port list of members of the ensemble");
+
+    /** @deprecated since 0.10.0 use <code>sensors().get(ZooKeeperEnsemble.CLUSTER_NAME)</code> instead */
+    @Deprecated
     String getClusterName();
 }

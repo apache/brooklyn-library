@@ -18,38 +18,31 @@
  */
 package org.apache.brooklyn.entity.zookeeper;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.api.policy.PolicySpec;
+import org.apache.brooklyn.api.sensor.EnricherSpec;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.EntityInternal;
+import org.apache.brooklyn.enricher.stock.Enrichers;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.group.DynamicClusterImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.brooklyn.util.guava.Suppliers;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Supplier;
 
 public class ZooKeeperEnsembleImpl extends DynamicClusterImpl implements ZooKeeperEnsemble {
-
-    private static final Logger log = LoggerFactory.getLogger(ZooKeeperEnsembleImpl.class);
-    private static final AtomicInteger myId = new AtomicInteger();
-    
-    private MemberTrackingPolicy policy;
 
     public ZooKeeperEnsembleImpl() {}
 
     /**
      * Sets the default {@link #MEMBER_SPEC} to describe the ZooKeeper nodes.
+     * Overwrites any value configured for {@link ZooKeeperNode#MY_ID} to use
+     * the value given by {@link ZooKeeperEnsemble#NODE_ID_SUPPLIER}.
      */
     @Override
     protected EntitySpec<?> getMemberSpec() {
-        return getConfig(MEMBER_SPEC, EntitySpec.create(ZooKeeperNode.class));
+        EntitySpec<?> spec = getConfig(MEMBER_SPEC, EntitySpec.create(ZooKeeperNode.class));
+        spec.configure(ZooKeeperNode.MY_ID, config().get(ZooKeeperEnsemble.NODE_ID_SUPPLIER).get());
+        return spec;
     }
 
     @Override
@@ -58,47 +51,48 @@ public class ZooKeeperEnsembleImpl extends DynamicClusterImpl implements ZooKeep
     }
 
     @Override
-    public void init() {
-        log.info("Initializing the ZooKeeper Ensemble");
-        super.init();
-
-        policy = policies().add(PolicySpec.create(MemberTrackingPolicy.class)
-                .displayName("Members tracker")
-                .configure("group", this));
+    protected void initEnrichers() {
+        super.initEnrichers();
+        EnricherSpec<?> zks = Enrichers.builder()
+                .aggregating(Attributes.MAIN_URI)
+                .publishing(ZOOKEEPER_SERVERS)
+                .fromMembers()
+                .build();
+        EnricherSpec<?> zke = Enrichers.builder()
+                .joining(ZOOKEEPER_SERVERS)
+                .publishing(ZOOKEEPER_ENDPOINTS)
+                .quote(false)
+                .separator(",")
+                .build();
+        enrichers().add(zks);
+        enrichers().add(zke);
     }
 
-    public static class MemberTrackingPolicy extends AbstractMembershipTrackingPolicy {
-        @Override
-        protected void onEntityChange(Entity member) {
-        }
+    /**
+     * @deprecated since 0.10.0 class is unused but kept for persistence backwards compatibility
+     */
+    @Deprecated
+    private static class MemberTrackingPolicy extends AbstractMembershipTrackingPolicy {
+        private final Object[] mutex = new Object[0];
 
         @Override
         protected void onEntityAdded(Entity member) {
-            if (member.getAttribute(ZooKeeperNode.MY_ID) == null) {
-                ((EntityInternal) member).sensors().set(ZooKeeperNode.MY_ID, myId.incrementAndGet());
+            if (member.config().get(ZooKeeperNode.MY_ID) == null) {
+                Supplier<Integer> id;
+                synchronized (mutex) {
+                    // Entities may not have been created with NODE_ID_SUPPLIER, so create it if
+                    // it's not there. We can't provide any good guarantees about what number to
+                    // start with, but then again the previous version of the entity gave no
+                    // guarantee either.
+                    id = entity.config().get(ZooKeeperEnsemble.NODE_ID_SUPPLIER);
+                    if (id == null) {
+                        id = Suppliers.incrementing();
+                        entity.config().set(ZooKeeperEnsemble.NODE_ID_SUPPLIER, id);
+                    }
+                }
+                member.config().set(ZooKeeperNode.MY_ID, id.get());
             }
         }
-
-        @Override
-        protected void onEntityRemoved(Entity member) {
-        }
-    };
-
-    @Override
-    protected void initEnrichers() {
-        super.initEnrichers();
-        
-    }
-    
-    @Override
-    public void start(Collection<? extends Location> locations) {
-        super.start(locations);
-        
-        List<String> zookeeperServers = Lists.newArrayList();
-        for (Entity zookeeper : getMembers()) {
-            zookeeperServers.add(zookeeper.getAttribute(Attributes.HOSTNAME));
-        }
-        sensors().set(ZOOKEEPER_SERVERS, zookeeperServers);
     }
 
 }

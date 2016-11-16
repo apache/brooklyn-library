@@ -18,33 +18,39 @@
  */
 package org.apache.brooklyn.entity.messaging.zookeeper;
 
-import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble;
-import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.Uninterruptibles;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.entity.Entities;
+import org.apache.brooklyn.core.entity.EntityAsserts;
+import org.apache.brooklyn.core.entity.trait.Startable;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
+import org.apache.brooklyn.entity.group.DynamicCluster;
+import org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble;
+import org.apache.brooklyn.entity.zookeeper.ZooKeeperNode;
+import org.apache.brooklyn.test.Asserts;
+import org.apache.brooklyn.util.exceptions.Exceptions;
+import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import java.net.Socket;
-import java.util.concurrent.TimeUnit;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.common.net.HostAndPort;
 
 /**
  * A live test of the {@link org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble} entity.
@@ -52,29 +58,28 @@ import static org.testng.Assert.assertTrue;
  * Tests that a 3 node cluster can be started on Amazon EC2 and data written on one {@link org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble}
  * can be read from another, using the Astyanax API.
  */
-public class ZooKeeperEnsembleLiveTest {
+public class ZooKeeperEnsembleLiveTest extends BrooklynAppLiveTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(ZooKeeperEnsembleLiveTest.class);
-    
-    private String provider = 
-            "gce-europe-west1";
-//            "aws-ec2:eu-west-1";
-//            "named:hpcloud-compute-at";
-//            "localhost";
+    private static final String DEFAULT_LOCATION = "jclouds:aws-ec2:eu-west-1";
 
-    protected TestApplication app;
-    protected Location testLocation;
-    protected ZooKeeperEnsemble cluster;
+    private Location testLocation;
+    private String locationSpec;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setup() {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
-        testLocation = app.getManagementContext().getLocationRegistry().getLocationManaged(provider);
+    @BeforeClass(alwaysRun = true)
+    @Parameters({"locationSpec"})
+    public void setLocationSpec(@Optional String locationSpec) {
+        this.locationSpec = !Strings.isBlank(locationSpec)
+                            ? locationSpec
+                            : DEFAULT_LOCATION;
+        log.info("Running {} with in {}", this, this.locationSpec);
     }
 
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() {
-        Entities.destroyAll(app.getManagementContext());
+    @Override
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() throws Exception {
+        super.setUp();
+        testLocation = app.getManagementContext().getLocationRegistry().getLocationManaged(locationSpec);
     }
 
     /**
@@ -82,46 +87,61 @@ public class ZooKeeperEnsembleLiveTest {
      */
     @Test(groups = "Live")
     public void testStartUpConnectAndResize() throws Exception {
-        try {
-            cluster = app.createAndManageChild(EntitySpec.create(ZooKeeperEnsemble.class)
-                    .configure("initialSize", 3)
-                    .configure("clusterName", "ZooKeeperEnsembleLiveTest"));
-            assertEquals(cluster.getCurrentSize().intValue(), 0);
+        final String zkDataPath = "/ensembletest";
+        final int initialSize = 3;
+        ZooKeeperEnsemble ensemble = app.createAndManageChild(EntitySpec.create(ZooKeeperEnsemble.class)
+                .configure(DynamicCluster.INITIAL_SIZE, initialSize)
+                .configure(ZooKeeperEnsemble.CLUSTER_NAME, "ZooKeeperEnsembleLiveTest"));
 
-            app.start(ImmutableList.of(testLocation));
+        app.start(ImmutableList.of(testLocation));
+        Entities.dumpInfo(app);
 
-            EntityAsserts.assertAttributeEqualsEventually(cluster, ZooKeeperEnsemble.GROUP_SIZE, 3);
-            Entities.dumpInfo(app);
+        EntityAsserts.assertAttributeEqualsEventually(ensemble, ZooKeeperEnsemble.GROUP_SIZE, 3);
+        EntityAsserts.assertAttributeEqualsEventually(ensemble, Startable.SERVICE_UP, true);
+        assertNotNull(ensemble.sensors().get(ZooKeeperEnsemble.ZOOKEEPER_ENDPOINTS),
+                "expected value for " + ZooKeeperEnsemble.ZOOKEEPER_ENDPOINTS + " on " + ensemble + ", was null");
+        Set<Integer> nodeIds = Sets.newHashSet();
+        for (Entity zkNode : ensemble.getMembers()) {
+            nodeIds.add(zkNode.config().get(ZooKeeperNode.MY_ID));
+        }
+        assertEquals(nodeIds.size(), initialSize, "expected " + initialSize + " node ids, found " + Iterables.toString(nodeIds));
 
-            EntityAsserts.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
-            for(Entity zkNode : cluster.getMembers()) {
-                assertTrue(isSocketOpen((ZooKeeperNode) zkNode));
-            }
-            cluster.resize(1);
-            EntityAsserts.assertAttributeEqualsEventually(cluster, ZooKeeperEnsemble.GROUP_SIZE, 1);
-            Entities.dumpInfo(app);
-            EntityAsserts.assertAttributeEqualsEventually(cluster, Startable.SERVICE_UP, true);
-            for (Entity zkNode : cluster.getMembers()) {
-                assertTrue(isSocketOpen((ZooKeeperNode) zkNode));
-            }
-        } catch (Throwable e) {
-            throw Throwables.propagate(e);
+        // Write data to one and read from the others.
+        List<String> servers = ensemble.sensors().get(ZooKeeperEnsemble.ZOOKEEPER_SERVERS);
+        assertNotNull(servers, "value for sensor should not be null: " + ZooKeeperEnsemble.ZOOKEEPER_SERVERS);
+        assertEquals(servers.size(), initialSize, "expected " + initialSize + " entries in " + servers);
+
+        // Write to one
+        String firstServer = servers.get(0);
+        HostAndPort conn = HostAndPort.fromString(firstServer);
+        log.info("Writing data to {}", conn);
+        try (ZooKeeperTestSupport zkts = new ZooKeeperTestSupport(conn)) {
+            zkts.create(zkDataPath, "data".getBytes());
+            assertEquals(new String(zkts.get(zkDataPath)), "data");
+        }
+
+        // And read from the others.
+        for (int i = 1; i < servers.size(); i++) {
+            conn = HostAndPort.fromString(servers.get(i));
+            log.info("Asserting that data can be read from {}", conn);
+            assertPathDataEventually(conn, zkDataPath, "data");
         }
     }
 
-    protected static boolean isSocketOpen(ZooKeeperNode node) {
-        int attempt = 0, maxAttempts = 20;
-        while(attempt < maxAttempts) {
-            try {
-                Socket s = new Socket(node.getAttribute(Attributes.HOSTNAME), node.getZookeeperPort());
-                s.close();
-                return true;
-            } catch (Exception e) {
-                attempt++;
-            }
-            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+    protected void assertPathDataEventually(HostAndPort hostAndPort, final String path, String expected) throws Exception {
+        try (ZooKeeperTestSupport zkts = new ZooKeeperTestSupport(hostAndPort)) {
+            final Supplier<String> dataSupplier = new Supplier<String>() {
+                @Override
+                public String get() {
+                    try {
+                        return new String(zkts.get(path));
+                    } catch (Exception e) {
+                        throw Exceptions.propagate(e);
+                    }
+                }
+            };
+            Asserts.eventually(dataSupplier, Predicates.equalTo(expected));
         }
-        return false;
     }
-    
+
 }

@@ -54,7 +54,7 @@ public class ZooKeeperEnsembleImpl extends DynamicClusterImpl implements ZooKeep
     protected void initEnrichers() {
         super.initEnrichers();
         EnricherSpec<?> zks = Enrichers.builder()
-                .aggregating(Attributes.MAIN_URI)
+                .aggregating(ZooKeeperNode.ZOOKEEPER_ENDPOINT)
                 .publishing(ZOOKEEPER_SERVERS)
                 .fromMembers()
                 .build();

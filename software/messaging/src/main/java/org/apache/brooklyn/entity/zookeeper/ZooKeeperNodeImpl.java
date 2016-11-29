@@ -53,6 +53,7 @@ public class ZooKeeperNodeImpl extends AbstractZooKeeperImpl implements ZooKeepe
     protected void postStart() {
         super.postStart();
         HostAndPort hap = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, sensors().get(ZOOKEEPER_PORT));
+        sensors().set(ZooKeeperNode.ZOOKEEPER_ENDPOINT, hap.toString());
         sensors().set(Attributes.MAIN_URI, URI.create("zk://" +hap.toString()));
     }
 }

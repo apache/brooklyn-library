@@ -73,6 +73,9 @@ public interface ZooKeeperNode extends SoftwareProcess {
     AttributeSensor<Long> PACKETS_RECEIVED = Sensors.newLongSensor("zookeeper.packets.received", "Total packets received");
     AttributeSensor<Long> PACKETS_SENT = Sensors.newLongSensor("zookeeper.packets.sent", "Total packets sent");
 
+    AttributeSensor<String> ZOOKEEPER_ENDPOINT = Sensors.newStringSensor(
+            "zookeeper.endpoint", "The host:port of the node");
+
     /** @deprecated since 0.10.0 use <code>sensors().get(ZooKeeperNode.ZOOKEEPER_PORT)</code> instead */
     @Deprecated
     Integer getZookeeperPort();

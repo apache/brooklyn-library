@@ -129,6 +129,7 @@
         <module>qa</module>
         
         <module>examples</module>
+        <module>brooklyn-validations</module>
 
         <module>karaf</module>
     </modules>

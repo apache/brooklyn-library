@@ -73,7 +73,7 @@ public class SaltHighstate {
 
 
     private static String adaptForSaltYamlTypes(String description) {
-        return description.replaceAll("!!python/unicode", "!!java.lang.String");
+        return description.replaceAll("!!python/unicode\\s+", "");
     }
 
     @SuppressWarnings("unchecked")

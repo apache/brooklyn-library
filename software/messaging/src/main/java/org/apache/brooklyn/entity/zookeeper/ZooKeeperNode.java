@@ -46,7 +46,7 @@ public interface ZooKeeperNode extends SoftwareProcess {
 
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "http://apache.org/dyn/closer.cgi?filename=zookeeper/zookeeper-${version}/zookeeper-${version}.tar.gz&action=download");
+            "http://apache.org/dyn/closer.cgi?action=download&filename=zookeeper/zookeeper-${version}/zookeeper-${version}.tar.gz");
 
     @SetFromFlag("zookeeperPort")
     PortAttributeSensorAndConfigKey ZOOKEEPER_PORT = ConfigKeys.newPortSensorAndConfigKey("zookeeper.port", "Zookeeper port", "2181+");

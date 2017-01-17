@@ -24,7 +24,7 @@ body{
 	margin: 0;
 }
 #main{
-	background: url('../images/BrooklynBridge3Large.png')fixed;
+	background: url('../images/BrooklynBridge3Large.png');
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;

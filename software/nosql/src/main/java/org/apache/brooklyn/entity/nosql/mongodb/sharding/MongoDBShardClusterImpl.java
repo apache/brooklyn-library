@@ -75,6 +75,7 @@ public class MongoDBShardClusterImpl extends DynamicClusterImpl implements Mongo
     @Override
     public void start(Collection<? extends Location> locations) {
         subscriptions().subscribeToMembers(this, Startable.SERVICE_UP, new SensorEventListener<Boolean>() {
+            @Override
             public void onEvent(SensorEvent<Boolean> event) {
                 addShards();
             }
@@ -84,6 +85,7 @@ public class MongoDBShardClusterImpl extends DynamicClusterImpl implements Mongo
         
         MongoDBRouterCluster routers = getParent().getAttribute(MongoDBShardedDeployment.ROUTER_CLUSTER);
         subscriptions().subscribe(routers, MongoDBRouterCluster.ANY_RUNNING_ROUTER, new SensorEventListener<MongoDBRouter>() {
+            @Override
             public void onEvent(SensorEvent<MongoDBRouter> event) {
                 if (event.getValue() != null)
                     addShards();

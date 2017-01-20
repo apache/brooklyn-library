@@ -42,10 +42,12 @@ public class AnsibleEntityImpl extends EffectorStartableImpl implements AnsibleE
         lifecycleTasks.attachLifecycleEffectors(this);
     }
 
+    @Override
     public void populateServiceNotUpDiagnostics() {
         // TODO no-op currently; should check ssh'able etc
     }
 
+    @Override
     public String ansibleCommand(String module, String args) {
         final ProcessTaskWrapper<Integer> command = DynamicTasks.queue(
             AnsiblePlaybookTasks.moduleCommand(module, config().get(ANSIBLE_VARS), lifecycleTasks.getRunDir(), args));

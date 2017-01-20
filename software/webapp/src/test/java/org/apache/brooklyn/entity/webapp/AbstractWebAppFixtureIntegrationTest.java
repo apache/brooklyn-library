@@ -258,6 +258,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         }
         
         Asserts.succeedsEventually(MutableMap.of("timeout", 20*1000), new Runnable() {
+            @Override
             public void run() {
                 Integer requestCount = entity.getAttribute(WebAppService.REQUEST_COUNT);
                 Integer errorCount = entity.getAttribute(WebAppService.ERROR_COUNT);
@@ -289,6 +290,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
             // reqs/sec initially zero
             log.info("Waiting for initial avg-requests to be zero...");
             Asserts.succeedsEventually(MutableMap.of("timeout", 20*1000), new Runnable() {
+                @Override
                 public void run() {
                     Double activityValue = entity.getAttribute(WebAppService.REQUESTS_PER_SECOND_IN_WINDOW);
                     assertNotNull(activityValue, "activity not set yet "+activityValue+")");
@@ -297,6 +299,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
             
             // apply workload on 1 per sec; reqs/sec should update
             Asserts.succeedsEventually(MutableMap.of("timeout", 30*1000), new Callable<Void>() {
+                @Override
                 public Void call() throws Exception {
                     String url = entity.getAttribute(WebAppService.ROOT_URL) + "does_not_exist";
                     final int desiredMsgsPerSec = 10;
@@ -315,6 +318,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
                     }
     
                     Asserts.succeedsEventually(MutableMap.of("timeout", 4000), new Runnable() {
+                        @Override
                         public void run() {
                             Double avgReqs = entity.getAttribute(WebAppService.REQUESTS_PER_SECOND_IN_WINDOW);
                             Integer requestCount = entity.getAttribute(WebAppService.REQUEST_COUNT);
@@ -332,6 +336,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
             Thread.sleep(WebAppServiceMethods.DEFAULT_WINDOW_DURATION.toMilliseconds());
             
             Asserts.succeedsEventually(MutableMap.of("timeout", 10*1000), new Runnable() {
+                @Override
                 public void run() {
                     Double avgReqs = entity.getAttribute(WebAppService.REQUESTS_PER_SECOND_IN_WINDOW);
                     assertNotNull(avgReqs);
@@ -478,6 +483,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         
         //tomcat may need a while to unpack everything
         Asserts.succeedsEventually(MutableMap.of("timeout", 60*1000), new Runnable() {
+            @Override
             public void run() {
                 // TODO get this URL from a WAR file entity
                 HttpTestUtils.assertHttpStatusCodeEquals(Urls.mergePaths(entity.getAttribute(WebAppService.ROOT_URL), urlSubPathToPageToQuery), 200);
@@ -499,6 +505,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         Entities.start(entity.getApplication(), ImmutableList.of(loc));
 
         Asserts.succeedsEventually(MutableMap.of("timeout", 60*1000), new Runnable() {
+            @Override
             public void run() {
                 // TODO get this URL from a WAR file entity
                 HttpTestUtils.assertHttpStatusCodeEquals(Urls.mergePaths(entity.getAttribute(WebAppService.ROOT_URL), urlSubPathToWebApp, urlSubPathToPageToQuery), 200);
@@ -519,6 +526,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         // Test deploying
         entity.deploy(resource.toString(), "myartifactname.war");
         Asserts.succeedsEventually(MutableMap.of("timeout", 60*1000), new Runnable() {
+            @Override
             public void run() {
                 // TODO get this URL from a WAR file entity
                 HttpTestUtils.assertHttpStatusCodeEquals(Urls.mergePaths(entity.getAttribute(WebAppService.ROOT_URL), "myartifactname/", urlSubPathToPageToQuery), 200);
@@ -528,6 +536,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         // And undeploying
         entity.undeploy("/myartifactname");
         Asserts.succeedsEventually(MutableMap.of("timeout", 60*1000), new Runnable() {
+            @Override
             public void run() {
                 // TODO get this URL from a WAR file entity
                 HttpTestUtils.assertHttpStatusCodeEquals(Urls.mergePaths(entity.getAttribute(WebAppService.ROOT_URL), "myartifactname", urlSubPathToPageToQuery), 404);

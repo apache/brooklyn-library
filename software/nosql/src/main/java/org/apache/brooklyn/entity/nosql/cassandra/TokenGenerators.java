@@ -44,8 +44,11 @@ public class TokenGenerators {
         
         public static final BigInteger TWO = BigInteger.valueOf(2);
         
+        @Override
         public abstract BigInteger max();
+        @Override
         public abstract BigInteger min();
+        @Override
         public abstract BigInteger range();
 
         private final Set<BigInteger> currentTokens = Sets.newTreeSet();

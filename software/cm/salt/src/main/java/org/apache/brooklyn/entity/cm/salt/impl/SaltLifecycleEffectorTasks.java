@@ -93,6 +93,7 @@ public class SaltLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
 
         if (0 != installedAlready.getExitCode()) {
             DynamicTasks.queue("install", new Runnable() {
+                @Override
                 public void run() {
                     DynamicTasks.queue(
                         SaltSshTasks.installSalt(false),

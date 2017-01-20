@@ -176,6 +176,7 @@ public class KarafContainerImpl extends SoftwareProcessImpl implements KarafCont
         if (jmxHelper != null) jmxHelper.terminate();
     }
 
+    @Override
     @Effector(description="Updates the OSGi Service's properties, adding (and overriding) the given key-value pairs")
     public void updateServiceProperties(
             @EffectorParam(name="serviceName", description="Name of the OSGi service") String serviceName, 
@@ -202,6 +203,7 @@ public class KarafContainerImpl extends SoftwareProcessImpl implements KarafCont
         jmxHelper.operation(OSGI_COMPENDIUM, "update", serviceName, table);
     }
     
+    @Override
     @Effector(description="Updates the OSGi Service's properties, adding (and overriding) the given key-value pairs")
     public void installFeature(
             @EffectorParam(name="featureName", description="Name of the feature - see org.apache.karaf:type=features#installFeature()") final String featureName) throws Exception {
@@ -212,6 +214,7 @@ public class KarafContainerImpl extends SoftwareProcessImpl implements KarafCont
                 .limitIterationsTo(40)
                 .every(500, TimeUnit.MILLISECONDS)
                 .until(new Callable<Boolean>() {
+                        @Override
                         public Boolean call() {
                             jmxHelper.operation(String.format(KARAF_FEATURES, getConfig(KARAF_NAME.getConfigKey())), "installFeature", featureName);
                             return true;
@@ -220,6 +223,7 @@ public class KarafContainerImpl extends SoftwareProcessImpl implements KarafCont
                 .run();
     }
 
+    @Override
     public Map<Long,Map<String,?>> listBundles() {
         TabularData table = (TabularData) jmxHelper.operation(OSGI_BUNDLE_STATE, "listBundles");
         Map<List<?>, Map<String, Object>> map = JmxValueFunctions.tabularDataToMapOfMaps(table);
@@ -234,6 +238,7 @@ public class KarafContainerImpl extends SoftwareProcessImpl implements KarafCont
     /**
      * throws URISyntaxException If bundle name is not a valid URI
      */
+    @Override
     @Effector(description="Deploys the given bundle, returning the bundle id - see osgi.core:type=framework#installBundle()")
     public long installBundle(
             @EffectorParam(name="bundle", description="URI of bundle to be deployed") String bundle) throws URISyntaxException {
@@ -261,6 +266,7 @@ public class KarafContainerImpl extends SoftwareProcessImpl implements KarafCont
         }
     }
 
+    @Override
     @Effector(description="Undeploys the bundle with the given id")
     public void uninstallBundle(
             @EffectorParam(name="bundleId", description="Id of the bundle") Long bundleId) {

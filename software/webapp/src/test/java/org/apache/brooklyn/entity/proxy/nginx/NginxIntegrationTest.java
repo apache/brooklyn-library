@@ -128,6 +128,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
         
         // App-servers and nginx has started
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 for (Entity member : serverPool.getMembers()) {
                     assertTrue(member.getAttribute(SoftwareProcess.SERVICE_UP));
@@ -171,6 +172,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
 
         // App-servers and nginx has started
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 for (Entity member : serverPool.getMembers()) {
                     assertTrue(member.getAttribute(SoftwareProcess.SERVICE_UP));
@@ -283,6 +285,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
         app.start(ImmutableList.of(localLoc));
 
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 for (Entity member : serverPool.getMembers()) {
                     assertHttpStatusCodeEquals(member.getAttribute(WebAppService.ROOT_URL), 200);
@@ -345,6 +348,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
         final String nginxUrl = nginx.getAttribute(WebAppService.ROOT_URL);
 
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 for (Entity member : serverPool.getMembers()) {
                     String jbossUrl = member.getAttribute(WebAppService.ROOT_URL);
@@ -356,6 +360,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
         final String jbossUrl = Iterables.get(serverPool.getMembers(), 0).getAttribute(WebAppService.ROOT_URL);
         
         Thread t = new Thread(new Runnable() {
+            @Override
             public void run() {
                 long lastReportTime = System.currentTimeMillis();
                 int num = 0;
@@ -378,6 +383,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
         t.start();
         
         Thread t2 = new Thread(new Runnable() {
+            @Override
             public void run() {
                 long lastReportTime = System.currentTimeMillis();
                 int num = 0;
@@ -416,6 +422,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
         
         // App-servers and nginx has started
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertTrue(nginx.getAttribute(SoftwareProcess.SERVICE_UP));
             }});
@@ -427,6 +434,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
 
         Time.sleep(Duration.ONE_SECOND);
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertTrue(nginx.getAttribute(SoftwareProcess.SERVICE_UP));
             }});

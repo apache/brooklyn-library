@@ -102,6 +102,7 @@ public class MongoDBClientSshDriver extends AbstractMongoDBSshDriver implements 
         return getRunDir() + "/userScripts/" ;
     }
     
+    @Override
     public void runScript(String preStart, String scriptName) {
         AbstractMongoDBServer server = getServer();
         String host = server.getAttribute(AbstractMongoDBServer.HOSTNAME);

@@ -117,6 +117,7 @@ public class NodeJsWebAppFixtureIntegrationTest {
 
         Entities.start(entity.getApplication(), ImmutableList.of(loc));
         Asserts.succeedsEventually(MutableMap.of("timeout", 120*1000), new Runnable() {
+            @Override
             public void run() {
                 assertTrue(entity.getAttribute(Startable.SERVICE_UP));
             }});
@@ -164,6 +165,7 @@ public class NodeJsWebAppFixtureIntegrationTest {
         Entities.start(entity.getApplication(), ImmutableList.of(loc));
 
         Asserts.succeedsEventually(MutableMap.of("timeout", Duration.minutes(1)), new Runnable() {
+            @Override
             public void run() {
                 // TODO get this URL from a web-app entity of some kind?
                 String url = Urls.mergePaths(entity.getAttribute(WebAppService.ROOT_URL), urlSubPathToWebApp, urlSubPathToPageToQuery);

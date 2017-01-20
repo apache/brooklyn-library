@@ -98,6 +98,7 @@ public class NginxWebClusterEc2LiveTest {
         app.start(ImmutableList.of(loc));
         
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 // Nginx URL is available
                 MachineLocation machine = Machines.findUniqueMachineLocation(nginx.getLocations()).get();

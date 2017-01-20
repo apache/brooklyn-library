@@ -75,6 +75,7 @@ public class KarafContainerTest extends BrooklynAppLiveTestSupport {
         EntityAsserts.assertAttributeEqualsEventually(karaf, Attributes.SERVICE_UP, false);
         
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 try {
                     Assert.assertFalse(Entities.submit(app, SshEffectorTasks.isPidRunning(pid).machine(localhost.obtain())).get());

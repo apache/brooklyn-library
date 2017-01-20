@@ -46,6 +46,7 @@ public class ActiveMQTopicImpl extends ActiveMQDestinationImpl implements Active
         //TODO add sensors for topics
     }
 
+    @Override
     public String getTopicName() {
         return getName();
     }

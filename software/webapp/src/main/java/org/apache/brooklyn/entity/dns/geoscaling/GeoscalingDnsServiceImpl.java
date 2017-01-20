@@ -131,6 +131,7 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
     }
     
     /** minimum/default TTL here is 300s = 5m */
+    @Override
     public long getTimeToLiveSeconds() { return 5*60; }
     
     @Override

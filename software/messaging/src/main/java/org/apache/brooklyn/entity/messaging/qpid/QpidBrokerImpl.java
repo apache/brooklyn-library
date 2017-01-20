@@ -54,8 +54,11 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
         super();
     }
 
+    @Override
     public String getVirtualHost() { return getAttribute(VIRTUAL_HOST_NAME); }
+    @Override
     public String getAmqpVersion() { return getAttribute(AMQP_VERSION); }
+    @Override
     public Integer getAmqpPort() { return getAttribute(AMQP_PORT); }
 
     @Override

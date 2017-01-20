@@ -127,6 +127,7 @@ public class CassandraDatacenterIntegrationTest extends BrooklynAppLiveTestSuppo
         // may take some time to be consistent (with new thrift_latency checks on the node,
         // contactability should not be an issue, but consistency still might be)
         Asserts.succeedsEventually(MutableMap.of("timeout", 120*1000), new Runnable() {
+            @Override
             public void run() {
                 boolean open = CassandraDatacenterLiveTest.isSocketOpen(node);
                 Boolean consistant = open ? CassandraDatacenterLiveTest.areVersionsConsistent(node) : null;

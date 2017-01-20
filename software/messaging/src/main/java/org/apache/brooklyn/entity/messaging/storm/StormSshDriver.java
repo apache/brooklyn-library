@@ -103,6 +103,7 @@ public class StormSshDriver extends JavaSoftwareProcessSshDriver implements Stor
         return result;
     }
 
+    @Override
     public String getJvmOptsLine() {
         return Optional.fromNullable(getShellEnvironment().get("JAVA_OPTS")).or("");
     }

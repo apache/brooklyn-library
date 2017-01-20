@@ -166,10 +166,12 @@ public class UrlMappingImpl extends AbstractGroupImpl implements UrlMapping {
         }
     }
 
+    @Override
     public Collection<String> getTargetAddresses() {
         return getAttribute(TARGET_ADDRESSES);
     }
 
+    @Override
     public ProxySslConfig getSsl() {
         return getConfig(SSL_CONFIG);
     }

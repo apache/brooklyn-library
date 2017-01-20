@@ -36,8 +36,11 @@ import com.google.common.base.Objects.ToStringHelper;
 public class RabbitBrokerImpl extends SoftwareProcessImpl implements RabbitBroker {
     private static final Logger log = LoggerFactory.getLogger(RabbitBrokerImpl.class);
 
+    @Override
     public String getVirtualHost() { return getAttribute(VIRTUAL_HOST_NAME); }
+    @Override
     public String getAmqpVersion() { return getAttribute(AMQP_VERSION); }
+    @Override
     public Integer getAmqpPort() { return getAttribute(AMQP_PORT); }
 
     public RabbitBrokerImpl() {
@@ -69,11 +72,13 @@ public class RabbitBrokerImpl extends SoftwareProcessImpl implements RabbitBroke
         // queueNames.each { String name -> addQueue(name) }
     }
 
+    @Override
     public void setBrokerUrl() {
         String urlFormat = "amqp://guest:guest@%s:%d/%s";
         sensors().set(BROKER_URL, format(urlFormat, getAttribute(HOSTNAME), getAttribute(AMQP_PORT), getAttribute(VIRTUAL_HOST_NAME)));
     }
 
+    @Override
     public RabbitQueue createQueue(Map properties) {
         RabbitQueue result = addChild(EntitySpec.create(RabbitQueue.class).configure(properties));
         result.create();

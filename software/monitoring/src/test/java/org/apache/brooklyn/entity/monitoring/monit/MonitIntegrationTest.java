@@ -90,6 +90,7 @@ public class MonitIntegrationTest extends BrooklynAppLiveTestSupport {
         MySqlNode mySqlNode = sameServerEntity.addChild(EntitySpec.create(MySqlNode.class));
 
         Function<String, Map<String, Object>> controlFileSubstitutionsFunction = new Function<String, Map<String, Object>>() {
+            @Override
             public Map<String, Object> apply(String input) {
                 return ImmutableMap.<String, Object>of("targetPidFile", input);
             }
@@ -121,6 +122,7 @@ public class MonitIntegrationTest extends BrooklynAppLiveTestSupport {
         // This runs on localhost; free to obtain another machine with impunity.
         final String osFlavor;
         MachineDetails machineDetails = app.getExecutionContext().submit(new Callable<MachineDetails>() {
+            @Override
             public MachineDetails call() throws Exception {
                 return loc.obtain().getMachineDetails();
             }}).get();
@@ -147,6 +149,7 @@ public class MonitIntegrationTest extends BrooklynAppLiveTestSupport {
             .configure(MySqlNode.DATA_DIR, mySqlDataDir));
 
         Function<String, Map<String, Object>> controlFileSubstitutionsFunction = new Function<String, Map<String, Object>>() {
+            @Override
             public Map<String, Object> apply(String input) {
                 return ImmutableMap.<String, Object>of(
                     "targetPidFile", input,

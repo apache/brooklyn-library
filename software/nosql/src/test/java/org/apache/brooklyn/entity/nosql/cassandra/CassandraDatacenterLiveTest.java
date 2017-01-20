@@ -187,6 +187,7 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
         // may take some time to be consistent (with new thrift_latency checks on the node,
         // contactability should not be an issue, but consistency still might be)
         Asserts.succeedsEventually(MutableMap.of("timeout", Duration.TWO_MINUTES), new Runnable() {
+            @Override
             public void run() {
                 for (Entity n : nodes) {
                     CassandraNode node = (CassandraNode) n;
@@ -202,6 +203,7 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
     protected static void assertSingleTokenConsistent(final List<CassandraNode> nodes) {
         final int numNodes = nodes.size();
         Asserts.succeedsEventually(MutableMap.of("timeout", Duration.TWO_MINUTES), new Runnable() {
+            @Override
             public void run() {
                 Set<BigInteger> alltokens = Sets.newLinkedHashSet();
                 for (Entity node : nodes) {
@@ -222,6 +224,7 @@ public class CassandraDatacenterLiveTest extends BrooklynAppLiveTestSupport {
         final int tokensPerNode = Iterables.get(nodes, 0).getNumTokensPerNode();
         
         Asserts.succeedsEventually(MutableMap.of("timeout", Duration.TWO_MINUTES), new Runnable() {
+            @Override
             public void run() {
                 Set<BigInteger> alltokens = Sets.newLinkedHashSet();
                 for (Entity node : nodes) {

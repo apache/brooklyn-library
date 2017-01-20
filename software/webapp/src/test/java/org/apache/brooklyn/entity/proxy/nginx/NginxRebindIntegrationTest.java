@@ -228,6 +228,7 @@ public class NginxRebindIntegrationTest extends RebindTestFixtureWithApp {
 
         // Expect continually to have same nginx members; should not lose them temporarily!
         Asserts.succeedsContinually(new Runnable() {
+            @Override
             public void run() {
                 Map<Entity, String> newNginxMemebers = newNginx.getAttribute(NginxController.SERVER_POOL_TARGETS);
                 assertEquals(newNginxMemebers.keySet(), ImmutableSet.of(newServer));

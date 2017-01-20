@@ -48,6 +48,7 @@ public class TomcatServerDisableRetrieveUsageMetricsIntegrationTest extends Broo
 
         // tc2 uses defaults, so will include usage metrics
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertNotNull(tc2.getAttribute(TomcatServer.CONNECTOR_STATUS));
                 assertNotNull(tc2.getAttribute(TomcatServer.ERROR_COUNT));

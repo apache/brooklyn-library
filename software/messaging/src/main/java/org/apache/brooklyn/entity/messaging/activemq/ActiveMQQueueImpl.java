@@ -35,10 +35,12 @@ public class ActiveMQQueueImpl extends ActiveMQDestinationImpl implements Active
         sensors().set(QUEUE_NAME, getName());
     }
 
+    @Override
     public String getQueueName() {
         return getName();
     }
     
+    @Override
     public void create() {
         log.debug("{} adding queue {} to broker {}", new Object[] {this, getName(), jmxHelper.getAttribute(brokerMBeanName, "BrokerName")});
         

@@ -213,6 +213,7 @@ public class NginxControllerImpl extends AbstractControllerImpl implements Nginx
         return (NginxDriver) super.getDriver();
     }
 
+    @Override
     public void doExtraConfigurationDuringStart() {
         computePortsAndUrls();
         reconfigureService();
@@ -323,6 +324,7 @@ public class NginxControllerImpl extends AbstractControllerImpl implements Nginx
         return "Nginx";
     }
 
+    @Override
     public boolean appendSslConfig(String id,
             StringBuilder out,
             String prefix,

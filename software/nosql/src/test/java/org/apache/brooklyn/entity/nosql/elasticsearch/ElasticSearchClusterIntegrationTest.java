@@ -111,6 +111,7 @@ public class ElasticSearchClusterIntegrationTest extends BrooklynAppLiveTestSupp
             assertEquals(HttpValueFunctions.jsonContents("foo", String.class).apply(getResponse), "bar");
         }
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 int count = clusterDocumentCount();
                 assertTrue(count >= 1, "count="+count);

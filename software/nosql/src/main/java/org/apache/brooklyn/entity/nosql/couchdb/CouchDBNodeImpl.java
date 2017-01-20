@@ -47,7 +47,9 @@ public class CouchDBNodeImpl extends SoftwareProcessImpl implements CouchDBNode 
     public CouchDBNodeImpl() {
     }
 
+    @Override
     public Integer getHttpPort() { return getAttribute(CouchDBNode.HTTP_PORT); }
+    @Override
     public Integer getHttpsPort() { return getAttribute(CouchDBNode.HTTPS_PORT); }
     public String getClusterName() { return getAttribute(CouchDBNode.CLUSTER_NAME); }
 

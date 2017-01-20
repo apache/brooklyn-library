@@ -65,6 +65,7 @@ public class SimulatedMySqlNodeImpl extends MySqlNodeImpl {
                     .poll(new FunctionPollConfig<Boolean, Boolean>(SERVICE_UP)
                             .callable(new Callable<Boolean>() {
                                 private int counter = 0;
+                                @Override
                                 public Boolean call() {
                                     sensors().set(QUERIES_PER_SECOND_FROM_MYSQL, (double)(counter++ % 100));
                                     return true;

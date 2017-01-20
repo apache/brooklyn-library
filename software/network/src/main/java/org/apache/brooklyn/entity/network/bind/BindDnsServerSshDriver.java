@@ -166,6 +166,7 @@ public class BindDnsServerSshDriver extends AbstractSoftwareProcessSshDriver imp
         return Os.mergePaths(getOsSupport().getConfigDirectory(), "rfc1912.zone");
     }
 
+    @Override
     public BindOsSupport getOsSupport() {
         BindOsSupport result = osSupport;
         if (result == null) {

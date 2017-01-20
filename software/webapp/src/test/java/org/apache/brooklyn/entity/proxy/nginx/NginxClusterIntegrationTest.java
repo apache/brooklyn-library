@@ -212,6 +212,7 @@ public class NginxClusterIntegrationTest extends BrooklynAppLiveTestSupport {
 
     private void assertNginxsResponsiveEvenutally(final Iterable<NginxController> nginxs, final String hostname, final List<String> pathsFor200) {
         Asserts.succeedsEventually(MutableMap.of("timeout", TIMEOUT_MS), new Runnable() {
+            @Override
             public void run() {
                 for (NginxController nginx : nginxs) {
                     assertTrue(nginx.getAttribute(NginxController.SERVICE_UP));

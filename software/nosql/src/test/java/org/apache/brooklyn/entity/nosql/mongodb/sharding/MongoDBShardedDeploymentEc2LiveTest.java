@@ -69,6 +69,7 @@ public class MongoDBShardedDeploymentEc2LiveTest extends AbstractEc2LiveTest {
         Entities.dumpInfo(app);
 
         Asserts.succeedsEventually(ImmutableMap.of("timeout", TIMEOUT), new Runnable() {
+            @Override
             public void run() {
                 Assert.assertEquals(deployment.getRouterCluster().getCurrentSize(), ROUTER_CLUSTER_SIZE);
                 Assert.assertEquals(deployment.getShardCluster().getCurrentSize(), SHARD_CLUSTER_SIZE);

@@ -371,6 +371,7 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
         return entity.getAttribute(RiakNode.RIAK_ON_PATH);
     }
 
+    @Override
     public String getRiakEtcDir() {
         return isPackageInstall() ? "/etc/riak" : Urls.mergePaths(getExpandedInstallDir(), "etc");
     }

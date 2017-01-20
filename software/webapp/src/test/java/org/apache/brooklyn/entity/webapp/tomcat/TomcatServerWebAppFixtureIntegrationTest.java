@@ -119,6 +119,7 @@ public class TomcatServerWebAppFixtureIntegrationTest extends AbstractWebAppFixt
         if (shutdownPort != null) {
             boolean socketClosed = Repeater.create("Checking WebApp has shut down")
                     .repeat(new Callable<Void>() {
+                            @Override
                             public Void call() throws Exception {
                                 if (shutdownSocket.get() != null) shutdownSocket.get().close();
                                 try {
@@ -131,6 +132,7 @@ public class TomcatServerWebAppFixtureIntegrationTest extends AbstractWebAppFixt
                             }})
                     .every(100, TimeUnit.MILLISECONDS)
                     .until(new Callable<Boolean>() {
+                            @Override
                             public Boolean call() {
                                 return (gotException.get() != null);
                             }})

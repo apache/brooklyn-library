@@ -29,6 +29,7 @@ public class PostgreSqlNodeImpl extends SoftwareProcessImpl implements PostgreSq
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(PostgreSqlNodeImpl.class);
 
+    @Override
     public Class<?> getDriverInterface() {
         return PostgreSqlDriver.class;
     }

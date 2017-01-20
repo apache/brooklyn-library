@@ -32,7 +32,6 @@ import org.apache.brooklyn.core.annotation.EffectorParam;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.effector.MethodEffector;
 import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
-import org.apache.brooklyn.core.sensor.BasicAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.proxy.AbstractController;
 import org.apache.brooklyn.entity.proxy.ProxySslConfig;

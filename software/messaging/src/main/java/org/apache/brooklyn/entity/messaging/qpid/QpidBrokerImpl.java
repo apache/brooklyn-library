@@ -28,7 +28,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.core.entity.Entities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.entity.java.JmxSupport;

@@ -18,7 +18,6 @@
  */
 package org.apache.brooklyn.entity.nosql.mongodb;
 
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 

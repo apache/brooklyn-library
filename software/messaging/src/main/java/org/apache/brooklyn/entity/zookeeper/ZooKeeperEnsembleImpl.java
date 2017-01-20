@@ -21,7 +21,6 @@ package org.apache.brooklyn.entity.zookeeper;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.sensor.EnricherSpec;
-import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.enricher.stock.Enrichers;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.group.DynamicClusterImpl;

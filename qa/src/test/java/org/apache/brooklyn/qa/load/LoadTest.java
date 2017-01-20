@@ -19,7 +19,6 @@
 package org.apache.brooklyn.qa.load;
 
 import org.apache.brooklyn.entity.software.base.VanillaSoftwareProcess;
-import org.apache.brooklyn.qa.load.AbstractLoadTest.TestConfig;
 import org.apache.brooklyn.util.time.Duration;
 import org.testng.annotations.Test;
 

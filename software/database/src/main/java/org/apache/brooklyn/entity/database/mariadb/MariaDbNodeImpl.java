@@ -31,8 +31,6 @@ import org.apache.brooklyn.util.core.config.ConfigBag;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.text.Identifiers;
 import org.apache.brooklyn.util.text.Strings;
-import org.apache.brooklyn.util.time.Duration;
-
 import com.google.common.base.Function;
 
 public class MariaDbNodeImpl extends SoftwareProcessImpl implements MariaDbNode {

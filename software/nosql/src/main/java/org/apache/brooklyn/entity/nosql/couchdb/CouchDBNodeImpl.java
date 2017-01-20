@@ -20,8 +20,6 @@ package org.apache.brooklyn.entity.nosql.couchdb;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 import org.apache.brooklyn.core.entity.EntityFunctions;
 import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcessImpl;
@@ -34,7 +32,6 @@ import org.apache.brooklyn.util.guava.Functionals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
 /**

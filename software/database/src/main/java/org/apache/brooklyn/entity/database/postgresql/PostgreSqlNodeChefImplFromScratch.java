@@ -18,6 +18,8 @@
  */
 package org.apache.brooklyn.entity.database.postgresql;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.brooklyn.api.effector.Effector;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
@@ -26,6 +28,7 @@ import org.apache.brooklyn.core.effector.Effectors;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.location.Locations;
+import org.apache.brooklyn.core.sensor.ReleaseableLatch;
 import org.apache.brooklyn.entity.chef.ChefConfig;
 import org.apache.brooklyn.entity.chef.ChefLifecycleEffectorTasks;
 import org.apache.brooklyn.entity.chef.ChefServerTasks;
@@ -77,6 +80,7 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
             usePidFile("/var/run/postgresql/*.pid");
             useService("postgresql");
         }
+        @Override
         protected void startWithKnifeAsync() {
             Entities.warnOnIgnoringConfig(entity(), ChefConfig.CHEF_LAUNCH_RUN_LIST);
             Entities.warnOnIgnoringConfig(entity(), ChefConfig.CHEF_LAUNCH_ATTRIBUTES);
@@ -95,8 +99,9 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
                         // no other arguments currenty supported; chef will pick a password for us
                 );
         }
-        protected void postStartCustom() {
-            super.postStartCustom();
+        @Override
+        protected void postStartCustom(AtomicReference<ReleaseableLatch> startLatchRef) {
+            super.postStartCustom(startLatchRef);
 
             // now run the creation script
             String creationScript;
@@ -111,10 +116,12 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
             // and finally connect sensors
             entity().connectSensors();
         }
+        @Override
         protected void preStopCustom() {
             entity().disconnectSensors();
             super.preStopCustom();
         }
+        @Override
         protected PostgreSqlNodeChefImplFromScratch entity() {
             return (PostgreSqlNodeChefImplFromScratch) super.entity();
         }

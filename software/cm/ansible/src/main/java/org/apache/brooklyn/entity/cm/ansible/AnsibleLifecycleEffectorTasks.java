@@ -27,6 +27,7 @@ import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.location.Locations;
 import org.apache.brooklyn.core.location.Machines;
+import org.apache.brooklyn.core.sensor.ReleaseableLatch;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.software.base.lifecycle.MachineLifecycleEffectorTasks;
 import org.apache.brooklyn.feed.ssh.SshFeed;
@@ -37,6 +38,9 @@ import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.net.Urls;
 
 import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.Duration;
 import org.apache.brooklyn.util.time.Time;
@@ -135,7 +139,8 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
     }
 
 
-    protected void postStartCustom() {
+    @Override
+    protected void postStartCustom(AtomicReference<ReleaseableLatch> startLatchRef) {
         boolean result = false;
         result |= tryCheckStartService();
 
@@ -173,11 +178,12 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
                             .setOnFailureOrException(false))
                     .build();
                     
-             entity().feeds().addFeed(serviceSshFeed);
+             entity().feeds().add(serviceSshFeed);
         } else {
             LOG.warn("Location(s) {} not an ssh-machine location, so not polling for status; "
                     + "setting serviceUp immediately", entity().getLocations());
         }
+        super.postStartCustom(startLatchRef);
     }
 
     protected boolean tryCheckStartService() {

@@ -229,7 +229,7 @@ public class CouchbaseClusterImpl extends DynamicClusterImpl implements Couchbas
                     Tasks.resetBlockingDetails();
                 }
                 
-                ((CouchbaseNode)getPrimaryNode()).rebalance();
+                getPrimaryNode().rebalance();
             } else {
                 if (getQuorumSize()>1) {
                     log.warn(this+" is not quorate; will likely fail later, but proceeding for now");

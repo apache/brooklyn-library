@@ -99,7 +99,7 @@ public class CassandraDatacenterTest extends BrooklynAppUnitTestSupport {
         // calling the driver stop for this entity will cause SERVICE_UP to become false, and stay false
         // (and that's all it does, incidentally); if we just set the attribute it will become true on serviceUp sensor feed
         log.info("Simulating failure of cassandra node "+e1);
-        ((EmptySoftwareProcess)e1).getDriver().stop();
+        e1.getDriver().stop();
         // not necessary, but speeds things up:
         if (fast)
             e1.sensors().set(Attributes.SERVICE_UP, false);
@@ -118,7 +118,7 @@ public class CassandraDatacenterTest extends BrooklynAppUnitTestSupport {
         if (!checkSeedsConstantOnRejoining) {
             // cluster should not revert to e1+e2, simply because e1 has come back; but e1 should rejoin the group
             // (not that important, and waits for 1s, so only done as part of integration)
-            ((EmptySoftwareProcessSshDriver)(((EmptySoftwareProcess)e1).getDriver())).launch();
+            ((EmptySoftwareProcessSshDriver)(e1.getDriver())).launch();
             if (fast)
                 e1.sensors().set(Attributes.SERVICE_UP, true);
             EntityAsserts.assertAttributeEqualsEventually(e1, CassandraNode.SERVICE_UP, true);

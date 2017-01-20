@@ -195,7 +195,7 @@ public class NginxClusterIntegrationTest extends BrooklynAppLiveTestSupport {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<NginxController> findNginxs() {
         ImmutableList result = ImmutableList.copyOf(Iterables.filter(app.getManagementContext().getEntityManager().getEntities(), Predicates.instanceOf(NginxController.class)));
-        return (List<NginxController>) result;
+        return result;
     }
 
     private List<String> findNginxRootUrls() {

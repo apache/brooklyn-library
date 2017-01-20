@@ -71,7 +71,7 @@ public class PostgreSqlChefTest extends ChefLiveTestSupport {
             t.getTask().blockUntilEnded(Duration.TEN_SECONDS);
             if (!t.isDone())
                 Assert.fail("Task not finished yet: "+t.getTask());
-            Assert.assertNotEquals(t.get(), (Integer)0, "Task ended with code "+t.get()+"; output: "+t.getStdout() );
+            Assert.assertNotEquals(t.get(), 0, "Task ended with code "+t.get()+"; output: "+t.getStdout() );
         } catch (Exception e) {
             // host has been killed, that is fine
             log.info("Machine "+targetMachine+" destroyed on stop (expected - "+e+")");

@@ -346,7 +346,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
             if (name == null) {
                 name = "UNKNOWN_DATACENTER";
             }
-            sensors().set((AttributeSensor<String>)DATACENTER_NAME, name);
+            sensors().set(DATACENTER_NAME, name);
         }
         return name;
     }
@@ -365,7 +365,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
             if (name == null) {
                 name = "UNKNOWN_RACK";
             }
-            sensors().set((AttributeSensor<String>)RACK_NAME, name);
+            sensors().set(RACK_NAME, name);
         }
         return name;
     }

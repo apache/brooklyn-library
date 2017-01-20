@@ -324,7 +324,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
                             Integer requestCount = entity.getAttribute(WebAppService.REQUEST_COUNT);
                             
                             log.info("avg-requests="+avgReqs+"; total-requests="+requestCount);
-                            assertEquals(avgReqs.doubleValue(), (double)desiredMsgsPerSec, 3.0d);
+                            assertEquals(avgReqs.doubleValue(), desiredMsgsPerSec, 3.0d);
                             assertEquals(requestCount.intValue(), preRequestCount+reqsSent.get());
                         }});
                     

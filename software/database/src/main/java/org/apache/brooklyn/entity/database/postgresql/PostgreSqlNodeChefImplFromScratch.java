@@ -53,6 +53,7 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
     
     private SshFeed feed;
 
+    @Override
     public void init() {
         super.init();
         new ChefPostgreSqlLifecycle().attachLifecycleEffectors(this);
@@ -126,6 +127,7 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
     public static class ExecuteScriptEffectorBody extends EffectorBody<String> {
         public static final ConfigKey<String> SCRIPT = ConfigKeys.newStringConfigKey("script", "contents of script to run");
         
+        @Override
         public String call(ConfigBag parameters) {
             return DynamicTasks.queue(SshEffectorTasks.ssh(
                     BashCommands.pipeTextTo(

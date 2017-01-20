@@ -204,6 +204,7 @@ public class SaltLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
         }
     }
 
+    @Override
     public void restart(ConfigBag parameters) {
         ServiceStateLogic.setExpectedState(entity(), Lifecycle.STOPPING);
 

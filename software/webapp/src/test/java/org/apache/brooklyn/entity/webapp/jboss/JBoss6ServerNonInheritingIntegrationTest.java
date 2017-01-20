@@ -49,6 +49,7 @@ public class JBoss6ServerNonInheritingIntegrationTest extends BrooklynAppLiveTes
 
     private LocalhostMachineProvisioningLocation localhostProvisioningLocation;
     
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

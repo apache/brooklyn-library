@@ -47,6 +47,7 @@ public class ActiveMQQueueImpl extends ActiveMQDestinationImpl implements Active
         connectSensors();
     }
 
+    @Override
     public void delete() {
         jmxHelper.operation(brokerMBeanName, "removeQueue", getName());
         disconnectSensors();

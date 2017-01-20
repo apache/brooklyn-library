@@ -29,6 +29,7 @@ public class AnsibleEntityImpl extends EffectorStartableImpl implements AnsibleE
 
     private AnsibleLifecycleEffectorTasks lifecycleTasks;
 
+    @Override
     public void init() {
         checkNotNull(getConfig(SERVICE_NAME), "service name is missing. it has to be provided by the user");
         String playbookName = getConfig(ANSIBLE_PLAYBOOK);

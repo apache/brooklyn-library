@@ -138,6 +138,7 @@ public class MariaDbSshDriver extends AbstractSoftwareProcessSshDriver implement
         newScript(INSTALLING).body.append(commands).execute();
     }
 
+    @Override
     public MariaDbNodeImpl getEntity() { return (MariaDbNodeImpl) super.getEntity(); }
     public int getPort() { return getEntity().getPort(); }
     public String getSocketUid() { return getEntity().getSocketUid(); }

@@ -116,6 +116,7 @@ public class CouchbaseClusterImpl extends DynamicClusterImpl implements Couchbas
     // so a feed is used to determine when a bucket has finished being created
     private final AtomicReference<HttpFeed> resetBucketCreation = new AtomicReference<HttpFeed>();
 
+    @Override
     public void init() {
         log.info("Initializing the Couchbase cluster...");
         super.init();
@@ -370,6 +371,7 @@ public class CouchbaseClusterImpl extends DynamicClusterImpl implements Couchbas
     }
 
 
+    @Override
     protected EntitySpec<?> getMemberSpec() {
         EntitySpec<?> result = super.getMemberSpec();
         if (result != null) return result;

@@ -69,6 +69,7 @@ public abstract class JavaWebAppSoftwareProcessImpl extends SoftwareProcessImpl 
     }
     
     //just provide better typing
+    @Override
     public JavaWebAppDriver getDriver() {
         return (JavaWebAppDriver) super.getDriver();
     }

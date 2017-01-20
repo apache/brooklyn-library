@@ -52,6 +52,7 @@ public class TomcatServerWebAppFixtureIntegrationTest extends AbstractWebAppFixt
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(TomcatServerWebAppFixtureIntegrationTest.class);
     
+    @Override
     @DataProvider(name = "basicEntities")
     public Object[][] basicEntities() {
         TestApplication tomcatApp = newTestApplication();
@@ -80,11 +81,13 @@ public class TomcatServerWebAppFixtureIntegrationTest extends AbstractWebAppFixt
     }
 
     // exists to be able to test on this class from GUI in Eclipse IDE
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void canStartAndStop(final SoftwareProcess entity) {
         super.canStartAndStop(entity);
     }
 
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void testReportsServiceDownWhenKilled(final SoftwareProcess entity) throws Exception {
         super.testReportsServiceDownWhenKilled(entity);

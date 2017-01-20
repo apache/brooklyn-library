@@ -113,6 +113,7 @@ public class CassandraFabricTest extends BrooklynAppUnitTestSupport {
                         .configure(CassandraDatacenter.MEMBER_SPEC, EntitySpec.create(DummyCassandraNode.class))));
 
         Thread t = new Thread() {
+            @Override
             public void run() {
                 app.start(ImmutableList.of(loc1, loc2));
             }

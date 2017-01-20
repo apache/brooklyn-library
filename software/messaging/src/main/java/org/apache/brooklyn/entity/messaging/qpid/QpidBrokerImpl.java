@@ -58,6 +58,7 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
     public String getAmqpVersion() { return getAttribute(AMQP_VERSION); }
     public Integer getAmqpPort() { return getAttribute(AMQP_PORT); }
 
+    @Override
     public void setBrokerUrl() {
         String urlFormat = "amqp://guest:guest@/%s?brokerlist='tcp://%s:%d'";
         sensors().set(BROKER_URL, format(urlFormat, getAttribute(VIRTUAL_HOST_NAME), getAttribute(HOSTNAME), getAttribute(AMQP_PORT)));
@@ -69,6 +70,7 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
         new JmxSupport(this, null).recommendJmxRmiCustomAgent();
     }
 
+    @Override
     public void waitForServiceUp(long duration, TimeUnit units) {
         super.waitForServiceUp(duration, units);
 
@@ -88,12 +90,14 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
         }
     }
     
+    @Override
     public QpidQueue createQueue(Map properties) {
         QpidQueue result = addChild(EntitySpec.create(QpidQueue.class).configure(properties));
         result.create();
         return result;
     }
 
+    @Override
     public QpidTopic createTopic(Map properties) {
         QpidTopic result = addChild(EntitySpec.create(QpidTopic.class).configure(properties));
         result.create();

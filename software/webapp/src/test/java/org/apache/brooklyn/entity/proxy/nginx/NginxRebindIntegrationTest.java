@@ -78,6 +78,7 @@ public class NginxRebindIntegrationTest extends RebindTestFixtureWithApp {
         return true;
     }
     
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();
@@ -90,6 +91,7 @@ public class NginxRebindIntegrationTest extends RebindTestFixtureWithApp {
         return "classpath://hello-world.war";
     }
 
+    @Override
     @AfterMethod(alwaysRun=true)
     public void tearDown() throws Exception {
         for (WebAppMonitor monitor : webAppMonitors) {

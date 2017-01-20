@@ -65,6 +65,7 @@ public class RiakClusterImpl extends DynamicClusterImpl implements RiakCluster {
 
     private transient Object mutex = new Object[0];
 
+    @Override
     public void init() {
         super.init();
         log.info("Initializing the riak cluster...");
@@ -98,6 +99,7 @@ public class RiakClusterImpl extends DynamicClusterImpl implements RiakCluster {
         }
     }
 
+    @Override
     protected EntitySpec<?> getMemberSpec() {
         EntitySpec<?> result = config().get(MEMBER_SPEC);
         if (result!=null) return result;

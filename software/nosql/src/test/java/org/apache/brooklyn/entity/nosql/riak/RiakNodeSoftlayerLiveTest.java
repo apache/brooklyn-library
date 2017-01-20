@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableList;
 
 public class RiakNodeSoftlayerLiveTest extends AbstractSoftlayerLiveTest {
 
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

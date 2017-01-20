@@ -81,6 +81,7 @@ public class SolrServerSshDriver extends JavaSoftwareProcessSshDriver implements
                 .execute();
     }
 
+    @Override
     public Set<Integer> getPortsUsed() {
         Set<Integer> result = Sets.newLinkedHashSet(super.getPortsUsed());
         result.addAll(getPortMap().values());

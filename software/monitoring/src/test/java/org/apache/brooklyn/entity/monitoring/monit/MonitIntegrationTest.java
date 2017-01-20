@@ -55,6 +55,7 @@ public class MonitIntegrationTest extends BrooklynAppLiveTestSupport {
     LocalhostMachineProvisioningLocation loc;
     Process testProcess;
     
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

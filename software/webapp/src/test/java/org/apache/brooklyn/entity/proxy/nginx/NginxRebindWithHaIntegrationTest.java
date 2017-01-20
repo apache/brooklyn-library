@@ -87,6 +87,7 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
         return "classpath://hello-world.war";
     }
 
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();
@@ -99,6 +100,7 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
         BrooklynFeatureEnablement.setEnablement(BrooklynFeatureEnablement.FEATURE_FEED_REGISTRATION_PROPERTY, true);
     }
 
+    @Override
     @AfterMethod(alwaysRun=true)
     public void tearDown() throws Exception {
         try {

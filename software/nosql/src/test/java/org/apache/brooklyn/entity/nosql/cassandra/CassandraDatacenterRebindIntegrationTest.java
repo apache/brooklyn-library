@@ -50,6 +50,7 @@ public class CassandraDatacenterRebindIntegrationTest extends RebindTestFixtureW
 
     private LocalhostMachineProvisioningLocation localhostProvisioningLocation;
     
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         CassandraNodeIntegrationTest.assertCassandraPortsAvailableEventually();

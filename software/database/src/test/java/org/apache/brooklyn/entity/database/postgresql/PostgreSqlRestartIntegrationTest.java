@@ -42,6 +42,7 @@ public class PostgreSqlRestartIntegrationTest extends AbstractSoftwareProcessRes
     // TODO The second start() will fail because customize operations forbidden while there is existing data:
     //      "If you want to create a new database system, either remove or empty".
     // I haven't checked whether it damaged the data in the database though!
+    @Override
     @Test(enabled=false, groups={"Integration", "WIP"})
     public void testStopProcessAndStart() throws Exception {
         super.testStopProcessAndStart();

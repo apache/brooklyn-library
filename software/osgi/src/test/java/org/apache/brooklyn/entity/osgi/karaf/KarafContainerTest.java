@@ -49,6 +49,7 @@ public class KarafContainerTest extends BrooklynAppLiveTestSupport {
     LocalhostMachineProvisioningLocation localhost;
     KarafContainer karaf;
 
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

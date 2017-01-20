@@ -38,6 +38,7 @@ public class PostgreSqlInitializeDatabaseLiveTest extends BrooklynAppLiveTestSup
     public static final Logger log = LoggerFactory.getLogger(PostgreSqlIntegrationTest.class);
     JcloudsLocation jcloudsLocation;
 
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

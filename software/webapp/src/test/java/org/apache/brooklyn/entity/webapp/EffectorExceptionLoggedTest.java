@@ -68,12 +68,14 @@ public class EffectorExceptionLoggedTest extends BrooklynAppUnitTestSupport {
         }
     }
 
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();
         loc = app.newLocalhostProvisioningLocation();
     }
 
+    @Override
     protected BrooklynProperties getBrooklynProperties() {
         BrooklynProperties result = BrooklynProperties.Factory.newEmpty();
         result.put(Entitlements.GLOBAL_ENTITLEMENT_MANAGER, ThrowingEntitlementManager.class.getName());

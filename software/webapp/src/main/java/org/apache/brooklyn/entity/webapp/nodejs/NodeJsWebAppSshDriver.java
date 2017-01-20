@@ -51,6 +51,7 @@ public class NodeJsWebAppSshDriver extends AbstractSoftwareProcessSshDriver impl
         super(entity, machine);
     }
 
+    @Override
     public NodeJsWebAppServiceImpl getEntity() {
         return (NodeJsWebAppServiceImpl) super.getEntity();
     }

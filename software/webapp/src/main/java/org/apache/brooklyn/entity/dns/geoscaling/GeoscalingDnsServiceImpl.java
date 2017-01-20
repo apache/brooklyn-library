@@ -155,6 +155,7 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
         isConfigured = false;
     }
     
+    @Override
     protected void reconfigureService(Collection<HostGeoInfo> targetHosts) {
         if (!isConfigured) {
             this.rememberedTargetHosts = MutableSet.copyOf(targetHosts);

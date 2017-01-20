@@ -42,6 +42,7 @@ public abstract class JavaWebAppSshDriver extends JavaSoftwareProcessSshDriver i
         super(entity, machine);
     }
 
+    @Override
     public JavaWebAppSoftwareProcessImpl getEntity() {
         return (JavaWebAppSoftwareProcessImpl) super.getEntity();
     }

@@ -18,8 +18,6 @@
  */
 package org.apache.brooklyn.entity.database.postgresql;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.brooklyn.api.effector.Effector;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
@@ -28,15 +26,12 @@ import org.apache.brooklyn.core.effector.Effectors;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.location.Locations;
-import org.apache.brooklyn.core.sensor.ReleaseableLatch;
 import org.apache.brooklyn.entity.chef.ChefConfig;
 import org.apache.brooklyn.entity.chef.ChefLifecycleEffectorTasks;
 import org.apache.brooklyn.entity.chef.ChefServerTasks;
 import org.apache.brooklyn.entity.stock.EffectorStartableImpl;
 import org.apache.brooklyn.feed.ssh.SshFeed;
 import org.apache.brooklyn.feed.ssh.SshPollConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.Jsonya;
 import org.apache.brooklyn.util.core.ResourceUtils;
@@ -44,6 +39,8 @@ import org.apache.brooklyn.util.core.config.ConfigBag;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.ssh.BashCommands;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl implements PostgreSqlNode {
 
@@ -100,9 +97,7 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
                 );
         }
         @Override
-        protected void postStartCustom(AtomicReference<ReleaseableLatch> startLatchRef) {
-            super.postStartCustom(startLatchRef);
-
+        protected void postStartCustom() {
             // now run the creation script
             String creationScript;
             String creationScriptUrl = entity().getConfig(PostgreSqlNode.CREATION_SCRIPT_URL);
@@ -115,6 +110,7 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
 
             // and finally connect sensors
             entity().connectSensors();
+            super.postStartCustom();
         }
         @Override
         protected void preStopCustom() {

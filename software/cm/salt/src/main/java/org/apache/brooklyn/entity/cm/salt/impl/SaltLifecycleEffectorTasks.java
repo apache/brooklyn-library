@@ -24,7 +24,6 @@ import static org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftw
 import static org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters.StopMode.NEVER;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +37,6 @@ import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.sensor.ReleaseableLatch;
 import org.apache.brooklyn.entity.cm.salt.SaltConfig;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters;
@@ -169,10 +167,10 @@ public class SaltLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
     }
 
     @Override
-    protected void postStartCustom(AtomicReference<ReleaseableLatch> startLatchRef) {
+    protected void postStartCustom() {
         // TODO: check for package installed?
         entity().sensors().set(SoftwareProcess.SERVICE_UP, true);
-        super.postStartCustom(startLatchRef);
+        super.postStartCustom();
     }
 
 

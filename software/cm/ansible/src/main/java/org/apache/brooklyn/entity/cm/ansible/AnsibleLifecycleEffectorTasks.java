@@ -18,7 +18,8 @@
  */
 package org.apache.brooklyn.entity.cm.ansible;
 
-import com.google.common.base.Supplier;
+import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
+
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.location.MachineLocation;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
@@ -35,13 +36,13 @@ import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.net.Urls;
-
-import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.Duration;
 import org.apache.brooklyn.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Supplier;
 
 public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks implements AnsibleConfig {
 
@@ -135,6 +136,7 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
     }
 
 
+    @Override
     protected void postStartCustom() {
         boolean result = false;
         result |= tryCheckStartService();
@@ -173,11 +175,12 @@ public class AnsibleLifecycleEffectorTasks extends MachineLifecycleEffectorTasks
                             .setOnFailureOrException(false))
                     .build();
                     
-             entity().feeds().addFeed(serviceSshFeed);
+             entity().feeds().add(serviceSshFeed);
         } else {
             LOG.warn("Location(s) {} not an ssh-machine location, so not polling for status; "
                     + "setting serviceUp immediately", entity().getLocations());
         }
+        super.postStartCustom();
     }
 
     protected boolean tryCheckStartService() {

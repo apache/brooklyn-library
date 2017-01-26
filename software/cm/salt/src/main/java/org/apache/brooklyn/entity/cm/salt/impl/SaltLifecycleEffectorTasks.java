@@ -18,21 +18,26 @@
  */
 package org.apache.brooklyn.entity.cm.salt.impl;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
+import static java.util.regex.Pattern.DOTALL;
+import static java.util.regex.Pattern.MULTILINE;
+import static org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters.StopMode.ALWAYS;
+import static org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters.StopMode.NEVER;
+
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.brooklyn.api.effector.Effector;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.location.MachineLocation;
 import org.apache.brooklyn.api.mgmt.TaskAdaptable;
 import org.apache.brooklyn.camp.brooklyn.BrooklynCampConstants;
-import org.apache.brooklyn.entity.cm.salt.SaltConfig;
 import org.apache.brooklyn.core.effector.Effectors;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
 import org.apache.brooklyn.core.entity.trait.Startable;
+import org.apache.brooklyn.entity.cm.salt.SaltConfig;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters;
 import org.apache.brooklyn.entity.software.base.lifecycle.MachineLifecycleEffectorTasks;
@@ -46,14 +51,10 @@ import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.regex.Pattern.DOTALL;
-import static java.util.regex.Pattern.MULTILINE;
-import static org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters.StopMode.ALWAYS;
-import static org.apache.brooklyn.entity.software.base.SoftwareProcess.StopSoftwareParameters.StopMode.NEVER;
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 
 @Beta
 public class SaltLifecycleEffectorTasks extends MachineLifecycleEffectorTasks implements SaltConfig {
@@ -165,10 +166,11 @@ public class SaltLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
         SaltHighstate.applyHighstate(stateDescription, entity());
     }
 
-
+    @Override
     protected void postStartCustom() {
         // TODO: check for package installed?
         entity().sensors().set(SoftwareProcess.SERVICE_UP, true);
+        super.postStartCustom();
     }
 
 

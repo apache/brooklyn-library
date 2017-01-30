@@ -27,7 +27,6 @@ import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.factory.ConfigurableEntityFactory;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.trait.MemberReplaceable;
 import org.apache.brooklyn.core.entity.trait.Resizable;
@@ -78,12 +77,6 @@ public interface ControlledDynamicWebAppCluster extends DynamicGroup, Entity, St
     public static BasicAttributeSensorAndConfigKey<EntitySpec<? extends LoadBalancer>> CONTROLLER_SPEC = new BasicAttributeSensorAndConfigKey(
             EntitySpec.class, "controlleddynamicwebappcluster.controllerSpec", "Spec for creating the controller (if one not supplied explicitly); if null an NGINX instance will be created");
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
-    /** factory (or closure) to create the web server, given flags */
-    @SetFromFlag("factory")
-    public static BasicAttributeSensorAndConfigKey<ConfigurableEntityFactory<? extends WebAppService>> FACTORY = new BasicAttributeSensorAndConfigKey(
-            ConfigurableEntityFactory.class, DynamicCluster.FACTORY.getName(), "factory (or closure) to create the web server");
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     /** Spec for web server entiites to be created */
     @SetFromFlag("memberSpec")
@@ -104,8 +97,6 @@ public interface ControlledDynamicWebAppCluster extends DynamicGroup, Entity, St
 
     
     public LoadBalancer getController();
-    
-    public ConfigurableEntityFactory<WebAppService> getFactory();
     
     public DynamicWebAppCluster getCluster();
     

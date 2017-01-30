@@ -32,7 +32,6 @@ import org.apache.brooklyn.api.sensor.SensorEventListener;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityPredicates;
-import org.apache.brooklyn.core.entity.factory.ConfigurableEntityFactory;
 import org.apache.brooklyn.core.entity.lifecycle.Lifecycle;
 import org.apache.brooklyn.core.entity.lifecycle.ServiceStateLogic;
 import org.apache.brooklyn.core.entity.trait.Startable;
@@ -79,16 +78,14 @@ public class ControlledDynamicWebAppClusterImpl extends DynamicGroupImpl impleme
     public void init() {
         super.init();
         
-        ConfigToAttributes.apply(this, FACTORY);
         ConfigToAttributes.apply(this, MEMBER_SPEC);
         ConfigToAttributes.apply(this, CONTROLLER);
         ConfigToAttributes.apply(this, CONTROLLER_SPEC);
         ConfigToAttributes.apply(this, WEB_CLUSTER_SPEC);
         ConfigToAttributes.apply(this, CONTROLLED_GROUP);
         
-        ConfigurableEntityFactory<? extends WebAppService> webServerFactory = getAttribute(FACTORY);
         EntitySpec<? extends WebAppService> webServerSpec = getAttribute(MEMBER_SPEC);
-        if (webServerFactory == null && webServerSpec == null) {
+        if (webServerSpec == null) {
             log.debug("creating default web server spec for {}", this);
             webServerSpec = EntitySpec.create(TomcatServer.class);
             sensors().set(MEMBER_SPEC, webServerSpec);
@@ -97,20 +94,14 @@ public class ControlledDynamicWebAppClusterImpl extends DynamicGroupImpl impleme
         log.debug("creating cluster child for {}", this);
         // Note relies on initial_size being inherited by DynamicWebAppCluster, because key id is identical
         EntitySpec<? extends DynamicWebAppCluster> webClusterSpec = getAttribute(WEB_CLUSTER_SPEC);
-        Map<String,Object> webClusterFlags;
-        if (webServerSpec != null) {
-            webClusterFlags = MutableMap.<String,Object>of("memberSpec", webServerSpec);
-        } else {
-            webClusterFlags = MutableMap.<String,Object>of("factory", webServerFactory);
-        }
+        Map<String,Object> webClusterFlags = MutableMap.<String,Object>of("memberSpec", webServerSpec);
+
         if (webClusterSpec == null) {
             log.debug("creating default web cluster spec for {}", this);
             webClusterSpec = EntitySpec.create(DynamicWebAppCluster.class);
         }
         boolean hasMemberSpec = webClusterSpec.getConfig().containsKey(DynamicWebAppCluster.MEMBER_SPEC) || webClusterSpec.getFlags().containsKey("memberSpec");
-        @SuppressWarnings("deprecation")
-        boolean hasMemberFactory = webClusterSpec.getConfig().containsKey(DynamicWebAppCluster.FACTORY) || webClusterSpec.getFlags().containsKey("factory");
-        if (!(hasMemberSpec || hasMemberFactory)) {
+        if (!hasMemberSpec) {
             webClusterSpec.configure(webClusterFlags);
         } else {
             log.warn("In {}, not setting cluster's {} because already set on webClusterSpec", new Object[] {this, webClusterFlags.keySet()});
@@ -182,12 +173,6 @@ public class ControlledDynamicWebAppClusterImpl extends DynamicGroupImpl impleme
         return getAttribute(CONTROLLER);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public ConfigurableEntityFactory<WebAppService> getFactory() {
-        return (ConfigurableEntityFactory<WebAppService>) getAttribute(FACTORY);
-    }
-    
     // TODO convert to an entity reference which is serializable
     @Override
     public DynamicWebAppCluster getCluster() {

@@ -21,7 +21,6 @@ package org.apache.brooklyn.entity.webapp;
 import java.util.List;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
@@ -73,7 +72,7 @@ public class DynamicWebAppFabricTest {
         
         app.start(locs);
         for (Entity member : fabric.getChildren()) {
-            ((EntityLocal)member).sensors().set(Changeable.GROUP_SIZE, 1);
+            member.sensors().set(Changeable.GROUP_SIZE, 1);
         }
         
         for (Entity member : fabric.getChildren()) {

@@ -35,7 +35,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nullable;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.policy.PolicySpec;
@@ -54,7 +53,6 @@ import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -238,7 +236,7 @@ public class MongoDBReplicaSetImpl extends DynamicClusterImpl implements MongoDB
                 addSecondaryWhenPrimaryIsNonNull(server);
             }
         } catch (Exception e) {
-            ServiceStateLogic.ServiceNotUpLogic.updateNotUpIndicator((EntityLocal)server, "Failed to update replicaset", e);
+            ServiceStateLogic.ServiceNotUpLogic.updateNotUpIndicator(server, "Failed to update replicaset", e);
         }
     }
 
@@ -338,7 +336,7 @@ public class MongoDBReplicaSetImpl extends DynamicClusterImpl implements MongoDB
                 }
             });
         } catch (Exception e) {
-            ServiceStateLogic.ServiceNotUpLogic.updateNotUpIndicator((EntityLocal)member, "Failed to update replicaset", e);
+            ServiceStateLogic.ServiceNotUpLogic.updateNotUpIndicator(member, "Failed to update replicaset", e);
         }
     }
 

@@ -31,7 +31,6 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.entity.database.Schema;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.feed.jmx.JmxAttributePollConfig;
 import org.apache.brooklyn.feed.jmx.JmxFeed;
@@ -104,7 +103,7 @@ public class DerbySchema extends AbstractEntity implements Schema {
             exchange = new ObjectName(format("org.apache.derby:type=VirtualHost.Exchange,VirtualHost=\"%s\",name=\"amq.direct\",ExchangeType=direct", virtualHost));
             create();
 
-            jmxHelper = new JmxHelper((EntityLocal)getParent());
+            jmxHelper = new JmxHelper(getParent());
 
             ObjectName schemaMBeanName = new ObjectName(format("org.apache.derby:type=VirtualHost.Schema,VirtualHost=\"%s\",name=\"%s\"", virtualHost, name));
 

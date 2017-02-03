@@ -21,9 +21,6 @@ package org.apache.brooklyn.entity.messaging.activemq;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
-
 import com.google.common.base.Preconditions;
 
 import org.apache.brooklyn.entity.messaging.jms.JMSDestinationImpl;
@@ -48,7 +45,7 @@ public abstract class ActiveMQDestinationImpl extends JMSDestinationImpl impleme
 
         try {
             brokerMBeanName = new ObjectName("org.apache.activemq:type=Broker,brokerName=" + brokerName);
-            jmxHelper = new JmxHelper((EntityLocal) getParent());
+            jmxHelper = new JmxHelper(getParent());
         } catch (MalformedObjectNameException e) {
             throw Exceptions.propagate(e);
         }

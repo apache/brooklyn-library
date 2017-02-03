@@ -21,7 +21,6 @@ package org.apache.brooklyn.entity.webapp;
 import static org.testng.Assert.assertEquals;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
@@ -98,7 +97,7 @@ public class DynamicWebAppClusterTest {
         EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, true);
         
         // When child is !service_up, should report false
-        ((EntityLocal)Iterables.get(cluster.getMembers(), 0)).sensors().set(Startable.SERVICE_UP, false);
+        Iterables.get(cluster.getMembers(), 0).sensors().set(Startable.SERVICE_UP, false);
         EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, false);
         EntityAsserts.assertAttributeEqualsContinually(MutableMap.of("timeout", SHORT_WAIT_MS), cluster, DynamicWebAppCluster.SERVICE_UP, false);
         
@@ -109,7 +108,7 @@ public class DynamicWebAppClusterTest {
 
         // And if that serviceUp child goes away, should again report false
         Entities.unmanage(Iterables.get(cluster.getMembers(), 1));
-        ((EntityLocal)Iterables.get(cluster.getMembers(), 0)).sensors().set(Startable.SERVICE_UP, false);
+        Iterables.get(cluster.getMembers(), 0).sensors().set(Startable.SERVICE_UP, false);
         
         EntityAsserts.assertAttributeEqualsEventually(cluster, DynamicWebAppCluster.SERVICE_UP, false);
     }

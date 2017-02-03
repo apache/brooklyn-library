@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
 import org.apache.brooklyn.policy.enricher.RollingTimeWindowMeanEnricher;
 import org.apache.brooklyn.policy.enricher.TimeFractionDeltaEnricher;
@@ -37,11 +36,11 @@ public class WebAppServiceMethods implements WebAppServiceConstants {
 
     public static final Duration DEFAULT_WINDOW_DURATION = Duration.TEN_SECONDS;
 
-    public static void connectWebAppServerPolicies(EntityLocal entity) {
+    public static void connectWebAppServerPolicies(Entity entity) {
         connectWebAppServerPolicies(entity, DEFAULT_WINDOW_DURATION);
     }
 
-    public static void connectWebAppServerPolicies(EntityLocal entity, Duration windowPeriod) {
+    public static void connectWebAppServerPolicies(Entity entity, Duration windowPeriod) {
         entity.enrichers().add(TimeWeightedDeltaEnricher.<Integer>getPerSecondDeltaEnricher(entity, REQUEST_COUNT, REQUESTS_PER_SECOND_LAST));
 
         if (windowPeriod!=null) {

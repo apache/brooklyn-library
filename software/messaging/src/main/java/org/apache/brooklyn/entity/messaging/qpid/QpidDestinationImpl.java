@@ -25,7 +25,6 @@ import javax.management.ObjectName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.messaging.amqp.AmqpServer;
 import org.apache.brooklyn.entity.messaging.jms.JMSDestinationImpl;
@@ -63,7 +62,7 @@ public abstract class QpidDestinationImpl extends JMSDestinationImpl implements 
             if (virtualHost == null) virtualHost = getConfig(QpidBroker.VIRTUAL_HOST_NAME);
             sensors().set(QpidBroker.VIRTUAL_HOST_NAME, virtualHost);
             virtualHostManager = new ObjectName(format("org.apache.qpid:type=VirtualHost.VirtualHostManager,VirtualHost=\"%s\"", virtualHost));
-            jmxHelper = new JmxHelper((EntityLocal)getParent());
+            jmxHelper = new JmxHelper(getParent());
         } catch (MalformedObjectNameException e) {
             throw Exceptions.propagate(e);
         }

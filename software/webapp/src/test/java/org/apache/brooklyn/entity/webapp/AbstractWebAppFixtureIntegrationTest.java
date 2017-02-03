@@ -39,7 +39,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.brooklyn.api.entity.Application;
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.api.mgmt.ManagementContext;
 import org.apache.brooklyn.api.mgmt.SubscriptionHandle;
@@ -474,7 +473,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         URL resource = getClass().getClassLoader().getResource(war);
         assertNotNull(resource);
         
-        ((EntityLocal)entity).config().set(JavaWebAppService.ROOT_WAR, resource.toString());
+        entity.config().set(JavaWebAppService.ROOT_WAR, resource.toString());
         Entities.start(entity.getApplication(), ImmutableList.of(loc));
         
         //tomcat may need a while to unpack everything
@@ -496,7 +495,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         URL resource = getClass().getClassLoader().getResource(war);
         assertNotNull(resource);
         
-        ((EntityLocal)entity).config().set(JavaWebAppService.NAMED_WARS, ImmutableList.of(resource.toString()));
+        entity.config().set(JavaWebAppService.NAMED_WARS, ImmutableList.of(resource.toString()));
         Entities.start(entity.getApplication(), ImmutableList.of(loc));
 
         Asserts.succeedsEventually(MutableMap.of("timeout", 60*1000), new Runnable() {

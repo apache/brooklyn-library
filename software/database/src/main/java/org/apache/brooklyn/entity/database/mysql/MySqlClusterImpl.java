@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nullable;
 
 import org.apache.brooklyn.api.entity.Entity;
-import org.apache.brooklyn.api.entity.EntityLocal;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -205,11 +204,10 @@ public class MySqlClusterImpl extends DynamicClusterImpl implements MySqlCluster
     protected Entity createNode(Location loc, Map<?, ?> flags) {
         MySqlNode node = (MySqlNode) super.createNode(loc, flags);
         if (!MySqlClusterUtils.IS_MASTER.apply(node)) {
-            EntityLocal localNode = (EntityLocal) node;
-            ServiceNotUpLogic.updateNotUpIndicator(localNode, MySqlSlave.SLAVE_HEALTHY, "Replication not started");
+            ServiceNotUpLogic.updateNotUpIndicator(node, MySqlSlave.SLAVE_HEALTHY, "Replication not started");
 
             addFeed(FunctionFeed.builder()
-                .entity(localNode)
+                .entity(node)
                 .period(Duration.FIVE_SECONDS)
                 .poll(FunctionPollConfig.forSensor(MySqlSlave.SLAVE_HEALTHY)
                         .callable(new SlaveStateCallable(node))

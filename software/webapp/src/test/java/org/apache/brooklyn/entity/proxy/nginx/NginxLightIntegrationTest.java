@@ -25,8 +25,6 @@ import java.util.Map;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.factory.BasicConfigurableEntityFactory;
-import org.apache.brooklyn.core.entity.factory.EntityFactory;
 import org.apache.brooklyn.core.test.BrooklynAppUnitTestSupport;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.proxy.StubAppServer;
@@ -39,20 +37,17 @@ import com.google.common.collect.Maps;
 
 public class NginxLightIntegrationTest extends BrooklynAppUnitTestSupport {
 
-    private NginxController nginx;
-    private DynamicCluster cluster;
-
     // FIXME Fails because getting addEntity callback for group members while nginx is still starting,
     // so important nginx fields are still null. Therefore get NPE for cluster members, and thus targets
     // is of size zero.
     @Test(groups = {"Integration", "WIP"})
     public void testNginxTargetsMatchesClusterMembers() {
-        EntityFactory<StubAppServer> serverFactory = new BasicConfigurableEntityFactory<StubAppServer>(StubAppServer.class);
+        EntitySpec<StubAppServer> serverSpec = EntitySpec.create(StubAppServer.class);
         final DynamicCluster cluster = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
                 .configure("initialSize", 2)
-                .configure("factory", serverFactory));
+                .configure(DynamicCluster.MEMBER_SPEC, serverSpec));
                 
-        nginx = app.createAndManageChild(EntitySpec.create(NginxController.class)
+        final NginxController nginx = app.createAndManageChild(EntitySpec.create(NginxController.class)
                 .configure("serverPool", cluster)
                 .configure("domain", "localhost"));
         

@@ -30,8 +30,8 @@ import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.EntityFactory;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
+import org.apache.brooklyn.core.test.entity.TestEntity;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.entity.webapp.JavaWebAppService;
@@ -79,10 +79,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
     public void testWhenNoServersReturns404() {
         serverPool = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
                 .configure("initialSize", 0)
-                .configure(DynamicCluster.FACTORY, new EntityFactory<Entity>() {
-                    @Override public Entity newEntity(Map flags, Entity parent) {
-                        throw new UnsupportedOperationException();
-                    }}));
+                .configure("memberSpec", EntitySpec.create(TestEntity.class)));
         
         nginx = app.createAndManageChild(EntitySpec.create(NginxController.class)
                 .configure("serverPool", serverPool)
@@ -98,10 +95,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
     public void testRestart() {
         serverPool = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
                 .configure("initialSize", 0)
-                .configure(DynamicCluster.FACTORY, new EntityFactory<Entity>() {
-                    @Override public Entity newEntity(Map flags, Entity parent) {
-                        throw new UnsupportedOperationException();
-                    }}));
+                .configure("memberSpec", EntitySpec.create(TestEntity.class)));
         
         nginx = app.createAndManageChild(EntitySpec.create(NginxController.class)
                 .configure("serverPool", serverPool)
@@ -244,10 +238,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
     public void testTwoNginxesGetDifferentPorts() {
         serverPool = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
                 .configure("initialSize", 0)
-                .configure(DynamicCluster.FACTORY, new EntityFactory<Entity>() {
-                    @Override public Entity newEntity(Map flags, Entity parent) {
-                        throw new UnsupportedOperationException();
-                    }}));
+                .configure("memberSpec", EntitySpec.create(TestEntity.class)));
         
         NginxController nginx1 = app.createAndManageChild(EntitySpec.create(NginxController.class)
                 .configure("serverPool", serverPool)

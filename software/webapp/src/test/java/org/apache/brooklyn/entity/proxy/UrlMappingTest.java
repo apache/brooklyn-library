@@ -32,8 +32,6 @@ import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityInternal;
 import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.entity.factory.BasicConfigurableEntityFactory;
-import org.apache.brooklyn.core.entity.factory.EntityFactory;
 import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
 import org.apache.brooklyn.core.mgmt.rebind.RebindTestUtils;
 import org.apache.brooklyn.core.test.entity.TestApplication;
@@ -79,10 +77,10 @@ public class UrlMappingTest {
 
         app = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
         
-        EntityFactory<StubAppServer> serverFactory = new BasicConfigurableEntityFactory<StubAppServer>(StubAppServer.class);
+        EntitySpec<StubAppServer> serverSpec = EntitySpec.create(StubAppServer.class);
         cluster = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
-                .configure("initialSize", initialClusterSize)
-                .configure("factory", serverFactory));
+                .configure(DynamicCluster.INITIAL_SIZE, initialClusterSize)
+                .configure(DynamicCluster.MEMBER_SPEC, serverSpec));
 
         urlMapping = app.createAndManageChild(EntitySpec.create(UrlMapping.class)
                 .configure("domain", "localhost")

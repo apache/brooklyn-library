@@ -27,7 +27,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.brooklyn.api.entity.Entity;
@@ -36,16 +35,14 @@ import org.apache.brooklyn.api.entity.Group;
 import org.apache.brooklyn.api.mgmt.EntityManager;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.EntityFactory;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
+import org.apache.brooklyn.core.test.entity.TestEntity;
 import org.apache.brooklyn.entity.group.BasicGroup;
 import org.apache.brooklyn.entity.group.DynamicCluster;
-import org.apache.brooklyn.entity.proxy.nginx.NginxController;
-import org.apache.brooklyn.entity.proxy.nginx.UrlMapping;
-import org.apache.brooklyn.entity.proxy.nginx.UrlRewriteRule;
 import org.apache.brooklyn.entity.webapp.JavaWebAppService;
 import org.apache.brooklyn.entity.webapp.WebAppService;
 import org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server;
+import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
@@ -53,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -429,10 +425,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
     public void testUrlMappingWithEmptyCoreCluster() throws Exception {
         DynamicCluster nullCluster = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
             .configure("initialSize", 0)
-            .configure("factory", new EntityFactory<Entity>() {
-                public Entity newEntity(Map flags, Entity parent) {
-                    throw new UnsupportedOperationException();
-                }}));
+            .configure("membeSpec", EntitySpec.create(TestEntity.class)));
 
         DynamicCluster c0 = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
                 .configure("initialSize", 1)

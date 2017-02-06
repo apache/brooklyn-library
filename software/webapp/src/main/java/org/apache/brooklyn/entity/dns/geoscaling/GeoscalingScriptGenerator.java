@@ -54,18 +54,18 @@ public class GeoscalingScriptGenerator {
     
     private static String getHostsDeclaration(Collection<HostGeoInfo> hosts) {
         StringBuffer sb = new StringBuffer();
-        sb.append("$hosts = array(").append(Os.LINE_SEPARATOR);
+        sb.append("$hosts = array(\n");
         Iterator<HostGeoInfo> iServer = hosts.iterator();
         while (iServer.hasNext()) {
             HostGeoInfo server = iServer.next();
-            sb.append("    array('name'      => '").append(escape(server.displayName)).append("',").append(Os.LINE_SEPARATOR);
-            sb.append("          'latitude'  => ").append(server.latitude).append(",").append(Os.LINE_SEPARATOR);
-            sb.append("          'longitude' => ").append(server.longitude).append(",").append(Os.LINE_SEPARATOR);
+            sb.append("    array('name'      => '").append(escape(server.displayName)).append("',\n");
+            sb.append("          'latitude'  => ").append(server.latitude).append(",\n");
+            sb.append("          'longitude' => ").append(server.longitude).append(",\n");
             sb.append("          'ip'        => '").append(escape(server.address)).append("')");
-            if (iServer.hasNext()) sb.append(",").append(Os.LINE_SEPARATOR);
-            sb.append(Os.LINE_SEPARATOR);
+            if (iServer.hasNext()) sb.append(",\n");
+            sb.append("\n");
         }
-        sb.append(");").append(Os.LINE_SEPARATOR);
+        sb.append(");").append("\n");
         return sb.toString();
     }
     

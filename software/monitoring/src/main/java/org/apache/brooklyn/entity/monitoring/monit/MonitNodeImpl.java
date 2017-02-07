@@ -28,7 +28,6 @@ import org.apache.brooklyn.feed.ssh.SshPollConfig;
 import org.apache.brooklyn.feed.ssh.SshPollValue;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.text.Strings;
-import org.apache.brooklyn.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

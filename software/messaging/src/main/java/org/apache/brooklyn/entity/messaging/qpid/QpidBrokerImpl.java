@@ -28,7 +28,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.core.entity.Entities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.brooklyn.entity.java.JmxSupport;
@@ -54,10 +53,14 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
         super();
     }
 
+    @Override
     public String getVirtualHost() { return getAttribute(VIRTUAL_HOST_NAME); }
+    @Override
     public String getAmqpVersion() { return getAttribute(AMQP_VERSION); }
+    @Override
     public Integer getAmqpPort() { return getAttribute(AMQP_PORT); }
 
+    @Override
     public void setBrokerUrl() {
         String urlFormat = "amqp://guest:guest@/%s?brokerlist='tcp://%s:%d'";
         sensors().set(BROKER_URL, format(urlFormat, getAttribute(VIRTUAL_HOST_NAME), getAttribute(HOSTNAME), getAttribute(AMQP_PORT)));
@@ -69,6 +72,7 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
         new JmxSupport(this, null).recommendJmxRmiCustomAgent();
     }
 
+    @Override
     public void waitForServiceUp(long duration, TimeUnit units) {
         super.waitForServiceUp(duration, units);
 
@@ -88,12 +92,14 @@ public class QpidBrokerImpl extends JMSBrokerImpl<QpidQueue, QpidTopic> implemen
         }
     }
     
+    @Override
     public QpidQueue createQueue(Map properties) {
         QpidQueue result = addChild(EntitySpec.create(QpidQueue.class).configure(properties));
         result.create();
         return result;
     }
 
+    @Override
     public QpidTopic createTopic(Map properties) {
         QpidTopic result = addChild(EntitySpec.create(QpidTopic.class).configure(properties));
         result.create();

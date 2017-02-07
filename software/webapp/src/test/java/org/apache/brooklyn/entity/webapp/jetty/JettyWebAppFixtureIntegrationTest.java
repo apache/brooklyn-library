@@ -32,11 +32,13 @@ public class JettyWebAppFixtureIntegrationTest extends AbstractWebAppFixtureInte
     // FIXME Fails with this is in the jetty log:
     //     Caused by: java.lang.ClassNotFoundException: mx4j.tools.adaptor.http.HttpAdaptor
 
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void canStartAndStop(final SoftwareProcess entity) {
         super.canStartAndStop(entity);
     }
     
+    @Override
     @DataProvider(name = "basicEntities")
     public Object[][] basicEntities() {
         TestApplication jettyApp = newTestApplication();

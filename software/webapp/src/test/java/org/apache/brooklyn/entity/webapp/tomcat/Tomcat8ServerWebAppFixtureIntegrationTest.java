@@ -52,6 +52,7 @@ public class Tomcat8ServerWebAppFixtureIntegrationTest extends AbstractWebAppFix
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(Tomcat8ServerWebAppFixtureIntegrationTest.class);
     
+    @Override
     @DataProvider(name = "basicEntities")
     public Object[][] basicEntities() {
         TestApplication tomcatApp = newTestApplication();
@@ -80,10 +81,12 @@ public class Tomcat8ServerWebAppFixtureIntegrationTest extends AbstractWebAppFix
     }
 
     // exists to be able to test on this class from GUI in Eclipse IDE
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void canStartAndStop(final SoftwareProcess entity) {
         super.canStartAndStop(entity);
     }
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void testReportsServiceDownWhenKilled(final SoftwareProcess entity) throws Exception {
         super.testReportsServiceDownWhenKilled(entity);
@@ -129,6 +132,7 @@ public class Tomcat8ServerWebAppFixtureIntegrationTest extends AbstractWebAppFix
         if (shutdownPort != null) {
             boolean socketClosed = Repeater.create("Checking WebApp has shut down")
                     .repeat(new Callable<Void>() {
+                            @Override
                             public Void call() throws Exception {
                                 if (shutdownSocket.get() != null) shutdownSocket.get().close();
                                 try {
@@ -141,6 +145,7 @@ public class Tomcat8ServerWebAppFixtureIntegrationTest extends AbstractWebAppFix
                             }})
                     .every(100, TimeUnit.MILLISECONDS)
                     .until(new Callable<Boolean>() {
+                            @Override
                             public Boolean call() {
                                 return (gotException.get() != null);
                             }})

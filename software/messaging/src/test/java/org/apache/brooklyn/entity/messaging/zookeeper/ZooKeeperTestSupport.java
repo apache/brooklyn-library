@@ -22,7 +22,6 @@ package org.apache.brooklyn.entity.messaging.zookeeper;
 import java.io.Closeable;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.brooklyn.location.paas.PaasLocation;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;

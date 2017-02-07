@@ -59,6 +59,7 @@ public class ControlledDynamicWebAppClusterIntegrationTest extends BrooklynAppLi
     private LocalhostMachineProvisioningLocation loc;
     private List<LocalhostMachineProvisioningLocation> locs;
     
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

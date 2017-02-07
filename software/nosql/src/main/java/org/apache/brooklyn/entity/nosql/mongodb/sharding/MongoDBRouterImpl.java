@@ -68,6 +68,7 @@ public class MongoDBRouterImpl extends SoftwareProcessImpl implements MongoDBRou
                 .poll(new FunctionPollConfig<Integer, Integer>(SHARD_COUNT)
                         .period(5, TimeUnit.SECONDS)
                         .callable(new Callable<Integer>() {
+                            @Override
                             public Integer call() throws Exception {
                                 MongoDBClientSupport clientSupport = MongoDBClientSupport.forServer(MongoDBRouterImpl.this);
                                 return (int) clientSupport.getShardCount();

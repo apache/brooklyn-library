@@ -153,11 +153,11 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
             // TODO osDetails.getName() is returning "linux", instead of debian/ubuntu on AWS with jenkins image,
             //      running as integration test targetting localhost.
             // TODO Debian support (default debian image fails with 'sudo: command not found')
-            downloadUrl = (String)entity.getAttribute(RiakNode.DOWNLOAD_URL_DEBIAN);
+            downloadUrl = entity.getAttribute(RiakNode.DOWNLOAD_URL_DEBIAN);
             osReleaseCmd = osDetails.getVersion().substring(0, osDetails.getVersion().indexOf("."));
         } else {
             // assume Ubuntu
-            downloadUrl = (String)entity.getAttribute(RiakNode.DOWNLOAD_URL_UBUNTU);
+            downloadUrl = entity.getAttribute(RiakNode.DOWNLOAD_URL_UBUNTU);
             osReleaseCmd = "`lsb_release -sc` && " +
                     "export OS_RELEASE=`([[ \"lucid natty precise\" =~ (^| )\\$OS_RELEASE($| ) ]] && echo $OS_RELEASE || echo precise)`";
         }
@@ -371,6 +371,7 @@ public class RiakNodeSshDriver extends JavaSoftwareProcessSshDriver implements R
         return entity.getAttribute(RiakNode.RIAK_ON_PATH);
     }
 
+    @Override
     public String getRiakEtcDir() {
         return isPackageInstall() ? "/etc/riak" : Urls.mergePaths(getExpandedInstallDir(), "etc");
     }

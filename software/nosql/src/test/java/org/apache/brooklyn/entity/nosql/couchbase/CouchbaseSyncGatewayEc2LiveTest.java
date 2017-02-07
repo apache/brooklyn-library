@@ -40,7 +40,7 @@ public class CouchbaseSyncGatewayEc2LiveTest extends AbstractEc2LiveTest {
             .configure(CouchbaseNode.COUCHBASE_ADMIN_USERNAME, "Administrator")
             .configure(CouchbaseNode.COUCHBASE_ADMIN_PASSWORD, "Password")
             .configure(DynamicCluster.INITIAL_SIZE, 3)
-            .configure(CouchbaseCluster.CREATE_BUCKETS, (List<Map<String,Object>>)ImmutableList.of(
+            .configure(CouchbaseCluster.CREATE_BUCKETS, ImmutableList.of(
                 (Map<String,Object>)ImmutableMap.<String, Object>of(
                     "bucket", "default",
                     "bucket-ramsize", 100,

@@ -139,6 +139,7 @@ public class GeoscalingWebClientTest extends BrooklynMgmtUnitTestSupport {
         super.setUp();
     }
     
+    @Override
     @AfterMethod(alwaysRun=true)
     public void tearDown() throws Exception {
         if (smartSubdomain != null)

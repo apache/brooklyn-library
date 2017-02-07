@@ -51,6 +51,7 @@ public class ActiveMQBrokerImpl extends JMSBrokerImpl<ActiveMQQueue, ActiveMQTop
         Entities.getRequiredUrlConfig(this, TEMPLATE_CONFIGURATION_URL);
     }
     
+    @Override
     public void setBrokerUrl() {
         sensors().set(BROKER_URL, String.format("tcp://%s:%d", getAttribute(HOSTNAME), getAttribute(OPEN_WIRE_PORT)));
     }

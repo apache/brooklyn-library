@@ -238,8 +238,8 @@ public class JavaWebAppsIntegrationTest {
             Assert.assertEquals(policy.getConfig(AutoScalerPolicy.MAX_POOL_SIZE), (Integer)5);
             Assert.assertEquals(policy.getConfig(AutoScalerPolicy.MIN_POOL_SIZE), (Integer)1);
             Assert.assertEquals(policy.getConfig(AutoScalerPolicy.METRIC), DynamicWebAppCluster.REQUESTS_PER_SECOND_IN_WINDOW_PER_NODE);
-            Assert.assertEquals(policy.getConfig(AutoScalerPolicy.METRIC_LOWER_BOUND), (Integer)10);
-            Assert.assertEquals(policy.getConfig(AutoScalerPolicy.METRIC_UPPER_BOUND), (Integer)100);
+            Assert.assertEquals(policy.getConfig(AutoScalerPolicy.METRIC_LOWER_BOUND), 10);
+            Assert.assertEquals(policy.getConfig(AutoScalerPolicy.METRIC_UPPER_BOUND), 100);
             Assert.assertTrue(policy.isRunning());
 
             EntityAsserts.assertAttributeEqualsEventually(app, Attributes.SERVICE_STATE_ACTUAL, Lifecycle.RUNNING);

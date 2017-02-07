@@ -134,6 +134,7 @@ public class SimulatedJBoss7ServerImpl extends JBoss7ServerImpl {
                 .poll(new FunctionPollConfig<Boolean,Boolean>(MANAGEMENT_URL_UP)
                         .callable(new Callable<Boolean>() {
                             private int counter = 0;
+                            @Override
                             public Boolean call() {
                                 sensors().set(REQUEST_COUNT, (counter++ % 100));
                                 sensors().set(ERROR_COUNT, (counter++ % 100));

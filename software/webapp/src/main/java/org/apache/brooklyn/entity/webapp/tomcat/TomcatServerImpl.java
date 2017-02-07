@@ -22,9 +22,6 @@ import static java.lang.String.format;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
-import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.core.entity.EntityFunctions;
 import org.apache.brooklyn.entity.java.JavaAppUtils;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcessImpl;
@@ -33,7 +30,6 @@ import org.apache.brooklyn.feed.jmx.JmxFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 

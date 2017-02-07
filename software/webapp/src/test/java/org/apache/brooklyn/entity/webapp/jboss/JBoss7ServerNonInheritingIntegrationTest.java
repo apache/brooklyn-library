@@ -86,6 +86,7 @@ public class JBoss7ServerNonInheritingIntegrationTest extends BrooklynAppLiveTes
         HttpTestUtils.assertUrlUnreachable(httpsUrl);
 
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertNotNull(server.getAttribute(JBoss7Server.REQUEST_COUNT));
                 assertNotNull(server.getAttribute(JBoss7Server.ERROR_COUNT));
@@ -159,6 +160,7 @@ public class JBoss7ServerNonInheritingIntegrationTest extends BrooklynAppLiveTes
         //HttpTestUtils.assertContentContainsText(httpsUrl, "Hello");
         
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertNotNull(server.getAttribute(JBoss7Server.REQUEST_COUNT));
                 assertNotNull(server.getAttribute(JBoss7Server.ERROR_COUNT));
@@ -178,6 +180,7 @@ public class JBoss7ServerNonInheritingIntegrationTest extends BrooklynAppLiveTes
         app.start(ImmutableList.of(localhostProvisioningLocation));
 
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertNotNull(serverA.getAttribute(JBoss7Server.BYTES_SENT));
                 assertNotNull(serverB.getAttribute(JBoss7Server.BYTES_SENT));

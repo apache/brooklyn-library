@@ -115,6 +115,7 @@ public class NginxHttpsSslIntegrationTest extends BrooklynAppLiveTestSupport {
         if (!url.startsWith("https://")) Assert.fail("URL should be https: "+url);
         
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 // Services are running
                 assertTrue(cluster.getAttribute(SoftwareProcess.SERVICE_UP));
@@ -172,6 +173,7 @@ public class NginxHttpsSslIntegrationTest extends BrooklynAppLiveTestSupport {
         if (!url.startsWith("https://")) Assert.fail("URL should be https: "+url);
 
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 // Services are running
                 assertTrue(cluster.getAttribute(SoftwareProcess.SERVICE_UP));

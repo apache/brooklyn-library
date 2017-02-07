@@ -108,18 +108,21 @@ public class RubyRepRackspaceLiveTest extends RubyRepIntegrationTest {
     }
     
     // disable inherited non-live tests
+    @Override
     @Test(enabled = false, groups = "Integration")
     public void test_localhost_mysql() throws Exception {
         super.test_localhost_mysql();
     }
 
     // disable inherited non-live tests
+    @Override
     @Test(enabled = false, groups = "Integration")
     public void test_localhost_postgres() throws Exception {
         super.test_localhost_postgres();
     }
 
     // disable inherited non-live tests
+    @Override
     @Test(enabled = false, groups = "Integration")
     public void test_localhost_postgres_mysql() throws Exception {
         super.test_localhost_postgres_mysql();

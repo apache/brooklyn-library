@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableList;
 
 import org.testng.annotations.Test;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 /**

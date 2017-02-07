@@ -79,6 +79,7 @@ public class RabbitQueue extends RabbitDestination implements Queue {
     /**
      * Return the AMQP name for the queue.
      */
+    @Override
     public String getQueueName() {
         return getName();
     }

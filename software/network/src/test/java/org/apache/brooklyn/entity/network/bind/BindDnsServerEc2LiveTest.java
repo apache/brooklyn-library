@@ -26,6 +26,7 @@ import org.apache.brooklyn.entity.AbstractEc2LiveTest;
 public class BindDnsServerEc2LiveTest extends AbstractEc2LiveTest {
     private static final Logger LOG = LoggerFactory.getLogger(BindDnsServerEc2LiveTest.class);
 
+    @Override
     protected void doTest(Location testLocation) throws Exception {
         BindDnsServerLiveTest.testBindStartsAndUpdates(app, testLocation);
     }

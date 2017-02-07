@@ -41,8 +41,10 @@ public abstract class JMSDestinationImpl extends AbstractEntity implements JMSDe
 
     protected abstract void disconnectSensors();
 
+    @Override
     public abstract void delete();
 
+    @Override
     public void destroy() {
         disconnectSensors();
         delete();

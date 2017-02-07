@@ -35,15 +35,18 @@ public class ActiveMQTopicImpl extends ActiveMQDestinationImpl implements Active
         connectSensors();
     }
 
+    @Override
     public void delete() {
         jmxHelper.operation(brokerMBeanName, "removeTopic", getName());
         disconnectSensors();
     }
 
+    @Override
     public void connectSensors() {
         //TODO add sensors for topics
     }
 
+    @Override
     public String getTopicName() {
         return getName();
     }

@@ -29,11 +29,13 @@ import org.testng.annotations.Test;
 
 public class JBossServersMultiVersionWebAppFixtureIntegrationTest extends AbstractWebAppFixtureIntegrationTest {
 
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void testReportsServiceDownWhenKilled(final SoftwareProcess entity) throws Exception {
         super.testReportsServiceDownWhenKilled(entity);
     }
     
+    @Override
     @DataProvider(name = "basicEntities")
     public Object[][] basicEntities() {
         TestApplication jboss6App = newTestApplication();
@@ -52,6 +54,7 @@ public class JBossServersMultiVersionWebAppFixtureIntegrationTest extends Abstra
     }
 
     // to be able to test on this class in Eclipse IDE
+    @Override
     @Test(groups = "Integration", dataProvider = "basicEntities")
     public void canStartAndStop(final SoftwareProcess entity) {
         super.canStartAndStop(entity);

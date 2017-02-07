@@ -44,6 +44,7 @@ public class MongoDBShardedDeploymentIntegrationTest extends BrooklynAppLiveTest
     
     private LocalhostMachineProvisioningLocation localhostProvisioningLocation;
 
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

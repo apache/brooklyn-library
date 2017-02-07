@@ -18,7 +18,6 @@
  */
 package org.apache.brooklyn.entity.webapp.tomcat;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import org.apache.brooklyn.api.entity.EntitySpec;

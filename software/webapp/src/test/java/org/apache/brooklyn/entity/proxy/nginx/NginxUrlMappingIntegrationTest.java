@@ -157,6 +157,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         // Confirm routes requests to the correct cluster
         // Do more than one request for each in-case just lucky with round-robin...
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 //cluster 0
                 for (int i = 0; i < 2; i++) {
@@ -230,6 +231,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         // Confirm routes requests to the correct cluster
         // Do more than one request for each in-case just lucky with round-robin...
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 for (int i = 0; i < 2; i++) {
                     HttpTestUtils.assertContentContainsText("http://localhost:"+port+"/atC0", "Hello");
@@ -301,6 +303,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         
         // check nginx forwards localhost1 to c1, and localhost to core group 
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 HttpTestUtils.assertContentContainsText("http://localhost1:"+port+"/hello-world", "Hello");
                 HttpTestUtils.assertHttpStatusCodeEquals("http://localhost1:"+port+"", 404);
@@ -333,6 +336,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         
         // Confirm routes requests to the correct cluster
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 // health check
                 HttpTestUtils.assertContentContainsText("http://localhost1:"+port+"", "Hello");
@@ -382,6 +386,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         
         // Wait for app-server to be responsive, and url-mapping to update its TARGET_ADDRESSES (through async subscription)
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 // Entities.dumpInfo(app);
                 assertEquals(u1.getAttribute(UrlMapping.TARGET_ADDRESSES).size(), 1);
@@ -401,6 +406,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         // Also wait for TARGET_ADDRESSES to update
         assertAppServerRespondsEventually(c1jboss2);
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 assertEquals(u1.getAttribute(UrlMapping.TARGET_ADDRESSES).size(), 2);
             }});
@@ -410,6 +416,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         //      This assertion isn't good enough to tell if it's been deployed.
         final String c1jboss2addr = c1jboss2.getAttribute(Attributes.HOSTNAME)+":"+c1jboss2.getAttribute(Attributes.HTTP_PORT);
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 String conf = nginx.getConfigFile();
                 assertTrue(conf.contains(c1jboss2addr), "could not find "+c1jboss2addr+" in:\n"+conf);
@@ -452,6 +459,7 @@ public class NginxUrlMappingIntegrationTest extends BrooklynAppLiveTestSupport {
         // Confirm routes requests to the correct cluster
         // Do more than one request for each in-case just lucky with round-robin...
         Asserts.succeedsEventually(new Runnable() {
+            @Override
             public void run() {
                 for (int i = 0; i < 2; i++) {
                     HttpTestUtils.assertContentContainsText("http://localhost:"+port+"/atC0/", "Hello");

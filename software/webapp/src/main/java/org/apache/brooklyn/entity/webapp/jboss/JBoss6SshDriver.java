@@ -53,10 +53,12 @@ public class JBoss6SshDriver extends JavaWebAppSshDriver implements JBoss6Driver
         return (JBoss6ServerImpl) super.getEntity();
     }
     
+    @Override
     protected String getLogFileLocation() {
         return Os.mergePathsUnix(getRunDir(), "server", SERVER_TYPE, "log/server.log");
     }
 
+    @Override
     protected String getDeploySubdir() {
         return Os.mergePathsUnix("server", SERVER_TYPE, "deploy");
     } // FIXME what is this in as6?

@@ -18,7 +18,6 @@
  */
 package org.apache.brooklyn.entity.webapp.jboss;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
@@ -49,6 +48,7 @@ public class JBoss6ServerNonInheritingIntegrationTest extends BrooklynAppLiveTes
 
     private LocalhostMachineProvisioningLocation localhostProvisioningLocation;
     
+    @Override
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         super.setUp();

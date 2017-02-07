@@ -54,6 +54,7 @@ public class PostgreSqlTest extends BrooklynAppUnitTestSupport {
     private SshMachineLocation stubbedMachine;
     
     public static class PostgreSqlNodeForTestingImpl extends PostgreSqlNodeImpl {
+        @Override
         public SoftwareProcessDriver doInitDriver(MachineLocation machine) {
             return super.doInitDriver(machine);
         }

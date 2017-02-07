@@ -32,6 +32,7 @@ public class SaltUtils {
 
         return new ManagementContext.PropertiesReloadListener() {
             private static final long serialVersionUID = 1L;
+            @Override
             public void reloaded() {
                 // TODO: implement properties reload logic
             }

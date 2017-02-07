@@ -184,6 +184,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
     }
     
     // Used for freemarker
+    @Override
     public String getMajorMinorVersion() {
         String version = getConfig(CassandraNode.SUGGESTED_VERSION);
         if (Strings.isBlank(version)) return "";
@@ -270,6 +271,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
     }
     /** not always the private IP, if public IP has been insisted on for broadcast, e.g. setting up a rack topology */
     // have not confirmed this does the right thing in all clouds ... only used for rack topology however
+    @Override
     public String getPrivateIp() {
         String sensorName = getConfig(BROADCAST_ADDRESS_SENSOR);
         if (Strings.isNonBlank(sensorName)) {
@@ -279,6 +281,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
             return Strings.isNonBlank(subnetAddress) ? subnetAddress : getAttribute(CassandraNode.ADDRESS);
         }
     }
+    @Override
     public String getPublicIp() {
         // may need to be something else in google
         return getAttribute(CassandraNode.ADDRESS);
@@ -343,7 +346,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
             if (name == null) {
                 name = "UNKNOWN_DATACENTER";
             }
-            sensors().set((AttributeSensor<String>)DATACENTER_NAME, name);
+            sensors().set(DATACENTER_NAME, name);
         }
         return name;
     }
@@ -362,7 +365,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
             if (name == null) {
                 name = "UNKNOWN_RACK";
             }
-            sensors().set((AttributeSensor<String>)RACK_NAME, name);
+            sensors().set(RACK_NAME, name);
         }
         return name;
     }
@@ -583,6 +586,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
         public ThriftLatencyChecker(CassandraNode entity) {
             this.entity = entity;
         }
+        @Override
         public Long call() {
             Integer privatePort = entity.getThriftPort();
             if (privatePort == null) return -1L;

@@ -138,6 +138,7 @@ public class MariaDbSshDriver extends AbstractSoftwareProcessSshDriver implement
         newScript(INSTALLING).body.append(commands).execute();
     }
 
+    @Override
     public MariaDbNodeImpl getEntity() { return (MariaDbNodeImpl) super.getEntity(); }
     public int getPort() { return getEntity().getPort(); }
     public String getSocketUid() { return getEntity().getSocketUid(); }
@@ -239,6 +240,7 @@ public class MariaDbSshDriver extends AbstractSoftwareProcessSshDriver implement
         return format("%s/bin/mysqladmin --defaults-file=%s status", getExpandedInstallDir(), Urls.mergePaths(getRunDir(), getConfigFile()));
     }
 
+    @Override
     public ProcessTaskWrapper<Integer> executeScriptAsync(String commands) {
         String filename = "mariadb-commands-"+Identifiers.makeRandomId(8);
         DynamicTasks.queue(SshEffectorTasks.put(Urls.mergePaths(getRunDir(), filename)).contents(commands).summary("copying datastore script to execute "+filename));

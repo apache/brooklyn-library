@@ -99,6 +99,7 @@ public class SimulatedNginxControllerImpl extends NginxControllerImpl {
                 .period(getConfig(HTTP_POLL_PERIOD))
                 .poll(new FunctionPollConfig<Boolean,Boolean>(SERVICE_UP)
                         .callable(new Callable<Boolean>() {
+                            @Override
                             public Boolean call() {
                                 return true;
                             }}))

@@ -79,6 +79,7 @@ public class PostgreSqlRackspaceLiveTest extends PostgreSqlIntegrationTest {
         test("Red Hat Enterprise Linux 6");
     }
 
+    @Override
     @Test(groups = "Live")
     public void test_localhost() throws Exception {
         super.test_localhost();

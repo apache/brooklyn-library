@@ -242,6 +242,7 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
 
     private static Function<String, String> givenDirIfFileExistsInItLinkToDir(final String filename, final String linkToMake) {
         return new Function<String, String>() {
+            @Override
             public String apply(@Nullable String dir) {
                 return ifExecutableElse1(Urls.mergePaths(dir, filename),
                     chainGroup("echo 'found "+filename+" in "+dir+" so linking to it in "+linkToMake+"'", "ln -s "+dir+" "+linkToMake));
@@ -558,6 +559,7 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
         return callPgctl("status", false);
     }
 
+    @Override
     public ProcessTaskWrapper<Integer> executeScriptAsync(String commands) {
         String filename = "postgresql-commands-"+Identifiers.makeRandomId(8);
         installFile(Streams.newInputStreamWithContents(commands), filename);

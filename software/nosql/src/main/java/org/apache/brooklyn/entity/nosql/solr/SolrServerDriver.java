@@ -19,7 +19,6 @@
 package org.apache.brooklyn.entity.nosql.solr;
 
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessDriver;
-import org.apache.brooklyn.entity.software.base.SoftwareProcessDriver;
 
 public interface SolrServerDriver extends JavaSoftwareProcessDriver {
 

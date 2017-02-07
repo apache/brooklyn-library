@@ -31,8 +31,6 @@ import org.apache.brooklyn.util.core.config.ConfigBag;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.text.Identifiers;
 import org.apache.brooklyn.util.text.Strings;
-import org.apache.brooklyn.util.time.Duration;
-
 import com.google.common.base.Function;
 
 public class MariaDbNodeImpl extends SoftwareProcessImpl implements MariaDbNode {
@@ -87,6 +85,7 @@ public class MariaDbNodeImpl extends SoftwareProcessImpl implements MariaDbNode 
                     .poll(new SshPollConfig<Double>(QUERIES_PER_SECOND_FROM_MARIADB)
                             .command(cmd)
                             .onSuccess(new Function<SshPollValue, Double>() {
+                                @Override
                                 public Double apply(SshPollValue input) {
                                     String q = Strings.getFirstWordAfter(input.getStdout(), "Queries per second avg:");
                                     return (q == null) ? null : Double.parseDouble(q);

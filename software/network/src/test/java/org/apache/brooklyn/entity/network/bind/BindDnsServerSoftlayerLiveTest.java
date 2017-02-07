@@ -24,6 +24,7 @@ import org.apache.brooklyn.entity.AbstractSoftlayerLiveTest;
 
 public class BindDnsServerSoftlayerLiveTest extends AbstractSoftlayerLiveTest {
 
+    @Override
     @Test(groups = "Live")
     protected void doTest(Location testLocation) throws Exception {
         BindDnsServerLiveTest.testBindStartsAndUpdates(app, testLocation);

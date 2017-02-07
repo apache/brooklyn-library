@@ -54,6 +54,7 @@ public class SaltIntegrationTest extends BrooklynAppLiveTestSupport {
 
     private Location testLocation;
 
+    @Override
     @BeforeMethod(alwaysRun = true)
     public void setUp() throws Exception {
         super.setUp();
@@ -68,6 +69,7 @@ public class SaltIntegrationTest extends BrooklynAppLiveTestSupport {
         }
     }
 
+    @Override
     @AfterMethod(alwaysRun = true)
     public void tearDown() throws Exception {
         if (mgmt != null) {

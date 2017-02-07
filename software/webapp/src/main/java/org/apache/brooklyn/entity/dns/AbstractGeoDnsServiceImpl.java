@@ -197,7 +197,7 @@ public abstract class AbstractGeoDnsServiceImpl extends AbstractEntity implement
                 return;
             if (targetEntityProvider instanceof DynamicGroup)
                 ((DynamicGroup) targetEntityProvider).rescanEntities();
-            Set<Entity> pool = MutableSet.copyOf(targetEntityProvider instanceof Group ? ((Group)targetEntityProvider).getMembers(): targetEntityProvider.getChildren());
+            Set<Entity> pool = MutableSet.copyOf(targetEntityProvider instanceof Group ? targetEntityProvider.getMembers(): targetEntityProvider.getChildren());
             if (log.isDebugEnabled()) log.debug("GeoDns {} refreshing targets, pool now {}", this, pool);
 
             boolean changed = false;

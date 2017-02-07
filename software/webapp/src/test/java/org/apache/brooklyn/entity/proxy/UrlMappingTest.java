@@ -188,6 +188,7 @@ public class UrlMappingTest {
     
     private void assertExpectedTargetsEventually(final Iterable<? extends Entity> members) {
         Asserts.succeedsEventually(MutableMap.of("timeout", Duration.ONE_MINUTE), new Runnable() {
+            @Override
             public void run() {
                 Iterable<String> expectedTargets = Iterables.transform(members, new Function<Entity,String>() {
                         @Override public String apply(@Nullable Entity input) {

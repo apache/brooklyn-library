@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.entity.messaging.amqp.AmqpServer;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.lifecycle.ScriptHelper;
@@ -45,7 +44,6 @@ import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.net.Urls;
-import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.text.Strings;
 
 /**

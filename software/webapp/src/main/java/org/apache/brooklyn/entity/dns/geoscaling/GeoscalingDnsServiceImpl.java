@@ -131,6 +131,7 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
     }
     
     /** minimum/default TTL here is 300s = 5m */
+    @Override
     public long getTimeToLiveSeconds() { return 5*60; }
     
     @Override
@@ -155,6 +156,7 @@ public class GeoscalingDnsServiceImpl extends AbstractGeoDnsServiceImpl implemen
         isConfigured = false;
     }
     
+    @Override
     protected void reconfigureService(Collection<HostGeoInfo> targetHosts) {
         if (!isConfigured) {
             this.rememberedTargetHosts = MutableSet.copyOf(targetHosts);

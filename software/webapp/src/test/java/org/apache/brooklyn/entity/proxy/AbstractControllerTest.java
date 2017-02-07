@@ -406,7 +406,7 @@ public class AbstractControllerTest extends BrooklynAppUnitTestSupport {
             sensors().set(Attributes.MAIN_URI_MAPPED_SUBNET, URI.create(machine.getAddress().getHostName()));
             sensors().set(Attributes.MAIN_URI_MAPPED_PUBLIC, URI.create("http://8.8.8.8:" + sensors().get(HTTP_PORT)));
         }
-        
+
         @Override
         public void stop() {
             Maybe<MachineLocation> machine = Machines.findUniqueMachineLocation(getLocations(), MachineLocation.class);

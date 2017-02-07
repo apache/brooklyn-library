@@ -18,15 +18,11 @@
  */
 package org.apache.brooklyn.entity.webapp;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Set;
 
-import com.google.common.net.HostAndPort;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
@@ -42,6 +38,7 @@ public abstract class JavaWebAppSshDriver extends JavaSoftwareProcessSshDriver i
         super(entity, machine);
     }
 
+    @Override
     public JavaWebAppSoftwareProcessImpl getEntity() {
         return (JavaWebAppSoftwareProcessImpl) super.getEntity();
     }

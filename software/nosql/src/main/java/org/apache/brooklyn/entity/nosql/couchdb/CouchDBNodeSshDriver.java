@@ -79,6 +79,11 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
 
     public String getErlangVersion() { return entity.getConfig(CouchDBNode.ERLANG_VERSION); }
 
+    protected boolean isV2() {
+        String version = getVersion();
+        return version.startsWith("2.");
+    }
+
     @Override
     public void install() {
         log.info("Installing {}", entity);
@@ -99,7 +104,7 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
                "zypper", "make",
                "port", null);
        MutableMap<String, String> installPackageFlags = MutableMap.of(
-               "yum", "js-devel openssl-devel libicu-devel libcurl-devel erlang-erts erlang-public_key erlang-eunit erlang-sasl erlang-os_mon erlang-asn1 erlang-xmerl",
+               "yum", "js-devel openssl-devel libicu-devel libcurl-devel erlang-erts erlang-public_key erlang-eunit erlang-sasl erlang-os_mon erlang-asn1 erlang-xmerl erlang erlangrebar",
                "apt", "erlang-nox erlang-dev libicu-dev libmozjs185-dev libcurl4-openssl-dev",
                "zypper", "erlang libicu-devel js-devel libopenssl-devel pcre-devel",
                "port", "icu erlang spidermonkey curl");
@@ -125,7 +130,7 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
        cmds.addAll(ImmutableList.of(
                "mkdir -p dist",
                configureCommand.toString(),
-               "make install"));
+               isV2()? "make release" : "make install"));
 
        ScriptHelper script = newScript(INSTALLING)
                .body.append(cmds)
@@ -182,14 +187,22 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
         log.info("Customizing {} (Cluster {})", entity, getClusterName());
         Networking.checkPortsValid(getPortMap());
 
-        newScript(CUSTOMIZING)
-        .body.append(
-                format("mkdir -p %s", getRunDir()),
-                format("cp -R %s/dist/{bin,etc,lib,share,var} %s", getExpandedInstallDir(), getRunDir()))
-        .execute();
+        ScriptHelper script = newScript(CUSTOMIZING).body
+                .append(format("mkdir -p %s", getRunDir()));
+        if (isV2()) {
+            script.body.append(format("mkdir -p %s/rel/couchdb/etc/local.d", getExpandedInstallDir()));
+        }
+        else {
+            script.body.append(format("cp -R %s/dist/{bin,etc,lib,share,var} %s", getExpandedInstallDir(), getRunDir()));
+        }
+        script.execute();
 
-        // Copy the configuration files across
+
         String destinationConfigFile = Os.mergePathsUnix(getRunDir(), getCouchDBConfigFileName());
+        if (isV2()) {
+            destinationConfigFile = Os.mergePathsUnix(getExpandedInstallDir(), "/rel/couchdb/etc/local.d", getCouchDBConfigFileName());
+        }
+        // Copy the configuration files across
         copyTemplate(getCouchDBConfigTemplateUrl(), destinationConfigFile);
         String destinationUriFile = Os.mergePathsUnix(getRunDir(), "couch.uri");
         copyTemplate(getCouchDBUriTemplateUrl(), destinationUriFile);
@@ -198,24 +211,36 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
     @Override
     public void launch() {
         log.info("Launching  {}", entity);
-        newScript(MutableMap.of(USE_PID_FILE, false), LAUNCHING)
-                .body.append(String.format("nohup ./bin/couchdb -p %s -a %s -o couchdb-console.log -e couchdb-error.log -b &", getPidFile(), Os.mergePathsUnix(getRunDir(), getCouchDBConfigFileName())))
-                .execute();
+        String couchDBPath = isV2()? getExpandedInstallDir()+"/rel/couchdb/bin/couchdb" : "./bin/couchdb";
+        ScriptHelper script = newScript(MutableMap.of(USE_PID_FILE, false), LAUNCHING);
+        script.body.append(String.format("nohup %s -p %s -a %s -o couchdb-console.log -e couchdb-error.log -b > console.out 2>&1 &", couchDBPath, getPidFile(), Os.mergePathsUnix(getRunDir(), getCouchDBConfigFileName())));
+        if (isV2()) {
+            script.body.append(String.format("echo $! > %s", getPidFile()));
+        }
+        script.execute();
     }
 
     public String getPidFile() { return Os.mergePathsUnix(getRunDir(), "couchdb.pid"); }
 
     @Override
     public boolean isRunning() {
+        String command = "./bin/couchdb -p %s -s";
+        if (isV2()) {
+            command = "kill -0 `cat %s`";
+            }
         return newScript(MutableMap.of(USE_PID_FILE, false), CHECK_RUNNING)
-                .body.append(String.format("./bin/couchdb -p %s -s", getPidFile()))
+                .body.append(String.format(command, getPidFile()))
                 .execute() == 0;
     }
 
     @Override
     public void stop() {
+        String command = "./bin/couchdb -p %s -k";
+        if (isV2()) {
+            command = "kill `cat %s`";
+        }
         newScript(MutableMap.of(USE_PID_FILE, false), STOPPING)
-                .body.append(String.format("./bin/couchdb -p %s -k", getPidFile()))
+                .body.append(String.format(command, getPidFile()))
                 .failOnNonZeroResultCode()
                 .execute();
     }

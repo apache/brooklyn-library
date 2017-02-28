@@ -41,12 +41,19 @@ The following apps are available:
 
 <ul>
 <%
-String url=System.getProperty("brooklyn.example.db.url");
+String mySqlUrl=System.getProperty("brooklyn.example.db.url");
 //URL should be supplied e.g. "-Dbrooklyn.example.db.url=jdbc:mysql://localhost/visitors?user=brooklyn&password=br00k11n"
 //(note quoting needed due to ampersand)
-if (url!=null) {
+if (mySqlUrl!=null) {
 %>
 <li><a href="db.jsp">SQL database chatroom</a></li>
+<% }
+
+String redisUrl=System.getProperty("brooklyn.example.redis.host");
+//Host should be supplied e.g. "-Dbrooklyn.example.redis.host=localhost"
+if (redisUrl!=null) {
+%>
+<li><a href="redis.jsp">Redis chatroom</a></li>
 <% } %>
 
 <%
@@ -71,9 +78,9 @@ if (hadoop!=null) {
 %>
 <li><a href="riak.jsp">Riak chatroom</a></li>
 <% }
-if (hadoop==null && url==null && mongo==null && riak==null) {
+if (hadoop==null && mySqlUrl==null && mongo==null && riak==null && redisUrl==null) {
 %>
-<li><i>None.</i> Try one of the other Brooklyn examples to see SQL or Hadoop.</li>
+<li><i>None.</i> Try one of the other Brooklyn examples to see SQL, Hadoop or Redis</li>
 <% } %>
 </ul>
 

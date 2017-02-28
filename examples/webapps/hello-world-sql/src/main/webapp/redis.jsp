@@ -34,7 +34,7 @@
     <td>
       <h1>Sample Brooklyn Deployed WebApp (Database JSP)</h1>
       This is the output of a JSP page that is part of the Hello, World application,
-      deployed by brooklyn, to show <b>Redis database interactivity</b>.
+      deployed by Brooklyn, to show <b>Redis database interactivity</b>.
     </td>
   </tr>
 </table>
@@ -56,10 +56,7 @@
       String message = messageParts[1];
     %>
     <li> <b><%= name %></b>: <%= message %> </li>
-      <%
-      }
-%>
-
+      <% } %>
 </ul>
 
 <br/>

@@ -252,6 +252,7 @@ public class MariaDbSshDriver extends AbstractSoftwareProcessSshDriver implement
                 SshEffectorTasks.ssh(
                                 "cd "+getRunDir(),
                                 getBaseDir()+"/bin/mysql --defaults-file="+getConfigFile()+" < "+filenameAlreadyInstalledAtServer)
+                        .requiringExitCodeZero()
                         .summary("executing datastore script "+filenameAlreadyInstalledAtServer));
     }
 

@@ -570,7 +570,8 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
         return DynamicTasks.queue(
             SshEffectorTasks.ssh(
                 "cd "+getRunDir(),
-                sudoAsUser("postgres", getInstallDir() + "/bin/psql -p " + entity.getAttribute(PostgreSqlNode.POSTGRESQL_PORT) + " --file " + filenameAlreadyInstalledAtServer))
+                sudoAsUser("postgres", getInstallDir() + "/bin/psql -p " + entity.getAttribute(PostgreSqlNode.POSTGRESQL_PORT) + " -v ON_ERROR_STOP=1 --file " + filenameAlreadyInstalledAtServer))
+                    .requiringExitCodeZero()
                 .summary("executing datastore script "+filenameAlreadyInstalledAtServer));
     }
 

@@ -75,14 +75,14 @@ public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver imp
         StringBuilder commandBuilder = new StringBuilder()
             .append(String.format("%s/bin/elasticsearch -d -p %s", getExpandedInstallDir(), pidFile));
         if (entity.getConfig(ElasticSearchNode.TEMPLATE_CONFIGURATION_URL) != null) {
-            commandBuilder.append(" -Des.config=" + Os.mergePaths(getRunDir(), getConfigFile()));
+            commandBuilder.append(" -Epath.conf=" + Os.mergePaths(getRunDir(), getConfigFile()));
         }
-        appendConfigIfPresent(commandBuilder, "es.path.data", ElasticSearchNode.DATA_DIR, Os.mergePaths(getRunDir(), "data"));
-        appendConfigIfPresent(commandBuilder, "es.path.logs", ElasticSearchNode.LOG_DIR, Os.mergePaths(getRunDir(), "logs"));
-        appendConfigIfPresent(commandBuilder, "es.node.name", ElasticSearchNode.NODE_NAME.getConfigKey());
-        appendConfigIfPresent(commandBuilder, "es.cluster.name", ElasticSearchNode.CLUSTER_NAME.getConfigKey());
-        appendConfigIfPresent(commandBuilder, "es.discovery.zen.ping.multicast.enabled", ElasticSearchNode.MULTICAST_ENABLED);
-        appendConfigIfPresent(commandBuilder, "es.discovery.zen.ping.unicast.enabled", ElasticSearchNode.UNICAST_ENABLED);
+        appendConfigIfPresent(commandBuilder, "path.data", ElasticSearchNode.DATA_DIR, Os.mergePaths(getRunDir(), "data"));
+        appendConfigIfPresent(commandBuilder, "path.logs", ElasticSearchNode.LOG_DIR, Os.mergePaths(getRunDir(), "logs"));
+        appendConfigIfPresent(commandBuilder, "node.name", ElasticSearchNode.NODE_NAME.getConfigKey());
+        appendConfigIfPresent(commandBuilder, "cluster.name", ElasticSearchNode.CLUSTER_NAME.getConfigKey());
+        appendConfigIfPresent(commandBuilder, "discovery.zen.ping.multicast.enabled", ElasticSearchNode.MULTICAST_ENABLED);
+        appendConfigIfPresent(commandBuilder, "discovery.zen.ping.unicast.enabled", ElasticSearchNode.UNICAST_ENABLED);
         commandBuilder.append(" > out.log 2> err.log < /dev/null");
         newScript(MutableMap.of("usePidFile", false), LAUNCHING)
             .updateTaskAndFailOnNonZeroResultCode()
@@ -103,7 +103,7 @@ public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver imp
             config = defaultValue;
         }
         if (config != null) {
-            builder.append(String.format(" -D%s=%s", parameter, config));
+            builder.append(String.format(" -E%s=%s", parameter, config));
         }
     }
     

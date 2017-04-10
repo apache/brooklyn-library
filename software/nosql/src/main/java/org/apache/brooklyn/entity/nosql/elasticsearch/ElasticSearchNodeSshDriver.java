@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableList;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessSshDriver;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessSshDriver;
+import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Urls;
@@ -74,6 +75,7 @@ public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver imp
         entity.sensors().set(ElasticSearchNode.PID_FILE, pidFile);
         StringBuilder commandBuilder = new StringBuilder()
             .append(String.format("%s/bin/elasticsearch -d -p %s", getExpandedInstallDir(), pidFile));
+        commandBuilder.append(" -Enetwork.host=" + getEntity().sensors().get(SoftwareProcess.ADDRESS));
         if (entity.getConfig(ElasticSearchNode.TEMPLATE_CONFIGURATION_URL) != null) {
             commandBuilder.append(" -Epath.conf=" + Os.mergePaths(getRunDir(), getConfigFile()));
         }

@@ -45,14 +45,14 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
 public interface ElasticSearchNode extends SoftwareProcess, UsesJava, DatastoreMixins.HasDatastoreUrl {
 
     @SetFromFlag("version")
-    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "1.2.1");
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "5.3.0");
 
     @SetFromFlag("archiveNameFormat")
     ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "elasticsearch-%s");
 
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-${version}.tar.gz");
+            "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${version}.tar.gz");
 
     @SetFromFlag("dataDir")
     ConfigKey<String> DATA_DIR = ConfigKeys.newStringConfigKey("elasticsearch.node.data.dir", "Directory for writing data files", null);
@@ -89,6 +89,9 @@ public interface ElasticSearchNode extends SoftwareProcess, UsesJava, DatastoreM
 
     @SetFromFlag("useHttpMonitoring")
     ConfigKey<Boolean> USE_HTTP_MONITORING = ConfigKeys.newConfigKey("httpMonitoring.enabled", "HTTP(S) monitoring enabled", Boolean.TRUE);
+
+    @SetFromFlag("javaVersionRequired")
+    ConfigKey<String> JAVA_VERSION_REQUIRED = ConfigKeys.newStringConfigKey("java.version.required", "Java version required", "1.8");
 
     AttributeSensor<String> NODE_ID = Sensors.newStringSensor("elasticsearch.node.id");
     AttributeSensor<Integer> DOCUMENT_COUNT = Sensors.newIntegerSensor("elasticsearch.node.docs.count");

@@ -42,10 +42,16 @@ public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver imp
 
     @Override
     public void install() {
+        final String tmpLimitsFile = Os.mergePaths(getRunDir(), "99-elasticsearch-limits.conf");
+        final String tmpSysctlFile = Os.mergePaths(getRunDir(), "99-elasticsearch-sysctl.conf");
+        copyResource("classpath://org/apache/brooklyn/entity/nosql/elasticsearch/99-elasticsearch-limits.conf", tmpLimitsFile);
+        copyResource("classpath://org/apache/brooklyn/entity/nosql/elasticsearch/99-elasticsearch-sysctl.conf", tmpSysctlFile);
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();
         
         List<String> commands = ImmutableList.<String>builder()
+            .add(BashCommands.sudo(String.format("cp %s %s", tmpLimitsFile, "/etc/security/limits.d/99-elasticsearch.conf")))
+            .add(BashCommands.sudo(String.format("cp %s %s", tmpSysctlFile, "/etc/sysctl.d/99-elasticsearch.conf")))
             .addAll(BashCommands.commandsToDownloadUrlsAs(urls, saveAs))
             .add(String.format("tar zxvf %s", saveAs))
             .build();

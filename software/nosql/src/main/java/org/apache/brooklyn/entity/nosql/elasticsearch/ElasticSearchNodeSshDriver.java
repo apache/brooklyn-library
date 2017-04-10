@@ -52,6 +52,7 @@ public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver imp
         List<String> commands = ImmutableList.<String>builder()
             .add(BashCommands.sudo(String.format("cp %s %s", tmpLimitsFile, "/etc/security/limits.d/99-elasticsearch.conf")))
             .add(BashCommands.sudo(String.format("cp %s %s", tmpSysctlFile, "/etc/sysctl.d/99-elasticsearch.conf")))
+            .add(BashCommands.sudo(String.format("sysctl --load %s", "/etc/sysctl.d/99-elasticsearch.conf")))
             .addAll(BashCommands.commandsToDownloadUrlsAs(urls, saveAs))
             .add(String.format("tar zxvf %s", saveAs))
             .build();
@@ -92,9 +93,12 @@ public class ElasticSearchNodeSshDriver extends JavaSoftwareProcessSshDriver imp
         appendConfigIfPresent(commandBuilder, "discovery.zen.ping.multicast.enabled", ElasticSearchNode.MULTICAST_ENABLED);
         appendConfigIfPresent(commandBuilder, "discovery.zen.ping.unicast.enabled", ElasticSearchNode.UNICAST_ENABLED);
         commandBuilder.append(" > out.log 2> err.log < /dev/null");
+        final List<String> cmds = ImmutableList.of(
+                String.format("for p in $( pidof bash ); do echo set prlimit on process $p; %s; done", BashCommands.sudo("prlimit --nofile=65536:65536 --pid=$p")),
+                commandBuilder.toString());
         newScript(MutableMap.of("usePidFile", false), LAUNCHING)
             .updateTaskAndFailOnNonZeroResultCode()
-            .body.append(commandBuilder.toString())
+            .body.append(cmds)
             .execute();
     }
     

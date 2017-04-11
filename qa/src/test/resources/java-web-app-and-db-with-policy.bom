@@ -20,7 +20,7 @@
 # standalone catalog file
 
 brooklyn.catalog:
-  version: "0.11.0-SNAPSHOT"   # BROOKLYN_VERSION
+  version: "0.12.0-SNAPSHOT"   # BROOKLYN_VERSION
   items:
   - id: java-cluster-db-policy-example
     itemType: template

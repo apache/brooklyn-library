@@ -456,7 +456,7 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
     }
     
     protected String getUserPassword() {
-        return getConfigOrDefault(PostgreSqlNode.PASSWORD, Strings.makeRandomId(8));
+        return getConfigOrDefault(PostgreSqlNode.PASSWORD, Identifiers.makeRandomPassword(8));
     }
 
     protected void executeDatabaseCreationScript() {

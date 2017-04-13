@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.brooklyn.util.text.Identifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class HazelcastClusterImpl extends DynamicClusterImpl implements Hazelcas
             if (LOG.isInfoEnabled()) {
                 LOG.info(this + " cluster password not provided for " + CLUSTER_PASSWORD.getName() + " : generating random password");
             }
-            config().set(CLUSTER_PASSWORD, Strings.makeRandomId(12));
+            config().set(CLUSTER_PASSWORD, Identifiers.makeRandomPassword(12));
         }
         
         policies().add(PolicySpec.create(MemberTrackingPolicy.class)

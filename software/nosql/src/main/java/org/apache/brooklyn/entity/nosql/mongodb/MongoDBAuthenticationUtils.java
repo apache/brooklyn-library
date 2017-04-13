@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.nosql.mongodb;
 
+import org.apache.brooklyn.util.text.Identifiers;
 import org.apache.brooklyn.util.text.Strings;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
@@ -46,7 +47,7 @@ public class MongoDBAuthenticationUtils {
         String password = entity.config().get(MongoDBAuthenticationMixins.ROOT_PASSWORD);
         if (Strings.isEmpty(password)) {
             LOG.debug(entity + " has no password specified for " + MongoDBAuthenticationMixins.ROOT_PASSWORD.getName() + "; using a random string");
-            password = Strings.makeRandomId(16);
+            password = Identifiers.makeRandomPassword(16);
             entity.sensors().set(MongoDBAuthenticationMixins.ROOT_PASSWORD, password);
             entity.config().set(MongoDBAuthenticationMixins.ROOT_PASSWORD, password);
         }

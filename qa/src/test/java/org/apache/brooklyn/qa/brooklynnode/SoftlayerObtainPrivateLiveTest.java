@@ -44,6 +44,7 @@ import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.BrooklynMavenArtifacts;
 import org.apache.brooklyn.util.maven.MavenRetriever;
+import org.apache.brooklyn.util.text.Identifiers;
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.time.Duration;
 import org.slf4j.Logger;
@@ -124,7 +125,7 @@ public class SoftlayerObtainPrivateLiveTest {
     public void testObtain() {
         String localUrl = MavenRetriever.localUrl(BrooklynMavenArtifacts.artifact("", "brooklyn-dist", "tar.gz", "dist"));
         String userName = "admin";
-        String userPassword = Strings.makeRandomId(6);
+        String userPassword = Identifiers.makeRandomPassword(6);
         String remoteConfig = Joiner.on('\n').join(MutableList.of(
                 "brooklyn.webconsole.security.users=" + userName,
                 "brooklyn.webconsole.security.user.admin.password=" + userPassword)

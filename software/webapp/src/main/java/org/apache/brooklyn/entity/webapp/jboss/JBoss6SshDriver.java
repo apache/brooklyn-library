@@ -90,6 +90,14 @@ public class JBoss6SshDriver extends JavaWebAppSshDriver implements JBoss6Driver
     }
 
     @Override
+    public boolean installJava() {
+        /*
+         * JBoss only works on Java 7 or lower, see here: https://developer.jboss.org/message/808212
+         */
+        return checkForAndInstallJava("1.7");
+    }
+
+    @Override
     public void install() {
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();

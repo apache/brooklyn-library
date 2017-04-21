@@ -44,7 +44,9 @@ import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.net.Urls;
+import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.Strings;
+import org.apache.brooklyn.util.time.Duration;
 
 /**
  * TODO javadoc
@@ -138,16 +140,10 @@ public class RabbitSshDriver extends AbstractSoftwareProcessSshDriver implements
     public void launch() {
         newScript(MutableMap.of("usePidFile", false), LAUNCHING)
             .body.append(
-                "rm console-out.log || true",
+                "mv console-out.log console-out-$(date +\"%Y%m%d.%H%M.%S\").log || true",
                 "nohup ./sbin/rabbitmq-server > console-out.log 2> console-err.log &",
                 "./sbin/rabbitmqctl wait ${RABBITMQ_PID_FILE}",
-                "for i in {1..60}\n" +
-                    "do\n" +
-                     "    grep 'Starting broker... completed' console-out.log && exit\n" +
-                     "    sleep 1\n" +
-                     "done",
-                "echo \"Couldn't determine if rabbitmq-server is running\"",
-                "exit 1"
+                BashCommands.waitForFileContents("console-out.log", "Starting broker... completed", Duration.ONE_MINUTE, true)
             ).execute();
     }
 

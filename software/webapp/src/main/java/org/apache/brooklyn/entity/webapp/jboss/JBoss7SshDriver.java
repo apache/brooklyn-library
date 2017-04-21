@@ -37,6 +37,7 @@ import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.Strings;
+import org.apache.brooklyn.util.time.Duration;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -206,6 +207,7 @@ public class JBoss7SshDriver extends JavaWebAppSshDriver implements JBoss7Driver
                         "export LAUNCH_JBOSS_IN_BACKGROUND=true",
                         format("export JBOSS_HOME=%s", getExpandedInstallDir()),
                         format("export JBOSS_PIDFILE=%s/%s", getRunDir(), PID_FILENAME),
+                        "mv "+getRunDir()+"/console "+getRunDir()+"/console-$(date +\"%Y%m%d.%H%M.%S\") || true",
                         format("%s/bin/%s.sh ", getExpandedInstallDir(), SERVER_TYPE) +
                                 format("--server-config %s ", CONFIG_FILE) +
                                 format("-Djboss.server.base.dir=%s/%s ", getRunDir(), SERVER_TYPE) +
@@ -213,12 +215,7 @@ public class JBoss7SshDriver extends JavaWebAppSshDriver implements JBoss7Driver
                                 "-Djava.net.preferIPv4Stack=true " +
                                 "-Djava.net.preferIPv6Addresses=false " +
                                 format(" >> %s/console 2>&1 </dev/null &", getRunDir()),
-                        "for i in {1..10}\n" +
-                                "do\n" +
-                                "    grep -i 'starting' "+getRunDir()+"/console && exit\n" +
-                                "    sleep 1\n" +
-                                "done\n" +
-                                "echo \"Couldn't determine if process is running (console output does not contain 'starting'); continuing but may subsequently fail\""
+                        BashCommands.waitForFileContents("console", "starting", Duration.TEN_SECONDS, false)
                     )
                 .execute();
     }

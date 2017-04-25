@@ -151,7 +151,7 @@ public class JBoss6SshDriver extends JavaWebAppSshDriver implements JBoss6Driver
                                 format("-Djboss.boot.server.log.dir=%s/server/%s/log ", getRunDir(), SERVER_TYPE) +
                                 format("-b %s %s -c %s ", getBindAddress(), clusterArg, SERVER_TYPE) +
                                 ">>$RUN_DIR/console 2>&1 </dev/null &",
-                        BashCommands.waitForFileContents(getRunDir()+"/console", "starting", Duration.TEN_SECONDS, false)
+                        BashCommands.waitForFileContents(getRunDir()+"/console", "Starting", Duration.TEN_SECONDS, false)
                     )
                 .execute();
     }

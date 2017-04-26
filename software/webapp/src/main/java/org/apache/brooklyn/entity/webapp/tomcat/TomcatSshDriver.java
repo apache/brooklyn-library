@@ -35,6 +35,7 @@ import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.StringEscapes.BashStringEscapes;
+import org.apache.brooklyn.util.time.Duration;
 
 public class TomcatSshDriver extends JavaWebAppSshDriver implements TomcatDriver {
 
@@ -91,13 +92,9 @@ public class TomcatSshDriver extends JavaWebAppSshDriver implements TomcatDriver
         // so the process failed to start.
         newScript(MutableMap.of(USE_PID_FILE, false), LAUNCHING)
                 .body.append(
+                        "mv "+getLogFileLocation()+" "+getLogFileLocation()+"-$(date +\"%Y%m%d.%H%M.%S\").log || true",
                         format("%s/bin/startup.sh >>$RUN/console 2>&1 </dev/null",getExpandedInstallDir()),
-                        "for i in {1..10}\n" +
-                        "do\n" +
-                        "    if [ -s "+getLogFileLocation()+" ]; then exit; fi\n" +
-                        "    sleep 1\n" +
-                        "done\n" +
-                        "echo \"Couldn't determine if tomcat-server is running (logs/catalina.out is still empty); continuing but may subsequently fail\""
+                        BashCommands.waitForFileExists(getLogFileLocation(), Duration.TEN_SECONDS, false)
                     )
                 .execute();
     }

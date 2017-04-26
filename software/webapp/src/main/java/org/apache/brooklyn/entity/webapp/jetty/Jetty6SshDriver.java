@@ -32,6 +32,7 @@ import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.text.Strings;
+import org.apache.brooklyn.util.time.Duration;
 
 public class Jetty6SshDriver extends JavaWebAppSshDriver implements Jetty6Driver {
 
@@ -98,19 +99,18 @@ public class Jetty6SshDriver extends JavaWebAppSshDriver implements Jetty6Driver
 
     @Override
     public void launch() {
-        Map ports = MutableMap.of("httpPort", getHttpPort(), "jmxPort", getJmxPort(), "rmiRegistryPort", getRmiRegistryPort());
+        MutableMap<String, Integer> ports = MutableMap.of("httpPort", getHttpPort(), "jmxPort", getJmxPort(), "rmiRegistryPort", getRmiRegistryPort());
         Networking.checkPortsValid(ports);
 
         newScript(MutableMap.of(USE_PID_FILE, false), LAUNCHING)
                 .body.append(
+                        "mv "+getLogFileLocation()+" "+getLogFileLocation()+"-$(date +\"%Y%m%d.%H%M.%S\") || true",
                         "./bin/jetty.sh start jetty-brooklyn.xml jetty.xml jetty-logging.xml jetty-stats.xml " +
                                 (Strings.isEmpty(getConfigXmlTemplateUrl()) ? "" : "jetty-custom.xml ") +
                                 ">> $RUN_DIR/console 2>&1 < /dev/null",
-                        "for i in {1..10} ; do\n" +
-                        "    if [ -s "+getLogFileLocation()+" ]; then exit; fi\n" +
-                        "    sleep 1\n" +
-                        "done",
-                        "echo \"Couldn't determine if jetty-server is running (log file is still empty); continuing but may subsequently fail\""
+                        BashCommands.waitForFileExists(getLogFileLocation(), Duration.TEN_SECONDS, false),
+                        "sleep 5",
+                        "cat $RUN_DIR/console"
                     )
                 .execute();
         log.debug("launched jetty");

@@ -72,7 +72,7 @@ public class ZooKeeperSshDriver extends JavaSoftwareProcessSshDriver implements 
                 if (memberId == null) {
                     throw new IllegalStateException(member + " has null value for " + ZooKeeperNode.MY_ID);
                 }
-                String hostname = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.HOSTNAME).get();
+                String hostname = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.SUBNET_HOSTNAME).get();
                 Integer port = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.ZOOKEEPER_PORT).get();
                 Integer leaderPort = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.ZOOKEEPER_LEADER_PORT).get();
                 Integer electionPort = Entities.attributeSupplierWhenReady(member, ZooKeeperNode.ZOOKEEPER_ELECTION_PORT).get();

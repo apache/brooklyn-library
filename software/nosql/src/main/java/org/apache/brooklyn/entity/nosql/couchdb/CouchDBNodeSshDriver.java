@@ -245,6 +245,10 @@ public class CouchDBNodeSshDriver extends AbstractSoftwareProcessSshDriver imple
                 .execute();
     }
 
+    public String getBindSection() {
+       return isV2() ? "chttpd": "httpd";
+    }
+
     private String getZypperRepository() {
         OsDetails osDetails = getMachine().getMachineDetails().getOsDetails();
 

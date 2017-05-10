@@ -166,8 +166,8 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
                 .configure("latitude", lat)
                 .configure("longitude", lon);
     }
-    
-    @Test
+
+    @Test(groups="Integration")
     public void testGeoInfoOnLocation() {
         app.start( ImmutableList.of(westChildWithLocation, eastChildWithLocationAndWithPrivateHostname) );
         publishSensors(2, true, true, true);
@@ -177,7 +177,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         assertIsTarget("East child with location");
     }
 
-    @Test
+    @Test(groups="Integration")
     public void testGeoInfoOnParentLocation() {
         app.start( ImmutableList.of(westChild, eastChild) );
         publishSensors(2, true, false, false);
@@ -187,7 +187,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         assertIsTarget("East child");
     }
 
-    @Test
+    @Test(groups="Integration")
     public void testSubscribesToHostname() {
         geoDns.config().set(GeoDnsTestServiceImpl.ADD_ANYTHING, false);
         app.start( ImmutableList.of(westChild, eastChildWithLocationAndWithPrivateHostname) );
@@ -219,7 +219,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         }
     }
 
-    @Test
+    @Test(groups="Integration")
     public void testChildAddedLate() {
         app.start( ImmutableList.of(westChild, eastChildWithLocationAndWithPrivateHostname) );
         publishSensors(2, true, false, false);
@@ -238,7 +238,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         log.info("targets: "+geoDns.getTargetHostsByName());
     }
 
-    @Test
+    @Test(groups="Integration")
     public void testFiltersEntirelyPrivate() {
         geoDns.config().set(GeoDnsTestServiceImpl.ADD_ANYTHING, false);
         app.start( ImmutableList.of(westChild, eastChildWithLocationAndWithPrivateHostname, northChildWithLocation) );
@@ -276,7 +276,7 @@ public class AbstractGeoDnsServiceTest extends BrooklynAppUnitTestSupport {
         assertAttributeEventually(geoDns, AbstractGeoDnsService.TARGETS, CollectionFunctionals.<String>mapSizeEquals(2));
     }
 
-    @Test
+    @Test(groups="Integration")
     public void testCanDisableFilterForRunningEntities() throws Exception {
         geoDns.config().set(AbstractGeoDnsService.FILTER_FOR_RUNNING, false);
         app.start(ImmutableList.of(westChildWithLocation, eastChildWithLocationAndWithPrivateHostname));

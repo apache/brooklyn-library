@@ -18,11 +18,8 @@
  */
 package org.apache.brooklyn.entity.webapp.jboss;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.core.entity.EntityFunctions;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcessImpl;
@@ -39,22 +36,6 @@ public class JBoss6ServerImpl extends JavaWebAppSoftwareProcessImpl implements J
 
     private volatile JmxFeed jmxFeed;
     
-    public JBoss6ServerImpl() {
-        this(new LinkedHashMap(), null);
-    }
-
-    public JBoss6ServerImpl(Entity parent) {
-        this(new LinkedHashMap(), parent);
-    }
-
-    public JBoss6ServerImpl(Map flags){
-        this(flags, null);
-    }
-
-    public JBoss6ServerImpl(Map flags, Entity parent) {
-        super(flags, parent);
-    }
-
     @Override
     public void connectSensors() {
         super.connectSensors();

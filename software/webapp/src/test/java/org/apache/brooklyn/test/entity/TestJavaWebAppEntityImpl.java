@@ -18,9 +18,6 @@
  */
 package org.apache.brooklyn.test.entity;
 
-import java.util.Map;
-
-import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.entity.java.VanillaJavaAppImpl;
 import org.apache.brooklyn.entity.webapp.WebAppServiceConstants;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
@@ -30,11 +27,6 @@ public class TestJavaWebAppEntityImpl extends VanillaJavaAppImpl implements Test
     @SetFromFlag public int a;
     @SetFromFlag public int b;
     @SetFromFlag public int c;
-
-    public TestJavaWebAppEntityImpl() {}
-    
-    // constructor required for use in DynamicCluster.factory
-    public TestJavaWebAppEntityImpl(@SuppressWarnings("rawtypes") Map flags, Entity parent) { super(flags, parent); }
 
     @Override
     public synchronized void spoofRequest() {

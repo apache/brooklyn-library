@@ -18,9 +18,6 @@
  */
 package org.apache.brooklyn.entity.monitoring.monit;
 
-import java.util.Map;
-
-import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
 import org.apache.brooklyn.feed.ssh.SshFeed;
@@ -40,17 +37,6 @@ public class MonitNodeImpl extends SoftwareProcessImpl implements MonitNode {
     
     private SshFeed feed;
     
-    public MonitNodeImpl() {
-    }
-    
-    public MonitNodeImpl(Map<?,?> flags) {
-        super(flags, null);
-    }
-    
-    public MonitNodeImpl(Map<?,?> flags, Entity parent) {
-        super(flags, parent);
-    }
-
     @Override
     public Class<? extends MonitDriver> getDriverInterface() {
         return MonitDriver.class;

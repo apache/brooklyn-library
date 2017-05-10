@@ -18,9 +18,6 @@
  */
 package org.apache.brooklyn.entity.database.mysql;
 
-import java.util.Map;
-
-import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.core.effector.EffectorBody;
 import org.apache.brooklyn.core.location.Locations;
 import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
@@ -28,7 +25,6 @@ import org.apache.brooklyn.feed.ssh.SshFeed;
 import org.apache.brooklyn.feed.ssh.SshPollConfig;
 import org.apache.brooklyn.feed.ssh.SshPollValue;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
-import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.config.ConfigBag;
 import org.apache.brooklyn.util.guava.Maybe;
 import org.apache.brooklyn.util.text.Identifiers;
@@ -49,21 +45,6 @@ public class MySqlNodeImpl extends SoftwareProcessImpl implements MySqlNode {
     String DEFAULT_USERNAME = "root";
 
     private SshFeed feed;
-
-    public MySqlNodeImpl() {
-    }
-
-    public MySqlNodeImpl(Entity parent) {
-        this(MutableMap.of(), parent);
-    }
-
-    public MySqlNodeImpl(Map<?,?> flags) {
-        super(flags, null);
-    }
-
-    public MySqlNodeImpl(Map<?,?> flags, Entity parent) {
-        super(flags, parent);
-    }
 
     @Override
     public Class<?> getDriverInterface() {

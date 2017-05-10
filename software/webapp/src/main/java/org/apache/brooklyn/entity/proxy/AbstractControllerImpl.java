@@ -83,25 +83,6 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     // final because this is the synch target
     final protected Set<String> serverPoolAddresses = Sets.newLinkedHashSet();
     
-    public AbstractControllerImpl() {
-        this(MutableMap.of(), null, null);
-    }
-    public AbstractControllerImpl(Map<?, ?> properties) {
-        this(properties, null, null);
-    }
-    public AbstractControllerImpl(Entity parent) {
-        this(MutableMap.of(), parent, null);
-    }
-    public AbstractControllerImpl(Map<?, ?> properties, Entity parent) {
-        this(properties, parent, null);
-    }
-    public AbstractControllerImpl(Entity parent, Cluster cluster) {
-        this(MutableMap.of(), parent, cluster);
-    }
-    public AbstractControllerImpl(Map<?, ?> properties, Entity parent, Cluster cluster) {
-        super(properties, parent);
-    }
-
     @Override
     public void init() {
         super.init();

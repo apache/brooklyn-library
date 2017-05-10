@@ -57,23 +57,6 @@ public class ControlledDynamicWebAppClusterImpl extends DynamicGroupImpl impleme
 
     public static final Logger log = LoggerFactory.getLogger(ControlledDynamicWebAppClusterImpl.class);
 
-    public ControlledDynamicWebAppClusterImpl() {
-        this(MutableMap.of(), null);
-    }
-    
-    public ControlledDynamicWebAppClusterImpl(Map<?,?> flags) {
-        this(flags, null);
-    }
-    
-    public ControlledDynamicWebAppClusterImpl(Entity parent) {
-        this(MutableMap.of(), parent);
-    }
-    
-    @Deprecated
-    public ControlledDynamicWebAppClusterImpl(Map<?,?> flags, Entity parent) {
-        super(flags, parent);
-    }
-
     @Override
     public void init() {
         super.init();

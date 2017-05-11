@@ -38,9 +38,5 @@
 
     <modules>
         <module>webapps</module>
-        <module>simple-web-cluster</module>
-        <module>global-web-fabric</module>
-        <module>simple-messaging-pubsub</module>
-        <module>simple-nosql-cluster</module>
     </modules>
 </project>

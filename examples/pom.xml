@@ -37,6 +37,7 @@
     </parent>
 
     <modules>
+        <module>simple-web-cluster</module>
         <module>webapps</module>
     </modules>
 </project>

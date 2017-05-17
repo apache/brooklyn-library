@@ -20,7 +20,6 @@ package org.apache.brooklyn.entity.webapp.jboss;
 
 import java.util.Map;
 
-import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.core.config.render.RendererHints;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.EntityFunctions;
@@ -44,18 +43,6 @@ public class JBoss7ServerImpl extends JavaWebAppSoftwareProcessImpl implements J
 
     private volatile HttpFeed httpFeed;
     
-    public JBoss7ServerImpl(){
-        super();
-    }
-
-    public JBoss7ServerImpl(@SuppressWarnings("rawtypes") Map flags){
-        this(flags, null);
-    }
-
-    public JBoss7ServerImpl(@SuppressWarnings("rawtypes") Map flags, Entity parent) {
-        super(flags, parent);
-    }
-
     @Override
     public Class<?> getDriverInterface() {
         return JBoss7Driver.class;

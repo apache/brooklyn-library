@@ -165,6 +165,7 @@ public class NginxSshDriver extends AbstractSoftwareProcessSshDriver implements 
 
         List<String> cmds = Lists.newArrayList();
 
+        cmds.add(BashCommands.ifExecutableElse0("yum", BashCommands.sudo("yum -y install kernel-headers --disableexcludes=all")));
         cmds.add(BashCommands.INSTALL_TAR);
         cmds.add(BashCommands.alternatives(
                 BashCommands.ifExecutableElse0("apt-get", BashCommands.installPackage("build-essential")),

@@ -134,11 +134,11 @@ public class MySqlClusterImpl extends DynamicClusterImpl implements MySqlCluster
                 .build());
     }
 
-    private void propagateMasterAttribute(AttributeSensor<?> att) {
+    private <T> void propagateMasterAttribute(AttributeSensor<T> att) {
         enrichers().add(Enrichers.builder()
                 .aggregating(att)
                 .publishing(att)
-                .computing(IfFunctions.ifPredicate(CollectionFunctionals.notEmpty())
+                .computing(IfFunctions.<Collection<T>>ifPredicate(CollectionFunctionals.notEmpty())
                         .apply(CollectionFunctionals.firstElement())
                         .defaultValue(null))
                 .entityFilter(MySqlClusterUtils.IS_MASTER)

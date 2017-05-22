@@ -336,7 +336,8 @@ public class CassandraDatacenterImpl extends DynamicClusterImpl implements Cassa
     protected Entity replaceMember(Entity member, Location memberLoc, Map<?, ?> extraFlags) {
         Set<BigInteger> oldTokens = ((CassandraNode) member).getTokens();
         Set<BigInteger> newTokens = (oldTokens != null && oldTokens.size() > 0) ? getTokenGenerator().getTokensForReplacementNode(oldTokens) : null;
-        return super.replaceMember(member, memberLoc,  MutableMap.copyOf(extraFlags).add(CassandraNode.TOKENS, newTokens));
+        MutableMap<Object, Object> allFlags = MutableMap.<Object, Object>copyOf(extraFlags).add(CassandraNode.TOKENS, newTokens);
+        return super.replaceMember(member, memberLoc, allFlags);
     }
 
     @Override

@@ -42,7 +42,7 @@ public interface MariaDbNode extends SoftwareProcess, DatastoreCommon, HasShortN
 
     @SetFromFlag("version")
     public static final ConfigKey<String> SUGGESTED_VERSION =
-        ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "5.5.53");
+        ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "10.2.6");
 
     // https://downloads.mariadb.org/interstitial/mariadb-5.5.33a/kvm-bintar-hardy-amd64/mariadb-5.5.33a-linux-x86_64.tar.gz/from/http://mirrors.coreix.net/mariadb
     // above redirects to download the artifactd from the URLs below.

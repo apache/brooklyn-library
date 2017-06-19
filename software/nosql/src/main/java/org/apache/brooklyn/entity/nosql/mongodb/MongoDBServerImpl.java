@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.net.HostAndPort;
 
 public class MongoDBServerImpl extends SoftwareProcessImpl implements MongoDBServer {
@@ -218,7 +218,7 @@ public class MongoDBServerImpl extends SoftwareProcessImpl implements MongoDBSer
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", getId())
                 .add("hostname", sensors().get(HOSTNAME))
                 .add("port", sensors().get(PORT))

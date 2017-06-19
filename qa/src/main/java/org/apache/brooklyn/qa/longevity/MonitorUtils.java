@@ -41,7 +41,7 @@ import org.apache.brooklyn.util.stream.StreamGobbler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -209,7 +209,7 @@ public class MonitorUtils {
 
         @Override
         public String toString() {
-            return Objects.toStringHelper(this)
+            return MoreObjects.toStringHelper(this)
                     .add("totalInstances", totalInstances)
                     .add("totalMemoryBytes", totalMemoryBytes)
                     .add("instanceCounts", instanceCounts)

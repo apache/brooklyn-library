@@ -21,7 +21,7 @@ package org.apache.brooklyn.qa.longevity;
 import java.io.File;
 import java.net.URL;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Range;
 
 public class MonitorPrefs {
@@ -39,7 +39,7 @@ public class MonitorPrefs {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("webUrl", webUrl)
                 .add("brooklynPid", brooklynPid)
                 .add("logFile", logFile)

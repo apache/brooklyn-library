@@ -26,20 +26,16 @@ import java.util.concurrent.Callable;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.time.Duration;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.messaging.activemq.ActiveMQBroker;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -49,21 +45,17 @@ import com.google.common.collect.ImmutableMap;
  *
  * TODO test that sensors update.
  */
-public class KafkaIntegrationTest {
+//TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+//existing behaviour of using the live BrooklynProperties.
+public class KafkaIntegrationTest extends BrooklynAppLiveTestSupport {
 
-    private TestApplication app;
     private Location testLocation;
 
     @BeforeMethod(alwaysRun = true)
-    public void setup() {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
-        LocationSpec<LocalhostMachineProvisioningLocation> locationSpec = LocationSpec.create(LocalhostMachineProvisioningLocation.class);
-        testLocation = app.getManagementContext().getLocationManager().createLocation(locationSpec);
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        testLocation = app.newLocalhostProvisioningLocation();
     }
 
     /**

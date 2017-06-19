@@ -22,18 +22,12 @@ import java.io.File;
 import java.net.InetAddress;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.api.mgmt.ManagementContext;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.internal.BrooklynProperties;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
@@ -47,28 +41,21 @@ import com.google.common.collect.ImmutableList;
  * from
  * http://www.vogella.de/articles/MySQLJava/article.html
  */
-public class MariaDbIntegrationTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties. However, this is extended by
+// MariaDBLiveRackspaceTest, so that does need it.
+public class MariaDbIntegrationTest extends BrooklynAppLiveTestSupport {
 
     public static final Logger log = LoggerFactory.getLogger(MariaDbIntegrationTest.class);
     
-    protected BrooklynProperties brooklynProperties;
-    protected ManagementContext managementContext;
-    protected TestApplication tapp;
     protected String hostname;
     
     @BeforeMethod(alwaysRun = true)
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         // can start in AWS by running this -- or use brooklyn CLI/REST for most clouds, or programmatic/config for set of fixed IP machines
         hostname = InetAddress.getLocalHost().getHostName();
-
-        brooklynProperties = BrooklynProperties.Factory.newDefault();
-        managementContext = new LocalManagementContext(brooklynProperties);
-        tapp = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
-    }
-
-    @AfterMethod(alwaysRun=true)
-    public void ensureShutDown() throws Exception {
-        Entities.destroyAllCatching(managementContext);
     }
 
     //from http://www.vogella.de/articles/MySQLJava/article.html
@@ -100,13 +87,13 @@ public class MariaDbIntegrationTest {
     @Test(groups = "Integration")
     public void test_localhost() throws Exception {
         String dataDir = "/tmp/mariadb-data-" + Strings.makeRandomId(8);
-        MariaDbNode mariadb = tapp.createAndManageChild(EntitySpec.create(MariaDbNode.class)
+        MariaDbNode mariadb = app.createAndManageChild(EntitySpec.create(MariaDbNode.class)
                 .configure(MariaDbNode.MARIADB_SERVER_CONF, MutableMap.<String, Object>of("skip-name-resolve",""))
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, CREATION_SCRIPT)
                 .configure(MariaDbNode.DATA_DIR, dataDir));
         LocalhostMachineProvisioningLocation location = new LocalhostMachineProvisioningLocation();
 
-        tapp.start(ImmutableList.of(location));
+        app.start(ImmutableList.of(location));
         log.info("MariaDB started");
 
         new VogellaExampleAccess("com.mysql.jdbc.Driver", mariadb.getAttribute(DatastoreCommon.DATASTORE_URL)).readModifyAndRevertDataBase();

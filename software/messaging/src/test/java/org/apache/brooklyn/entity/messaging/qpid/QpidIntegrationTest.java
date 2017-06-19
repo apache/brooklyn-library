@@ -36,11 +36,9 @@ import javax.jms.TextMessage;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Attributes;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.test.HttpTestUtils;
@@ -50,7 +48,6 @@ import org.apache.qpid.client.AMQConnectionFactory;
 import org.apache.qpid.configuration.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -59,24 +56,21 @@ import com.google.common.collect.ImmutableList;
 /**
  * Test the operation of the {@link QpidBroker} class.
  */
-public class QpidIntegrationTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties.
+public class QpidIntegrationTest extends BrooklynAppLiveTestSupport {
     private static final Logger log = LoggerFactory.getLogger(QpidIntegrationTest.class);
 
-    private TestApplication app;
     private Location testLocation;
     private QpidBroker qpid;
 
     @BeforeMethod(groups = "Integration")
-    public void setup() {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         String workingDir = System.getProperty("user.dir");
         log.info("Qpid working dir: {}", workingDir);
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
         testLocation = app.newLocalhostProvisioningLocation();
-    }
-
-    @AfterMethod(alwaysRun=true)
-    public void shutdown() {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
     }
 
     /**

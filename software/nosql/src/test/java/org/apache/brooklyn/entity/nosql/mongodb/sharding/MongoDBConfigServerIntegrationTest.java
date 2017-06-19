@@ -21,36 +21,32 @@ package org.apache.brooklyn.entity.nosql.mongodb.sharding;
 import static org.testng.Assert.assertFalse;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer;
 import org.apache.brooklyn.entity.nosql.mongodb.MongoDBTestHelper;
 import org.apache.brooklyn.test.Asserts;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.collect.ImmutableList;
 
-public class MongoDBConfigServerIntegrationTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties.
+public class MongoDBConfigServerIntegrationTest extends BrooklynAppLiveTestSupport {
     private TestApplication app;
     private LocalhostMachineProvisioningLocation localhostProvisioningLocation;
 
     @BeforeMethod(alwaysRun=true)
+    @Override
     public void setUp() throws Exception {
-        localhostProvisioningLocation = new LocalhostMachineProvisioningLocation();
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
+        super.setUp();
+        localhostProvisioningLocation = app.newLocalhostProvisioningLocation();
     }
 
-    @AfterMethod(alwaysRun=true)
-    public void tearDown() throws Exception {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
-    }
-    
     @Test(groups = "Integration")
     public void testCanStartAndStop() throws Exception {
         MongoDBConfigServer entity = app.createAndManageChild(EntitySpec.create(MongoDBConfigServer.class)

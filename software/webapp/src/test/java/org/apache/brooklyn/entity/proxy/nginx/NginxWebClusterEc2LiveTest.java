@@ -26,11 +26,9 @@ import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.api.location.MachineLocation;
-import org.apache.brooklyn.api.mgmt.ManagementContext;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
+import org.apache.brooklyn.core.internal.BrooklynProperties;
 import org.apache.brooklyn.core.location.Machines;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.proxy.nginx.NginxController;
 import org.apache.brooklyn.entity.webapp.JavaWebAppService;
@@ -41,12 +39,10 @@ import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Test Nginx proxying a cluster of JBoss7Server entities on AWS for ENGR-1689.
@@ -54,26 +50,27 @@ import com.google.common.collect.ImmutableMap;
  * This test is a proof-of-concept for the Brooklyn demo application, with each
  * service running on a separate Amazon EC2 instance.
  */
-public class NginxWebClusterEc2LiveTest {
+public class NginxWebClusterEc2LiveTest extends BrooklynAppLiveTestSupport {
+    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(NginxWebClusterEc2LiveTest.class);
     
-    private TestApplication app;
     private NginxController nginx;
     private DynamicCluster cluster;
     private Location loc;
 
     @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        ManagementContext managementContext = Entities.newManagementContext(
-                ImmutableMap.of("brooklyn.location.jclouds.aws-ec2.image-id", "us-east-1/ami-2342a94a"));
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         
-        loc = managementContext.getLocationRegistry().getLocationManaged("aws-ec2:us-east-1");
-        app = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
+        loc = mgmt.getLocationRegistry().getLocationManaged("aws-ec2:us-east-1");
     }
 
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
+    @Override
+    protected BrooklynProperties getBrooklynProperties() {
+        BrooklynProperties result = BrooklynProperties.Factory.newDefault();
+        result.put("brooklyn.location.jclouds.aws-ec2.image-id", "us-east-1/ami-2342a94a");
+        return result;
     }
 
     @Test(groups = "Live")

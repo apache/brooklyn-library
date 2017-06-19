@@ -21,8 +21,10 @@ package org.apache.brooklyn.entity.nosql.couchdb;
 import java.util.Map;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.text.Strings;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ import com.google.common.collect.ImmutableList;
  * to exercise the node, and will need to have {@code brooklyn.jclouds.provider.identity} and {@code .credential}
  * set, usually in the {@code .brooklyn/brooklyn.properties} file.
  */
-public class CouchDBNodeLiveTest extends AbstractCouchDBNodeTest {
+public class CouchDBNodeLiveTest extends BrooklynAppLiveTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(CouchDBNodeLiveTest.class);
 
@@ -58,10 +60,10 @@ public class CouchDBNodeLiveTest extends AbstractCouchDBNodeTest {
         log.info("Testing CouchDB on {}{} using {} ({})", new Object[] { provider, Strings.isNonEmpty(region) ? ":" + region : "", description, imageId });
 
         Map<String, String> properties = MutableMap.of("imageId", imageId);
-        testLocation = app.getManagementContext().getLocationRegistry()
+        Location testLocation = app.getManagementContext().getLocationRegistry()
                 .getLocationManaged(provider + (Strings.isNonEmpty(region) ? ":" + region : ""), properties);
 
-        couchdb = app.createAndManageChild(EntitySpec.create(CouchDBNode.class)
+        CouchDBNode couchdb = app.createAndManageChild(EntitySpec.create(CouchDBNode.class)
                 .configure("httpPort", "12345+")
                 .configure("clusterName", "TestCluster"));
         app.start(ImmutableList.of(testLocation));

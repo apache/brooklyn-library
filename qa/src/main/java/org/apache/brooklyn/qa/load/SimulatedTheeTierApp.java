@@ -105,7 +105,7 @@ public class SimulatedTheeTierApp extends AbstractApplication {
                 metric(DynamicWebAppCluster.REQUESTS_PER_SECOND_IN_WINDOW_PER_NODE).
                 metricRange(10, 100).
                 sizeRange(2, 5).
-                build());
+                buildSpec());
 
         enrichers().add(Enrichers.builder()
                 .propagating(Attributes.MAIN_URI, WebAppServiceConstants.ROOT_URL,

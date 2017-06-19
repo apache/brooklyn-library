@@ -86,12 +86,11 @@ public class TomcatAutoScalerPolicyTest {
                 .configure(DynamicWebAppCluster.INITIAL_SIZE, 1)
                 .configure(DynamicWebAppCluster.MEMBER_SPEC, EntitySpec.create(TomcatServer.class)));
 
-        final AutoScalerPolicy policy = AutoScalerPolicy.builder()
+        final AutoScalerPolicy policy = cluster.policies().add(AutoScalerPolicy.builder()
                 .metric(DynamicWebAppCluster.REQUEST_COUNT_PER_NODE)
                 .metricRange(0, 1)
                 .minPoolSize(1)
-                .build();
-        cluster.policies().add(policy);
+                .buildSpec());
         
         app.start(ImmutableList.of(loc));
         

@@ -24,7 +24,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.api.sensor.EnricherSpec;
 import org.apache.brooklyn.core.location.access.BrooklynAccessUtils;
+import org.apache.brooklyn.entity.java.UsesJavaMXBeans;
 import org.apache.brooklyn.policy.enricher.RollingTimeWindowMeanEnricher;
 import org.apache.brooklyn.policy.enricher.TimeFractionDeltaEnricher;
 import org.apache.brooklyn.policy.enricher.TimeWeightedDeltaEnricher;
@@ -41,20 +43,33 @@ public class WebAppServiceMethods implements WebAppServiceConstants {
     }
 
     public static void connectWebAppServerPolicies(Entity entity, Duration windowPeriod) {
-        entity.enrichers().add(TimeWeightedDeltaEnricher.<Integer>getPerSecondDeltaEnricher(entity, REQUEST_COUNT, REQUESTS_PER_SECOND_LAST));
+        entity.enrichers().add(EnricherSpec.create(TimeWeightedDeltaEnricher.class)
+                .configure("producer", entity)
+                .configure("source", REQUEST_COUNT)
+                .configure("target", REQUESTS_PER_SECOND_LAST)
+                .configure("unitMillis", 1000));
 
         if (windowPeriod!=null) {
-            entity.enrichers().add(new RollingTimeWindowMeanEnricher<Double>(entity, REQUESTS_PER_SECOND_LAST,
-                    REQUESTS_PER_SECOND_IN_WINDOW, windowPeriod));
+            entity.enrichers().add(EnricherSpec.create(RollingTimeWindowMeanEnricher.class)
+                    .configure("producer", entity)
+                    .configure("source", REQUESTS_PER_SECOND_LAST)
+                    .configure("target", REQUESTS_PER_SECOND_IN_WINDOW)
+                    .configure("timePeriod", windowPeriod));
         }
 
-        entity.enrichers().add(new TimeFractionDeltaEnricher<Integer>(entity, TOTAL_PROCESSING_TIME, PROCESSING_TIME_FRACTION_LAST, TimeUnit.MILLISECONDS));
+        entity.enrichers().add(EnricherSpec.create(TimeFractionDeltaEnricher.class)
+                .configure("producer", entity)
+                .configure("source", TOTAL_PROCESSING_TIME)
+                .configure("target", PROCESSING_TIME_FRACTION_LAST)
+                .configure("durationPerOrigUnit", Duration.millis(1)));
 
         if (windowPeriod!=null) {
-            entity.enrichers().add(new RollingTimeWindowMeanEnricher<Double>(entity, PROCESSING_TIME_FRACTION_LAST,
-                    PROCESSING_TIME_FRACTION_IN_WINDOW, windowPeriod));
+            entity.enrichers().add(EnricherSpec.create(RollingTimeWindowMeanEnricher.class)
+                    .configure("producer", entity)
+                    .configure("source", PROCESSING_TIME_FRACTION_LAST)
+                    .configure("target", PROCESSING_TIME_FRACTION_IN_WINDOW)
+                    .configure("timePeriod", windowPeriod));
         }
-
     }
 
     public static Set<String> getEnabledProtocols(Entity entity) {

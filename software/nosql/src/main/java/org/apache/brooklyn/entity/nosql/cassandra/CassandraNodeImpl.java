@@ -35,7 +35,7 @@ import javax.management.ObjectName;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.location.MachineLocation;
 import org.apache.brooklyn.api.location.MachineProvisioningLocation;
-import org.apache.brooklyn.api.sensor.AttributeSensor;
+import org.apache.brooklyn.api.sensor.EnricherSpec;
 import org.apache.brooklyn.core.effector.EffectorBody;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
@@ -525,16 +525,28 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
     protected void connectEnrichers(Duration windowPeriod) {
         JavaAppUtils.connectJavaAppServerPolicies(this);
 
-        enrichers().add(TimeWeightedDeltaEnricher.<Long>getPerSecondDeltaEnricher(this, READ_COMPLETED, READS_PER_SECOND_LAST));
-        enrichers().add(TimeWeightedDeltaEnricher.<Long>getPerSecondDeltaEnricher(this, WRITE_COMPLETED, WRITES_PER_SECOND_LAST));
+        enrichers().add(EnricherSpec.create(TimeWeightedDeltaEnricher.class)
+                .configure("producer", this)
+                .configure("source", READ_COMPLETED)
+                .configure("target", READS_PER_SECOND_LAST)
+                .configure("unitMillis", 1000));
         
         if (windowPeriod!=null) {
-            enrichers().add(new RollingTimeWindowMeanEnricher<Long>(this, THRIFT_PORT_LATENCY, 
-                    THRIFT_PORT_LATENCY_IN_WINDOW, windowPeriod));
-            enrichers().add(new RollingTimeWindowMeanEnricher<Double>(this, READS_PER_SECOND_LAST, 
-                    READS_PER_SECOND_IN_WINDOW, windowPeriod));
-            enrichers().add(new RollingTimeWindowMeanEnricher<Double>(this, WRITES_PER_SECOND_LAST, 
-                    WRITES_PER_SECOND_IN_WINDOW, windowPeriod));
+            enrichers().add(EnricherSpec.create(RollingTimeWindowMeanEnricher.class)
+                    .configure("producer", this)
+                    .configure("source", THRIFT_PORT_LATENCY)
+                    .configure("target", THRIFT_PORT_LATENCY_IN_WINDOW)
+                    .configure("timePeriod", windowPeriod));
+            enrichers().add(EnricherSpec.create(RollingTimeWindowMeanEnricher.class)
+                    .configure("producer", this)
+                    .configure("source", READS_PER_SECOND_LAST)
+                    .configure("target", READS_PER_SECOND_IN_WINDOW)
+                    .configure("timePeriod", windowPeriod));
+            enrichers().add(EnricherSpec.create(RollingTimeWindowMeanEnricher.class)
+                    .configure("producer", this)
+                    .configure("source", WRITES_PER_SECOND_LAST)
+                    .configure("target", WRITES_PER_SECOND_IN_WINDOW)
+                    .configure("timePeriod", windowPeriod));
         }
         
         // service-up checks

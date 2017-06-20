@@ -20,7 +20,6 @@ package org.apache.brooklyn.entity.proxy;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.util.HashSet;
 
 import javax.annotation.Nullable;
@@ -30,10 +29,8 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.EntityInternal;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
-import org.apache.brooklyn.core.mgmt.rebind.RebindTestUtils;
+import org.apache.brooklyn.core.mgmt.rebind.RebindOptions;
+import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.entity.proxy.nginx.UrlMapping;
@@ -43,7 +40,6 @@ import org.apache.brooklyn.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
@@ -54,50 +50,36 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.common.io.Files;
 
-public class UrlMappingTest {
+public class UrlMappingTest extends RebindTestFixtureWithApp {
     
     private static final Logger log = LoggerFactory.getLogger(UrlMappingTest.class);
     
     private final int initialClusterSize = 2;
     
-    private ClassLoader classLoader = getClass().getClassLoader();
-    private LocalManagementContext managementContext;
-    private File mementoDir;
-    
-    private TestApplication app;
     private DynamicCluster cluster;
     private UrlMapping urlMapping;
     
     @BeforeMethod(alwaysRun=true)
-    public void setup() {
-        mementoDir = Files.createTempDir();
-        managementContext = RebindTestUtils.newPersistingManagementContext(mementoDir, classLoader);
-
-        app = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         
         EntitySpec<StubAppServer> serverSpec = EntitySpec.create(StubAppServer.class);
-        cluster = app.createAndManageChild(EntitySpec.create(DynamicCluster.class)
+        cluster = app().createAndManageChild(EntitySpec.create(DynamicCluster.class)
                 .configure(DynamicCluster.INITIAL_SIZE, initialClusterSize)
                 .configure(DynamicCluster.MEMBER_SPEC, serverSpec));
 
-        urlMapping = app.createAndManageChild(EntitySpec.create(UrlMapping.class)
+        urlMapping = app().createAndManageChild(EntitySpec.create(UrlMapping.class)
                 .configure("domain", "localhost")
                 .configure("target", cluster));
 
-        app.start( ImmutableList.of(
-                managementContext.getLocationManager().createLocation(
+        app().start( ImmutableList.of(
+                mgmt().getLocationManager().createLocation(
                         LocationSpec.create(LocalhostMachineProvisioningLocation.class))
                 ));
-        log.info("app's location managed: "+managementContext.getLocationManager().isManaged(Iterables.getOnlyElement(app.getLocations())));
-        log.info("clusters's location managed: "+managementContext.getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())));
-    }
-
-    @AfterMethod(alwaysRun=true)
-    public void shutdown() {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
-        if (mementoDir != null) RebindTestUtils.deleteMementoDir(mementoDir);
+        log.info("app's location managed: "+mgmt().getLocationManager().isManaged(Iterables.getOnlyElement(app().getLocations())));
+        log.info("clusters's location managed: "+mgmt().getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())));
     }
 
     @Test(groups = "Integration")
@@ -150,9 +132,9 @@ public class UrlMappingTest {
         Iterable<StubAppServer> members = Iterables.filter(cluster.getChildren(), StubAppServer.class);
         assertExpectedTargetsEventually(members);
         
-        Assert.assertTrue(managementContext.getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())));
+        Assert.assertTrue(mgmt().getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())));
         rebind();
-        Assert.assertTrue(managementContext.getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())),
+        Assert.assertTrue(mgmt().getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())),
                 "location not managed after rebind");
         
         Iterable<StubAppServer> members2 = Iterables.filter(cluster.getChildren(), StubAppServer.class);
@@ -165,7 +147,7 @@ public class UrlMappingTest {
         // Add a new member; expect member to be added
         log.info("resizing "+cluster+" - "+cluster.getChildren());
         Integer result = cluster.resize(3);
-        Assert.assertTrue(managementContext.getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())));
+        Assert.assertTrue(mgmt().getLocationManager().isManaged(Iterables.getOnlyElement(cluster.getLocations())));
         log.info("resized "+cluster+" ("+result+") - "+cluster.getChildren());
         HashSet<StubAppServer> newEntities = Sets.newHashSet(Iterables.filter(cluster.getChildren(), StubAppServer.class));
         newEntities.remove(target1);
@@ -200,15 +182,13 @@ public class UrlMappingTest {
             }});
     }
     
-    private void rebind() throws Exception {
-        RebindTestUtils.waitForPersisted(app);
+    @Override
+    protected TestApplication rebind(RebindOptions options) throws Exception {
+        TestApplication result = super.rebind(options);
         
-        // Stop the old management context, so original nginx won't interfere
-        managementContext.terminate();
+        cluster = (DynamicCluster) Iterables.find(app().getChildren(), Predicates.instanceOf(DynamicCluster.class));
+        urlMapping = (UrlMapping) Iterables.find(app().getChildren(), Predicates.instanceOf(UrlMapping.class));
         
-        app = (TestApplication) RebindTestUtils.rebind(mementoDir, getClass().getClassLoader());
-        managementContext = (LocalManagementContext) ((EntityInternal)app).getManagementContext();
-        cluster = (DynamicCluster) Iterables.find(app.getChildren(), Predicates.instanceOf(DynamicCluster.class));
-        urlMapping = (UrlMapping) Iterables.find(app.getChildren(), Predicates.instanceOf(UrlMapping.class));
+        return result;
     }
 }

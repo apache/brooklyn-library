@@ -19,8 +19,10 @@
 package org.apache.brooklyn.entity.nosql.couchdb;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -30,8 +32,19 @@ import com.google.common.collect.ImmutableList;
  *
  * Test the operation of the {@link CouchDBNode} class.
  */
-public class CouchDBNodeIntegrationTest extends AbstractCouchDBNodeTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties.
+public class CouchDBNodeIntegrationTest extends BrooklynAppLiveTestSupport {
 
+    Location testLocation;
+    CouchDBNode couchdb;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        testLocation = app.newLocalhostProvisioningLocation();
+    }
+    
     /**
      * Test that a node starts and sets SERVICE_UP correctly.
      */

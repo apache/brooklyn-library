@@ -26,35 +26,28 @@ import java.util.concurrent.Callable;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.group.DynamicCluster;
 import org.apache.brooklyn.test.Asserts;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.collect.ImmutableList;
 
-public class RedisClusterIntegrationTest {
+//TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+//existing behaviour of using the live BrooklynProperties.
+public class RedisClusterIntegrationTest extends BrooklynAppLiveTestSupport {
 
-    private TestApplication app;
     private Location loc;
     private RedisCluster cluster;
 
     @BeforeMethod(alwaysRun=true)
-    public void setup() {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
-        loc = new LocalhostMachineProvisioningLocation();
-    }
-
-    @AfterMethod(alwaysRun=true)
-    public void shutdown() {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        loc = app.newLocalhostProvisioningLocation();
     }
 
     @Test(groups = { "Integration" })

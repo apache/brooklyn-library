@@ -24,10 +24,8 @@ import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
-import org.testng.annotations.AfterMethod;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -40,24 +38,19 @@ import com.google.common.collect.Iterables;
  * Tests that a two node cluster can be started on Amazon EC2 and data written on one {@link CouchDBNode}
  * can be read from another, using the Astyanax API.
  */
-public class CouchDBClusterLiveTest {
+public class CouchDBClusterLiveTest extends BrooklynAppLiveTestSupport {
 
     // private String provider = "rackspace-cloudservers-uk";
     private String provider = "aws-ec2:eu-west-1";
 
-    protected TestApplication app;
     protected Location testLocation;
     protected CouchDBCluster cluster;
 
     @BeforeMethod(alwaysRun = true)
-    public void setup() {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         testLocation = app.getManagementContext().getLocationRegistry().getLocationManaged(provider);
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() {
-        Entities.destroyAll(app.getManagementContext());
     }
 
     /**

@@ -25,17 +25,11 @@ import java.util.List;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.api.mgmt.ManagementContext;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.internal.BrooklynProperties;
 import org.apache.brooklyn.core.location.PortRanges;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
 import org.apache.brooklyn.entity.database.VogellaExampleAccess;
@@ -45,25 +39,13 @@ import org.apache.brooklyn.entity.database.postgresql.PostgreSqlIntegrationTest;
 import org.apache.brooklyn.entity.database.postgresql.PostgreSqlNode;
 import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
-public class RubyRepIntegrationTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties. However, this is extended by
+// RubyRepLiveRackspaceTest, so that does need it.
+public class RubyRepIntegrationTest extends BrooklynAppLiveTestSupport {
 
     public static final Logger log = LoggerFactory.getLogger(RubyRepIntegrationTest.class);
-    protected BrooklynProperties brooklynProperties;
-    protected ManagementContext managementContext;
-    protected TestApplication tapp;
     
-    @BeforeMethod(alwaysRun = true)
-    public void setUp() {
-        brooklynProperties = BrooklynProperties.Factory.newDefault();
-        managementContext = new LocalManagementContext(brooklynProperties);
-        tapp = ApplicationBuilder.newManagedApp(TestApplication.class, managementContext);
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void tearDown() {
-        Entities.destroyAllCatching(managementContext);
-    }
-
     /*
         Exception org.apache.brooklyn.util.exceptions.PropagatedRuntimeException
         
@@ -208,18 +190,18 @@ public class RubyRepIntegrationTest {
      */
     @Test(groups = {"Integration","Broken"})
     public void test_localhost_mysql() throws Exception {
-        MySqlNode db1 = tapp.createAndManageChild(EntitySpec.create(MySqlNode.class)
+        MySqlNode db1 = app.createAndManageChild(EntitySpec.create(MySqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, MySqlIntegrationTest.CREATION_SCRIPT)
                 .configure("test.table.name", "COMMENTS")
                 .configure(MySqlNode.MYSQL_PORT, PortRanges.fromInteger(9111)));
 
-        MySqlNode db2 = tapp.createAndManageChild(EntitySpec.create(MySqlNode.class)
+        MySqlNode db2 = app.createAndManageChild(EntitySpec.create(MySqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, MySqlIntegrationTest.CREATION_SCRIPT)
                 .configure("test.table.name", "COMMENTS")
                 .configure(MySqlNode.MYSQL_PORT, PortRanges.fromInteger(9112)));
 
 
-        startInLocation(tapp, db1, db2, new LocalhostMachineProvisioningLocation());
+        startInLocation(app, db1, db2, new LocalhostMachineProvisioningLocation());
         testReplication(db1, db2);
     }
 
@@ -370,29 +352,29 @@ public class RubyRepIntegrationTest {
         String createTwoDbsScript = PostgreSqlIntegrationTest.CREATION_SCRIPT +
                 PostgreSqlIntegrationTest.CREATION_SCRIPT.replaceAll("CREATE USER.*", "").replaceAll(" feedback", " feedback1");
 
-        PostgreSqlNode db1 = tapp.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+        PostgreSqlNode db1 = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, createTwoDbsScript)
                 .configure(PostgreSqlNode.POSTGRESQL_PORT, PortRanges.fromInteger(9113))
                 .configure(PostgreSqlNode.MAX_CONNECTIONS, 10)
                 .configure(PostgreSqlNode.SHARED_MEMORY, "512kB")); // Very low so kernel configuration not needed
 
-        startInLocation(tapp, db1, "feedback", db1, "feedback1", new LocalhostMachineProvisioningLocation());
+        startInLocation(app, db1, "feedback", db1, "feedback1", new LocalhostMachineProvisioningLocation());
         testReplication(db1, "feedback", db1, "feedback1");
     }
 
     @Test(enabled = false, groups = "Integration") // TODO this doesn't appear to be supported by RubyRep
     public void test_localhost_postgres_mysql() throws Exception {
-        PostgreSqlNode db1 = tapp.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+        PostgreSqlNode db1 = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, PostgreSqlIntegrationTest.CREATION_SCRIPT)
                 .configure(PostgreSqlNode.POSTGRESQL_PORT, PortRanges.fromInteger(9115))
                 .configure(PostgreSqlNode.MAX_CONNECTIONS, 10)
                 .configure(PostgreSqlNode.SHARED_MEMORY, "512kB")); // Very low so kernel configuration not needed
 
-        MySqlNode db2 = tapp.createAndManageChild(EntitySpec.create(MySqlNode.class)
+        MySqlNode db2 = app.createAndManageChild(EntitySpec.create(MySqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, MySqlIntegrationTest.CREATION_SCRIPT)
                 .configure(MySqlNode.MYSQL_PORT, PortRanges.fromInteger(9116)));
 
-        startInLocation(tapp, db1, db2, new LocalhostMachineProvisioningLocation());
+        startInLocation(app, db1, db2, new LocalhostMachineProvisioningLocation());
         testReplication(db1, db2);
     }
 

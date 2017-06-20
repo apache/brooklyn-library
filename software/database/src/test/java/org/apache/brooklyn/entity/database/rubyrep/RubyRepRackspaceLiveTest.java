@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
+import org.apache.brooklyn.core.internal.BrooklynProperties;
 import org.apache.brooklyn.core.location.PortRanges;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
@@ -83,20 +84,21 @@ public class RubyRepRackspaceLiveTest extends RubyRepIntegrationTest {
     }
 
     public void test(String osRegex) throws Exception {
-        PostgreSqlNode db1 = tapp.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+        PostgreSqlNode db1 = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, PostgreSqlIntegrationTest.CREATION_SCRIPT)
                 .configure(PostgreSqlNode.POSTGRESQL_PORT, PortRanges.fromInteger(9111)));
-        PostgreSqlNode db2 = tapp.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
+        PostgreSqlNode db2 = app.createAndManageChild(EntitySpec.create(PostgreSqlNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, PostgreSqlIntegrationTest.CREATION_SCRIPT)
                 .configure(PostgreSqlNode.POSTGRESQL_PORT, PortRanges.fromInteger(9111)));
 
+        BrooklynProperties brooklynProperties = mgmt.getBrooklynProperties();
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageNameRegex", osRegex);
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.image-id");
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageId");
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.inboundPorts", Arrays.asList(22, 9111));
-        Location loc = managementContext.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
+        Location loc = mgmt.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
         
-        startInLocation(tapp, db1, db2, loc);
+        startInLocation(app, db1, db2, loc);
 
         //hack to get the port for mysql open; is the inbounds property not respected on rackspace??
         for (DatastoreCommon node : ImmutableSet.of(db1, db2)) {

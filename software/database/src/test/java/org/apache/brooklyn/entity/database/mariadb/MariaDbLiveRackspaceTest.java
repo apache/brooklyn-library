@@ -21,6 +21,7 @@ package org.apache.brooklyn.entity.database.mariadb;
 import java.util.Arrays;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
+import org.apache.brooklyn.core.internal.BrooklynProperties;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
 import org.apache.brooklyn.entity.database.VogellaExampleAccess;
@@ -85,16 +86,17 @@ public class MariaDbLiveRackspaceTest extends MariaDbIntegrationTest {
     }
 
     public void test(String osRegex) throws Exception {
-        MariaDbNode mariadb = tapp.createAndManageChild(EntitySpec.create(MariaDbNode.class)
+        MariaDbNode mariadb = app.createAndManageChild(EntitySpec.create(MariaDbNode.class)
                 .configure(DatastoreCommon.CREATION_SCRIPT_CONTENTS, CREATION_SCRIPT));
 
+        BrooklynProperties brooklynProperties = mgmt.getBrooklynProperties();
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageNameRegex", osRegex);
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.image-id");
         brooklynProperties.remove("brooklyn.location.jclouds.rackspace-cloudservers-uk.imageId");
         brooklynProperties.put("brooklyn.location.jclouds.rackspace-cloudservers-uk.inboundPorts", Arrays.asList(22, 3306));
-        JcloudsLocation jcloudsLocation = (JcloudsLocation) managementContext.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
+        JcloudsLocation jcloudsLocation = (JcloudsLocation) mgmt.getLocationRegistry().getLocationManaged("jclouds:rackspace-cloudservers-uk");
 
-        tapp.start(ImmutableList.of(jcloudsLocation));
+        app.start(ImmutableList.of(jcloudsLocation));
 
         SshMachineLocation l = (SshMachineLocation) mariadb.getLocations().iterator().next();
         l.execCommands("add iptables rule", ImmutableList.of(IptablesCommands.insertIptablesRule(Chain.INPUT, Protocol.TCP, 3306, Policy.ACCEPT)));

@@ -33,17 +33,14 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.java.UsesJmx.JmxAgentModes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -53,22 +50,19 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Test the operation of the {@link ActiveMQBroker} class.
  */
-public class ActiveMQIntegrationTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties.
+public class ActiveMQIntegrationTest extends BrooklynAppLiveTestSupport {
     private static final Logger log = LoggerFactory.getLogger(ActiveMQIntegrationTest.class);
 
-    private TestApplication app;
     private Location testLocation;
     private ActiveMQBroker activeMQ;
 
     @BeforeMethod(alwaysRun = true)
-    public void setup() throws Exception {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         testLocation = app.newLocalhostProvisioningLocation();
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() throws Exception {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
     }
 
     /**

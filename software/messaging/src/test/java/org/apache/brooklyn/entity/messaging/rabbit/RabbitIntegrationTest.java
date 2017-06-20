@@ -25,19 +25,15 @@ import java.io.IOException;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
-import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.messaging.MessageBroker;
 import org.apache.brooklyn.entity.messaging.amqp.AmqpExchange;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
@@ -62,22 +58,19 @@ import com.rabbitmq.client.QueueingConsumer;
  *      ERROR: epmd error for host "Aleds-MacBook-Pro": timeout (timed out establishing tcp connection)
  *    I got around that with disabling my wifi and running when not connected to the internet.
  */
-public class RabbitIntegrationTest {
+// TODO Does it really need to be a live test? When converting from ApplicationBuilder, preserved
+// existing behaviour of using the live BrooklynProperties.
+public class RabbitIntegrationTest extends BrooklynAppLiveTestSupport {
     private static final Logger log = LoggerFactory.getLogger(RabbitIntegrationTest.class);
 
-    private TestApplication app;
     private Location testLocation;
     private RabbitBroker rabbit;
 
     @BeforeMethod(groups = "Integration")
-    public void setup() {
-        app = ApplicationBuilder.newManagedApp(TestApplication.class);
-        testLocation = new LocalhostMachineProvisioningLocation();
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void shutdown() {
-        if (app != null) Entities.destroyAll(app.getManagementContext());
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        testLocation = app.newLocalhostProvisioningLocation();
     }
 
     /**

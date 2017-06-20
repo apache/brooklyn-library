@@ -23,7 +23,6 @@ import static org.apache.brooklyn.test.HttpTestUtils.assertHttpStatusCodeEventua
 import static org.apache.brooklyn.test.HttpTestUtils.assertUrlUnreachableEventually;
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -31,11 +30,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.core.entity.Entities;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
-import org.apache.brooklyn.core.mgmt.rebind.RebindTestUtils;
-import org.apache.brooklyn.core.test.entity.TestApplication;
+import org.apache.brooklyn.core.mgmt.rebind.RebindTestFixtureWithApp;
 import org.apache.brooklyn.entity.webapp.DynamicWebAppCluster;
 import org.apache.brooklyn.test.WebAppMonitor;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
@@ -49,55 +44,38 @@ import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocati
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.io.Files;
 
-public class DynamicWebAppClusterRebindIntegrationTest {
+public class DynamicWebAppClusterRebindIntegrationTest extends RebindTestFixtureWithApp {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicWebAppClusterRebindIntegrationTest.class);
     
     private LocalhostMachineProvisioningLocation localhostProvisioningLocation;
-    private TestApplication origApp;
-    private TestApplication newApp;
     private List<WebAppMonitor> webAppMonitors = new CopyOnWriteArrayList<WebAppMonitor>();
     private ExecutorService executor;
     
-    private ClassLoader classLoader = getClass().getClassLoader();
-    private LocalManagementContext origManagementContext;
-    private File mementoDir;
-    
     @BeforeMethod(groups = "Integration")
-    public void setUp() {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         executor = Executors.newCachedThreadPool();
-
-        mementoDir = Files.createTempDir();
-        origManagementContext = RebindTestUtils.newPersistingManagementContext(mementoDir, classLoader);
-
-        localhostProvisioningLocation = new LocalhostMachineProvisioningLocation();
-        origApp = ApplicationBuilder.newManagedApp(TestApplication.class, origManagementContext);
+        localhostProvisioningLocation = app().newLocalhostProvisioningLocation();
     }
 
     @AfterMethod(groups = "Integration", alwaysRun=true)
+    @Override
     public void tearDown() throws Exception {
-        for (WebAppMonitor monitor : webAppMonitors) {
-            monitor.terminate();
+        try {
+            for (WebAppMonitor monitor : webAppMonitors) {
+                monitor.terminate();
+            }
+            if (executor != null) executor.shutdownNow();
+        } finally {
+            super.tearDown();
         }
-        if (executor != null) executor.shutdownNow();
-        if (newApp != null) Entities.destroyAll(newApp.getManagementContext());
-        if (origApp != null) Entities.destroyAll(origApp.getManagementContext());
-        if (mementoDir != null) RebindTestUtils.deleteMementoDir(mementoDir);
     }
 
     public String getTestWar() {
         TestResourceUnavailableException.throwIfResourceUnavailable(getClass(), "/hello-world.war");
         return "classpath://hello-world.war";
-    }
-
-    private TestApplication rebind() throws Exception {
-        RebindTestUtils.waitForPersisted(origApp);
-        
-        // Stop the old management context, so original nginx won't interfere
-        origManagementContext.terminate();
-        
-        return (TestApplication) RebindTestUtils.rebind(mementoDir, getClass().getClassLoader());
     }
 
     private WebAppMonitor newWebAppMonitor(String url) {
@@ -150,11 +128,11 @@ public class DynamicWebAppClusterRebindIntegrationTest {
      */
     @Test(groups = {"Integration","Broken"})
     public void testRebindsToRunningCluster() throws Exception {
-        DynamicWebAppCluster origCluster = origApp.createAndManageChild(EntitySpec.create(DynamicWebAppCluster.class)
+        DynamicWebAppCluster origCluster = app().createAndManageChild(EntitySpec.create(DynamicWebAppCluster.class)
                 .configure("memberSpec", EntitySpec.create(JBoss7Server.class).configure("war", getTestWar()))
                 .configure("initialSize", 1));
         
-        origApp.start(ImmutableList.of(localhostProvisioningLocation));
+        app().start(ImmutableList.of(localhostProvisioningLocation));
         JBoss7Server origJboss = (JBoss7Server) Iterables.find(origCluster.getChildren(), Predicates.instanceOf(JBoss7Server.class));
         String jbossUrl = origJboss.getAttribute(JBoss7Server.ROOT_URL);
         
@@ -162,8 +140,8 @@ public class DynamicWebAppClusterRebindIntegrationTest {
         WebAppMonitor monitor = newWebAppMonitor(jbossUrl);
         
         // Rebind
-        newApp = rebind();
-        DynamicWebAppCluster newCluster = (DynamicWebAppCluster) Iterables.find(newApp.getChildren(), Predicates.instanceOf(DynamicWebAppCluster.class));
+        rebind();
+        DynamicWebAppCluster newCluster = (DynamicWebAppCluster) Iterables.find(app().getChildren(), Predicates.instanceOf(DynamicWebAppCluster.class));
 
         assertHttpStatusCodeEquals(jbossUrl, 200);
 

@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.brooklyn.api.entity.Application;
 import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.api.mgmt.ManagementContext;
 import org.apache.brooklyn.api.mgmt.SubscriptionHandle;
@@ -48,7 +49,6 @@ import org.apache.brooklyn.api.sensor.SensorEvent;
 import org.apache.brooklyn.api.sensor.SensorEventListener;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
-import org.apache.brooklyn.core.entity.factory.ApplicationBuilder;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.internal.BrooklynProperties;
 import org.apache.brooklyn.core.test.entity.LocalManagementContextForTests;
@@ -175,7 +175,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
      * @return
      */
     protected TestApplication newTestApplication() {
-        TestApplication ta = ApplicationBuilder.newManagedApp(TestApplication.class, getMgmt());
+        TestApplication ta = mgmt.getEntityManager().createEntity(EntitySpec.create(TestApplication.class));
         applications.add(ta);
         return ta;
     }

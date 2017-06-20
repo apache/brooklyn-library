@@ -55,14 +55,6 @@ public class SinusoidalLoadGenerator extends AbstractEnricher {
         this.executor = Executors.newSingleThreadScheduledExecutor();
     }
     
-    public SinusoidalLoadGenerator(AttributeSensor<Double> target, long publishPeriodMs, long sinPeriodMs, double sinAmplitude) {
-        config().set(TARGET, target);
-        config().set(PUBLISH_PERIOD_MS, publishPeriodMs);
-        config().set(SIN_PERIOD_MS, sinPeriodMs);
-        config().set(SIN_AMPLITUDE, sinAmplitude);
-        this.executor = Executors.newSingleThreadScheduledExecutor();
-    }
-    
     @Override
     public void setEntity(final EntityLocal entity) {
         super.setEntity(entity);

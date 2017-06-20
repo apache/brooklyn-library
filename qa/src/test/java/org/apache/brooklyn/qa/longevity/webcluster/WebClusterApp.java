@@ -82,7 +82,7 @@ public class WebClusterApp extends AbstractApplication {
                 .metric(averageLoad)
                 .sizeRange(1, 3)
                 .metricRange(0.3, 0.7)
-                .build());
+                .buildSpec());
     }
     
     public static void main(String[] argv) {

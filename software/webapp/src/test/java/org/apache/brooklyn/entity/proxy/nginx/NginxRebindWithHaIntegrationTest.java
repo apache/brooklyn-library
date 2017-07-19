@@ -92,7 +92,7 @@ public class NginxRebindWithHaIntegrationTest extends RebindTestFixtureWithApp {
     public void setUp() throws Exception {
         super.setUp();
         loc = origManagementContext.getLocationManager().createLocation(LocationSpec.create(LocalhostMachineProvisioningLocation.class)
-            .configure("address", Networking.getLocalHost())
+            .configure("address", Networking.getReachableLocalHost())
             .configure(SshMachineLocation.SSH_TOOL_CLASS, RecordingSshjTool.class.getName()));
         executor = Executors.newCachedThreadPool();
         

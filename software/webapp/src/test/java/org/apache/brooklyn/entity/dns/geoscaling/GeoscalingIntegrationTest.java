@@ -61,7 +61,7 @@ public class GeoscalingIntegrationTest extends BrooklynAppUnitTestSupport {
 
     private final String primaryDomain = "geopaas.org";//"domain"+((int)(Math.random()*10000))+".test.org";
     private final String subDomain = "subdomain"+((int)(Math.random()*10000));
-    private final InetAddress addrWithGeo = Networking.getLocalHost();
+    private final InetAddress addrWithGeo = Networking.getReachableLocalHost();
     private final InetAddress addrWithoutGeo = Networking.getInetAddressWithFixedName(StubHostGeoLookup.HOMELESS_IP);
     
     private TestEntity target;

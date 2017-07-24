@@ -46,7 +46,7 @@ public class MySqlIntegrationTest extends BrooklynAppLiveTestSupport {
     public static final Logger log = LoggerFactory.getLogger(MySqlIntegrationTest.class);
     
     // can start in AWS by running this -- or use brooklyn CLI/REST for most clouds, or programmatic/config for set of fixed IP machines
-    static String hostname = Networking.getLocalHost().getHostName();
+    static String hostname = Networking.getReachableLocalHost().getHostName();
 
     // From http://www.vogella.de/articles/MySQLJava/article.html
     // Expects COMMENTS to be injected as the test.table.name config value, for VogellaExampleAccess to work.

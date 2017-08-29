@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,25 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.brooklyn.entity.cm.salt.impl;
+package org.apache.brooklyn.entity.cm.salt;
 
-import com.google.common.annotations.Beta;
-import org.apache.brooklyn.entity.cm.salt.SaltConfig;
-import org.apache.brooklyn.entity.cm.salt.SaltEntity;
-import org.apache.brooklyn.entity.stock.EffectorStartableImpl;
-import org.apache.brooklyn.util.core.task.DynamicTasks;
+import java.util.Set;
+
+import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
+import com.google.common.annotations.Beta;
 
 @Beta
-public class SaltEntityImpl extends EffectorStartableImpl implements SaltEntity {
+public class SaltEntityImpl extends SoftwareProcessImpl implements SaltEntity {
     private static final Logger LOG = LoggerFactory.getLogger(SaltEntityImpl.class);
 
-    public SaltEntityImpl() {
-        super();
+    @Override
+    public Class getDriverInterface() {
+        return SaltEntityDriver.class;
+    }
+
+    @Override
+    public SaltEntityDriver getDriver() {
+        return (SaltEntityDriver) super.getDriver();
     }
 
     @Override
@@ -60,7 +64,6 @@ public class SaltEntityImpl extends EffectorStartableImpl implements SaltEntity 
 
         SaltConfig.SaltMode mode = getConfig(SaltConfig.SALT_MODE);
         LOG.debug("Initialize SaltStack {} mode", mode.name());
-        new SaltLifecycleEffectorTasks().attachLifecycleEffectors(this);
     }
 
     @Override
@@ -70,8 +73,10 @@ public class SaltEntityImpl extends EffectorStartableImpl implements SaltEntity 
 
     @Override
     public String saltCall(String spec) {
-        final ProcessTaskWrapper<Integer> command = DynamicTasks.queue(SaltSshTasks.saltCall(spec));
+        final ProcessTaskWrapper<Integer> command = getDriver().saltCall(spec);
+
         command.asTask().blockUntilEnded();
+
         if (0 == command.getExitCode()) {
             return command.getStdout();
         } else {

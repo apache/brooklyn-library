@@ -20,7 +20,6 @@ package org.apache.brooklyn.entity.cm.salt;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.brooklyn.api.entity.EntitySpec;
-import org.apache.brooklyn.entity.cm.salt.impl.SaltHighstate;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.core.test.entity.TestApplication;

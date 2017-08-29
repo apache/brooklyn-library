@@ -57,7 +57,7 @@ public interface MariaDbNode extends SoftwareProcess, DatastoreCommon, HasShortN
     /** download mirror, if desired */
     @SetFromFlag("mirrorUrl")
     public static final ConfigKey<String> MIRROR_URL = ConfigKeys.newStringConfigKey("mariadb.install.mirror.url", "URL of mirror",
-        "http://mirrors.coreix.net/mariadb"
+        "http://ftp.hosteurope.de/mirror/archive.mariadb.org"
      );
 
     @SetFromFlag("port")

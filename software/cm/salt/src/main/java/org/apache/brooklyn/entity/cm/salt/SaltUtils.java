@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,13 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.brooklyn.entity.cm.salt.impl;
+package org.apache.brooklyn.entity.cm.salt;
 
+import org.apache.brooklyn.api.location.LocationDefinition;
+import org.apache.brooklyn.api.mgmt.ManagementContext;
 
-public class SaltSshDriver {
+public class SaltUtils {
 
-    private SaltSshDriver() {
+    private SaltUtils() {
         // Utility class
+    }
+
+    public static ManagementContext.PropertiesReloadListener propertiesReloadListener(
+            ManagementContext mc, LocationDefinition definition) {
+
+        return new ManagementContext.PropertiesReloadListener() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void reloaded() {
+                // TODO: implement properties reload logic
+            }
+        };
     }
 
 }

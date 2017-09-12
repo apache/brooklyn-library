@@ -19,6 +19,7 @@
 package org.apache.brooklyn.entity.webapp.tomcat;
 
 import org.apache.brooklyn.api.catalog.Catalog;
+import org.apache.brooklyn.api.catalog.CatalogConfig;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.objs.HasShortName;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -30,6 +31,7 @@ import org.apache.brooklyn.core.sensor.PortAttributeSensorAndConfigKey;
 import org.apache.brooklyn.core.sensor.Sensors;
 import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
+import org.apache.brooklyn.entity.webapp.JavaWebAppService;
 import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcess;
 import org.apache.brooklyn.util.core.ResourcePredicates;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
@@ -44,6 +46,10 @@ import org.apache.brooklyn.util.time.Duration;
         iconUrl="classpath:///tomcat-logo.png")
 @ImplementedBy(TomcatServerImpl.class)
 public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasShortName {
+
+    @CatalogConfig(label = "Root WAR")
+    @SetFromFlag("war")
+    public static final ConfigKey<String> ROOT_WAR = JavaWebAppService.ROOT_WAR;
 
     @SetFromFlag("version")
     ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "7.0.65");
@@ -61,13 +67,14 @@ public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasSho
      * so override default here to a high-numbered port.
      */
     @SetFromFlag("shutdownPort")
-    PortAttributeSensorAndConfigKey SHUTDOWN_PORT =
-            ConfigKeys.newPortSensorAndConfigKey("tomcat.shutdownport", "Suggested shutdown port", PortRanges.fromString("31880+"));
+    PortAttributeSensorAndConfigKey SHUTDOWN_PORT = ConfigKeys.newPortSensorAndConfigKey(
+            "tomcat.shutdownport", 
+            "Suggested shutdown port", PortRanges.fromString("31880+"));
 
     @SetFromFlag("server.xml")
     ConfigKey<String> SERVER_XML_RESOURCE = ConfigKeys.builder(String.class)
             .name("tomcat.serverxml")
-            .description("The file to template and use as the Tomcat process' server.xml")
+            .description("The file to template and use as the Tomcat's server.xml")
             .defaultValue(JavaClassNames.resolveClasspathUrl(TomcatServer.class, "server.xml"))
             .constraint(ResourcePredicates.urlExists())
             .build();
@@ -75,15 +82,16 @@ public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasSho
     @SetFromFlag("web.xml")
     ConfigKey<String> WEB_XML_RESOURCE = ConfigKeys.builder(String.class)
             .name("tomcat.webxml")
-            .description("The file to template and use as the Tomcat process' web.xml")
+            .description("The file to template and use as the Tomcat's web.xml")
             .defaultValue(JavaClassNames.resolveClasspathUrl(TomcatServer.class, "web.xml"))
             .constraint(ResourcePredicates.urlExists())
             .build();
 
     ConfigKey<Duration> START_TIMEOUT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.START_TIMEOUT, Duration.FIVE_MINUTES);
 
-    AttributeSensor<String> CONNECTOR_STATUS =
-            Sensors.newStringSensor("webapp.tomcat.connectorStatus", "Catalina connector state name");
+    AttributeSensor<String> CONNECTOR_STATUS = Sensors.newStringSensor(
+            "webapp.tomcat.connectorStatus", 
+            "Catalina connector state name");
 
     AttributeSensor<String> JMX_SERVICE_URL = UsesJmx.JMX_URL;
 

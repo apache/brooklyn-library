@@ -21,6 +21,7 @@ package org.apache.brooklyn.entity.proxy;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.brooklyn.api.catalog.CatalogConfig;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.Group;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -55,45 +56,66 @@ import com.google.common.reflect.TypeToken;
  */
 public interface LoadBalancer extends Entity, Startable {
 
+    @CatalogConfig(label = "Server pool")
     @SetFromFlag("serverPool")
     ConfigKey<Group> SERVER_POOL = new BasicConfigKey<Group>(
-            Group.class, "loadbalancer.serverpool", "The default servers to route messages to");
+            Group.class, 
+            "loadbalancer.serverpool", 
+            "The default servers to route messages to (points at an entity of type 'Group' or 'Cluster')");
 
     @SetFromFlag("urlMappings")
     ConfigKey<Group> URL_MAPPINGS = new BasicConfigKey<Group>(
-            Group.class, "loadbalancer.urlmappings", "Special mapping rules (e.g. for domain/path matching, rewrite, etc); not supported by all load balancers");
+            Group.class, 
+            "loadbalancer.urlmappings", 
+            "Special mapping rules (e.g. for domain/path matching, rewrite, etc); not supported by all load balancers");
     
     /** sensor for port to forward to on target entities */
     @SuppressWarnings("serial")
     @SetFromFlag("portNumberSensor")
     public static final BasicAttributeSensorAndConfigKey<AttributeSensor<Integer>> PORT_NUMBER_SENSOR = new BasicAttributeSensorAndConfigKey<AttributeSensor<Integer>>(
-        new TypeToken<AttributeSensor<Integer>>() {}, "member.sensor.portNumber", "Port number sensor on members (defaults to http.port; not supported in all implementations)", Attributes.HTTP_PORT);
+        new TypeToken<AttributeSensor<Integer>>() {}, 
+        "member.sensor.portNumber", 
+        "Port number sensor on members (defaults to http.port; not supported in all implementations)", 
+        Attributes.HTTP_PORT);
 
     /** sensor for hostname to forward to on target entities */
     @SuppressWarnings("serial")
     @SetFromFlag("hostnameSensor")
     public static final BasicAttributeSensorAndConfigKey<AttributeSensor<String>> HOSTNAME_SENSOR = new BasicAttributeSensorAndConfigKey<AttributeSensor<String>>(
-        new TypeToken<AttributeSensor<String>>() {}, "member.sensor.hostname", "Hostname/IP sensor on members (defaults to host.subnet.hostname; not supported in all implementations)", Attributes.SUBNET_HOSTNAME);
+        new TypeToken<AttributeSensor<String>>() {}, 
+        "member.sensor.hostname", 
+        "Hostname/IP sensor on members (defaults to host.subnet.hostname; not supported in all implementations)", 
+        Attributes.SUBNET_HOSTNAME);
 
     /** sensor for hostname to forward to on target entities */
     @SuppressWarnings("serial")
     @SetFromFlag("hostAndPortSensor")
     public static final BasicAttributeSensorAndConfigKey<AttributeSensor<String>> HOST_AND_PORT_SENSOR = new BasicAttributeSensorAndConfigKey<AttributeSensor<String>>(
-            new TypeToken<AttributeSensor<String>>() {}, "member.sensor.hostandport", "host:port sensor on members (invalid to configure this and the portNumber or hostname sensors)", null);
+            new TypeToken<AttributeSensor<String>>() {}, 
+            "member.sensor.hostandport", 
+            "host:port sensor on members (invalid to configure this and the portNumber or hostname sensors)", 
+            null);
     
     @SetFromFlag("port")
     /** port where this controller should live */
     public static final PortAttributeSensorAndConfigKey PROXY_HTTP_PORT = new PortAttributeSensorAndConfigKey(
-            "proxy.http.port", "Main port where this proxy listens if using HTTP", ImmutableList.of(8000, "8001+"));
+            "proxy.http.port", 
+            "Main port where this proxy listens if using HTTP", 
+            ImmutableList.of(8000, "8001+"));
 
     @SetFromFlag("httpsPort")
     /** port where this controller should live */
     public static final PortAttributeSensorAndConfigKey PROXY_HTTPS_PORT = new PortAttributeSensorAndConfigKey(
-            "proxy.https.port", "Main port where this proxy listens if using HTTPS", ImmutableList.of(8443, "8443+"));
+            "proxy.https.port", 
+            "Main port where this proxy listens if using HTTPS", 
+            ImmutableList.of(8443, "8443+"));
 
     @SetFromFlag("protocol")
     public static final BasicAttributeSensorAndConfigKey<String> PROTOCOL = new BasicAttributeSensorAndConfigKey<String>(
-            String.class, "proxy.protocol", "Main URL protocol this proxy answers (typically http or https)", null);
+            String.class, 
+            "proxy.protocol", 
+            "Main URL protocol this proxy answers (typically http or https)", 
+            null);
     
     public static final AttributeSensor<String> HOSTNAME = Attributes.HOSTNAME;
     

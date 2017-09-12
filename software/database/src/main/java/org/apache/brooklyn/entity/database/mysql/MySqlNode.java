@@ -61,7 +61,8 @@ public interface MySqlNode extends SoftwareProcess, HasShortName, DatastoreCommo
 
     @SetFromFlag("serverConf")
     MapConfigKey<Object> MYSQL_SERVER_CONF = new MapConfigKey<Object>(
-            Object.class, "mysql.server.conf", "Configuration options for mysqld");
+            Object.class, "mysql.server.conf", 
+            "Configuration options for mysqld (appended to mysql.conf in the format 'key = value')");
 
     ConfigKey<Object> MYSQL_SERVER_CONF_LOWER_CASE_TABLE_NAMES = MYSQL_SERVER_CONF.subKey("lower_case_table_names", "See MySQL guide. Set 1 to ignore case in table names (useful for OS portability)");
 
@@ -69,25 +70,31 @@ public interface MySqlNode extends SoftwareProcess, HasShortName, DatastoreCommo
     ConfigKey<Integer> MYSQL_SERVER_ID = ConfigKeys.newIntegerConfigKey("mysql.server_id", "Corresponds to server_id option", 0);
 
     @SetFromFlag("user")
-    AttributeSensor USER = Sensors.newStringSensor("mysql.user", "Database admin user (default is `root`)");
+    AttributeSensor<String> USER = Sensors.newStringSensor("mysql.user", 
+            "Database admin user (default is 'root')");
 
     @SetFromFlag("password")
     StringAttributeSensorAndConfigKey PASSWORD = new StringAttributeSensorAndConfigKey(
-            "mysql.password", "Database admin password (or randomly generated if not set)", null);
+            "mysql.password", 
+            "Database admin password (or randomly generated if not set)", 
+            null);
 
     @SetFromFlag("socketUid")
     StringAttributeSensorAndConfigKey SOCKET_UID = new StringAttributeSensorAndConfigKey(
-            "mysql.socketUid", "Socket uid, for use in file /tmp/mysql.sock.<uid>.3306 (or randomly generated if not set)", null);
+            "mysql.socketUid", 
+            "Socket uid, for use in file /tmp/mysql.sock.<uid>.3306 (or randomly generated if not set)", 
+            null);
 
     @SetFromFlag("generalLog")
-    ConfigKey GENERAL_LOG = ConfigKeys.newBooleanConfigKey("mysql.general_log", "Enable general log", false);
-
-    /** @deprecated since 0.7.0 use DATASTORE_URL */ @Deprecated
-    AttributeSensor<String> MYSQL_URL = DATASTORE_URL;
+    ConfigKey<Boolean> GENERAL_LOG = ConfigKeys.newBooleanConfigKey(
+            "mysql.general_log", 
+            "Enable general_log option in mysql.conf", 
+            false);
 
     @SetFromFlag("configurationTemplateUrl")
     BasicAttributeSensorAndConfigKey<String> TEMPLATE_CONFIGURATION_URL = new StringAttributeSensorAndConfigKey(
-            "mysql.template.configuration.url", "Template file (in freemarker format) for the mysql.conf file",
+            "mysql.template.configuration.url", 
+            "Template file (in freemarker format) for the mysql.conf file. The default respects other config options such as 'mysql.general_log'",
             "classpath://org/apache/brooklyn/entity/database/mysql/mysql.conf");
 
     AttributeSensor<Double> QUERIES_PER_SECOND_FROM_MYSQL = Sensors.newDoubleSensor("mysql.queries.perSec.fromMysql");

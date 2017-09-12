@@ -75,11 +75,15 @@ public interface NginxController extends AbstractController, HasShortName {
 
     @SetFromFlag("stickyVersion")
     ConfigKey<String> STICKY_VERSION = ConfigKeys.newStringConfigKey(
-            "nginx.sticky.version", "Version of ngnix-sticky-module to be installed, if required", "1.2.5");
+            "nginx.sticky.version", 
+            "Version of ngnix-sticky-module to be installed, if required", 
+            "1.2.5");
 
     @SetFromFlag("pcreVersion")
     ConfigKey<String> PCRE_VERSION = ConfigKeys.newStringConfigKey(
-            "pcre.version", "Version of PCRE to be installed, if required", "8.37");
+            "pcre.version", 
+            "Version of PCRE to be installed, if required", 
+            "8.37");
 
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
@@ -97,19 +101,25 @@ public interface NginxController extends AbstractController, HasShortName {
 
     @SetFromFlag("httpPollPeriod")
     ConfigKey<Long> HTTP_POLL_PERIOD = ConfigKeys.newLongConfigKey(
-            "nginx.sensorpoll.http", "Poll period (in milliseconds)", 1000L);
+            "nginx.sensorpoll.http", "Poll period (in milliseconds) for health-check over http", 1000L);
 
     @SetFromFlag("withLdOpt")
     ConfigKey<String> WITH_LD_OPT = ConfigKeys.newStringConfigKey(
-            "nginx.install.withLdOpt", "String to pass in with --with-ld-opt=\"<val>\" (and for OS X has pcre auto-appended to this)", "-L /usr/local/lib");
+            "nginx.install.withLdOpt", 
+            "String to pass in with --with-ld-opt=\"<val>\" (and for OS X has pcre auto-appended to this)", 
+            "-L /usr/local/lib");
 
     @SetFromFlag("withCcOpt")
     ConfigKey<String> WITH_CC_OPT = ConfigKeys.newStringConfigKey(
-            "nginx.install.withCcOpt", "String to pass in with --with-cc-opt=\"<val>\"", "-I /usr/local/include");
+            "nginx.install.withCcOpt", 
+            "String to pass in with --with-cc-opt=\"<val>\"", 
+            "-I /usr/local/include");
 
     @SetFromFlag("configGenerator")
     ConfigKey<NginxConfigFileGenerator> SERVER_CONF_GENERATOR = ConfigKeys.newConfigKey(NginxConfigFileGenerator.class,
-            "nginx.config.generator", "The server.conf generator class", new NginxDefaultConfigGenerator());
+            "nginx.config.generator", 
+            "The server.conf generator class", 
+            new NginxDefaultConfigGenerator());
 
     @SetFromFlag("configTemplate")
     ConfigKey<String> SERVER_CONF_TEMPLATE_URL = NginxTemplateConfigGenerator.SERVER_CONF_TEMPLATE_URL;
@@ -119,10 +129,14 @@ public interface NginxController extends AbstractController, HasShortName {
             "nginx.config.staticContentArchiveUrl", "The URL of an archive file of static content (To be copied to the server)");
 
     AttributeSensorAndConfigKey<String, String> ACCESS_LOG_LOCATION = ConfigKeys.newStringSensorAndConfigKey(
-            "nginx.log.access", "Nginx access log file location", "logs/access.log");
+            "nginx.log.access", 
+            "Nginx access log file location", 
+            "logs/access.log");
 
     AttributeSensorAndConfigKey<String, String> ERROR_LOG_LOCATION = ConfigKeys.newStringSensorAndConfigKey(
-            "nginx.log.error", "Nginx error log file location", "logs/error.log");
+            "nginx.log.error", 
+            "Nginx error log file location", 
+            "logs/error.log");
 
     boolean isSticky();
 

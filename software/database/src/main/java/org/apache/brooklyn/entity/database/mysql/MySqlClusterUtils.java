@@ -37,7 +37,7 @@ public class MySqlClusterUtils {
 
     // Can't call node.executeScript directly, need to change execution context, so use an effector task
     protected static Task<String> executeSqlOnNodeAsync(MySqlNode node, String commands) {
-        return DynamicTasks.queue(Effectors.invocation(node, MySqlNode.EXECUTE_SCRIPT, ImmutableMap.of(CanExecuteScript.COMMANDS.getName(), commands))).asTask();
+        return DynamicTasks.queue(Effectors.invocation(node, MySqlNode.EXECUTE_SCRIPT, ImmutableMap.of("commands", commands))).asTask();
     }
 
     protected static String validateSqlParam(String config) {

@@ -22,6 +22,8 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.database.crate.CrateNode
       item:
         type: org.apache.brooklyn.entity.database.crate.CrateNode
+        name: Crate Node
+        description: CrateDB offers Standard-SQL real-time queries and document support
     - id: org.apache.brooklyn.entity.database.mysql.MySqlNode
       item:
         type: org.apache.brooklyn.entity.database.mysql.MySqlNode
@@ -40,6 +42,9 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.database.rubyrep.RubyRepNode
       item:
         type: org.apache.brooklyn.entity.database.rubyrep.RubyRepNode
+        name: RubyRep Node
+        description: RubyRep is a database replication system
+        iconUrl: classpath:///rubyrep-logo.jpeg
     - id: org.apache.brooklyn.entity.database.mariadb.MariaDbNode
       item:
         type: org.apache.brooklyn.entity.database.mariadb.MariaDbNode

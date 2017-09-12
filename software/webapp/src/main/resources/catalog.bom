@@ -31,9 +31,11 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.proxy.nginx.UrlMapping
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.UrlMapping
+        name: URL Mapping
     - id: org.apache.brooklyn.entity.webapp.DynamicWebAppFabric
       item:
         type: org.apache.brooklyn.entity.webapp.DynamicWebAppFabric
+        name: Dynamic Web App Fabric
     - id: org.apache.brooklyn.entity.proxy.nginx.NginxController
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.NginxController
@@ -47,10 +49,14 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server
       item:
         type: org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server
-        name: Tomcat Server
+        name: Tomcat 8 Server
     - id: org.apache.brooklyn.entity.proxy.LoadBalancerCluster
       item:
         type: org.apache.brooklyn.entity.proxy.LoadBalancerCluster
+        name: Load-balanced Cluster
+        description: |
+          A cluster of load balancers; configuring the cluster (through the LoadBalancer interface)
+          will configure all load balancers in the cluster.
     - id: org.apache.brooklyn.entity.webapp.jetty.Jetty6Server
       item:
         type: org.apache.brooklyn.entity.webapp.jetty.Jetty6Server
@@ -64,10 +70,12 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.webapp.tomcat.TomcatServer
       item:
         type: org.apache.brooklyn.entity.webapp.tomcat.TomcatServer
-        name: Tomcat Server
+        name: Tomcat 7 Server
     - id: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
       item:
         type: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
+        name: Geoscaling DNS Service
+        description: A geo-DNS service using geoscaling.com
     - id: org.apache.brooklyn.entity.webapp.ControlledDynamicWebAppCluster
       item:
         type: org.apache.brooklyn.entity.webapp.ControlledDynamicWebAppCluster
@@ -75,14 +83,15 @@ brooklyn.catalog:
         description: A cluster of load-balanced web-apps, which can be dynamically re-sized
 
     - id: load-balancer
-      description: |
-        Create a load balancer which will point at members in the group entity
-        referred to by the config key "serverPool".
-        The sensor advertising the port can be configured with the "member.sensor.portNumber" config key,
-        defaulting to `http.port`; all member entities which have published "service.up" will then be picked up.
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.NginxController
         name: Load Balancer (nginx)
+        description: |
+          Synonym for 'Nginx Server'.
+          Create a load balancer which will point at members in the group entity
+          referred to by the config key "serverPool".
+          The sensor advertising the port can be configured with the "member.sensor.portNumber" config key,
+          defaulting to `http.port`; all member entities which have published "service.up" will then be picked up.
 
     - id: resilient-bash-web-cluster-template
       itemType: template

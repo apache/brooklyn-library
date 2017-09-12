@@ -27,6 +27,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBRouterCluster
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBRouterCluster
+        name: MongoDB Router Cluster
     - id: org.apache.brooklyn.entity.nosql.cassandra.CassandraDatacenter
       item:
         type: org.apache.brooklyn.entity.nosql.cassandra.CassandraDatacenter
@@ -44,6 +45,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.redis.RedisShard
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisShard
+        name: Redis Shard
     - id: org.apache.brooklyn.entity.nosql.redis.RedisCluster
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisCluster
@@ -57,6 +59,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.couchdb.CouchDBCluster
       item:
         type: org.apache.brooklyn.entity.nosql.couchdb.CouchDBCluster
+        name: CouchDB Cluster
     - id: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseNode
       item:
         type: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseNode
@@ -79,6 +82,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServerCluster
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServerCluster
+        name: MongoDB Config Server Cluster
     - id: org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer
@@ -90,12 +94,15 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.mongodb.MongoDBReplicaSet
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.MongoDBReplicaSet
+        name: MongoDB Replica Set
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBShardCluster
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBShardCluster
+        name: MongoDB Shard Cluster
     - id: org.apache.brooklyn.entity.nosql.mongodb.MongoDBClient
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.MongoDBClient
+        name: MongoDB Client
     - id: org.apache.brooklyn.entity.nosql.elasticsearch.ElasticSearchNode
       item:
         type: org.apache.brooklyn.entity.nosql.elasticsearch.ElasticSearchNode
@@ -114,12 +121,15 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.cassandra.CassandraCluster
       item:
         type: org.apache.brooklyn.entity.nosql.cassandra.CassandraCluster
+        name: Cassandra Cluster
     - id: org.apache.brooklyn.entity.nosql.redis.RedisSlave
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisSlave
+        name: Redis Slave
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServer
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServer
+        name: MongoDB Config Server
     - id: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseCluster
       item:
         type: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseCluster
@@ -128,6 +138,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseSyncGateway
       item:
         type: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseSyncGateway
+        name: Couchbase Sync Gateway
     - id: org.apache.brooklyn.entity.nosql.hazelcast.HazelcastNode
       item:
         type: org.apache.brooklyn.entity.nosql.hazelcast.HazelcastNode
@@ -141,6 +152,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.CoLocatedMongoDBRouter
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.CoLocatedMongoDBRouter
+        name: Co-located MongoDB Router
 
 
     - id: bash-web-and-riak-template

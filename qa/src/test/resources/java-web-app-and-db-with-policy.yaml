@@ -26,7 +26,8 @@ services:
   proxy.http.port: 9210+
   java.sysprops: 
     brooklyn.example.db.url: $brooklyn:formatString("jdbc:%s%s?user=%s&password=%s",
-       component("db").attributeWhenReady("datastore.url"), "visitors", "brooklyn", "br00k11n")
+       component("db").attributeWhenReady("datastore.url"), "visitors", "brooklyn", 
+       $brooklyn:external("brooklyn-demo-sample", "hidden-brooklyn-password"))
 
   brooklyn.policies:
   - type: org.apache.brooklyn.policy.autoscaling.AutoScalerPolicy
@@ -42,4 +43,6 @@ services:
   name: My DB
   creationScriptUrl: classpath://visitors-creation-script.sql
   # or https://raw.githubusercontent.com/apache/brooklyn-library/master/examples/simple-web-cluster/src/main/resources/visitors-creation-script.sql
+  brooklyn.config:
+    creation.script.password: $brooklyn:external("brooklyn-demo-sample", "hidden-brooklyn-password")
     

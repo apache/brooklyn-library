@@ -100,7 +100,7 @@ public class JavaWebAppsIntegrationTest {
             Assert.assertEquals(app.getDisplayName(), "sample-single-jboss");
                         
             // locations set on AT in this yaml
-            Assert.assertEquals(app.getLocations().size(), 1);
+            Asserts.assertSize(app.getLocations(), 1);
 
             Set<Task<?>> tasks = BrooklynTaskTags.getTasksInEntityContext(brooklynMgmt.getExecutionManager(), app);
             log.info("Waiting on "+tasks.size()+" task(s)");
@@ -147,8 +147,8 @@ public class JavaWebAppsIntegrationTest {
             final Entity app = brooklynMgmt.getEntityManager().getEntity(assembly.getId());
             log.info("App - "+app);
             
-            // locations set on individual services here
-            Assert.assertEquals(app.getLocations().size(), 0);
+            // locations set on root node
+            Asserts.assertSize(app.getLocations(), 1);
             
             Iterator<ResolvableLink<PlatformComponent>> pcs = assembly.getPlatformComponents().links().iterator();
             PlatformComponent pc1 = pcs.next().resolve();
@@ -208,8 +208,8 @@ public class JavaWebAppsIntegrationTest {
             final Entity app = brooklynMgmt.getEntityManager().getEntity(assembly.getId());
             log.info("App - "+app);
             
-            // locations set on individual services here
-            Assert.assertEquals(app.getLocations().size(), 0);
+            // locations set on root node
+            Asserts.assertSize(app.getLocations(), 1);
             
             Set<Task<?>> tasks = BrooklynTaskTags.getTasksInEntityContext(brooklynMgmt.getExecutionManager(), app);
             log.info("Waiting on "+tasks.size()+" task(s)");

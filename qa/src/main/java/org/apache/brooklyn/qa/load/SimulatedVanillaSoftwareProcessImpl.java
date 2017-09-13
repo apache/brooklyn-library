@@ -216,5 +216,14 @@ public class SimulatedVanillaSoftwareProcessImpl extends VanillaSoftwareProcessI
                 // no-op
             }
         }
+        
+        @Override
+        public boolean isRunning() {
+            if (Boolean.TRUE.equals(entity.getConfig(USE_SSH_MONITORING))) {
+                return super.isRunning();
+            } else {
+                return true;
+            }
+        }
     }
 }

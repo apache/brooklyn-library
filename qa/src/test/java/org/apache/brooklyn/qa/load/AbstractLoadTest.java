@@ -161,8 +161,8 @@ public class AbstractLoadTest extends AbstractYamlTest {
         // Create management node
         persistenceDir = Files.createTempDir();
         launcher = BrooklynLauncher.newInstance()
-                .persistMode(PersistMode.CLEAN)
-                .highAvailabilityMode(HighAvailabilityMode.MASTER)
+                .persistMode(doPersistence() ? PersistMode.CLEAN : PersistMode.DISABLED)
+                .highAvailabilityMode(doPersistence() ? HighAvailabilityMode.MASTER : HighAvailabilityMode.DISABLED)
                 .persistenceDir(persistenceDir)
                 .start();
         
@@ -170,6 +170,10 @@ public class AbstractLoadTest extends AbstractYamlTest {
         LOG.info("Brooklyn web-console running at " + webServerUrl);
         
         return launcher.getServerDetails().getManagementContext();
+    }
+
+    protected boolean doPersistence() {
+        return true;
     }
     
     @Override

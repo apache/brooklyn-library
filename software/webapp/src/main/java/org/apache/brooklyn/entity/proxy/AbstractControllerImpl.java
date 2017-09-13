@@ -154,6 +154,7 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     public static class ServerPoolMemberTrackerPolicy extends AbstractMembershipTrackingPolicy {
         @Override
         protected void onEntityEvent(EventType type, Entity entity) {
+            defaultHighlightAction(type, entity);
             // relies on policy-rebind injecting the implementation rather than the dynamic-proxy
             ((AbstractControllerImpl)super.entity).onServerPoolMemberChanged(entity);
         }

@@ -37,6 +37,7 @@ public class PrefixAndIdEnricher extends AbstractEnricher {
     public static final ConfigKey<String> PREFIX = ConfigKeys.newStringConfigKey(
             "prefixandid.prefix", "Sets SENSOR to prefix+entity id");
 
+    @SuppressWarnings("serial")
     public static final ConfigKey<AttributeSensor<?>> MONITOR = ConfigKeys.newConfigKey(new TypeToken<AttributeSensor<?>>() {},
             "prefixandid.attributetomonitor", "Changes on this sensor are monitored and the prefix/id republished");
 
@@ -52,6 +53,7 @@ public class PrefixAndIdEnricher extends AbstractEnricher {
                 entity.sensors().set(SENSOR, getConfig(PREFIX) + entity.getId());
             }
         });
+        highlightTriggers(getConfig(MONITOR), null);
     }
 
 }

@@ -48,11 +48,13 @@ public interface Tomcat8Server extends TomcatServer {
 
     @SetFromFlag("server.xml")
     ConfigKey<String> SERVER_XML_RESOURCE = ConfigKeys.newStringConfigKey(
-            "tomcat.serverxml", "The file to template and use as the Tomcat process' server.xml",
+            "tomcat.serverxml", 
+            "The file to template and use as the Tomcat's server.xml",
             JavaClassNames.resolveClasspathUrl(Tomcat8Server.class, "tomcat8-server.xml"));
 
     @SetFromFlag("web.xml")
     ConfigKey<String> WEB_XML_RESOURCE = ConfigKeys.newStringConfigKey(
-            "tomcat.webxml", "The file to template and use as the Tomcat process' web.xml",
+            "tomcat.webxml", 
+            "The file to template and use as the Tomcat's web.xml",
             JavaClassNames.resolveClasspathUrl(Tomcat8Server.class, "tomcat8-web.xml"));
 }

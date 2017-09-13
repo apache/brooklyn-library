@@ -42,6 +42,7 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQQueue
       item:
         type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQQueue
+        name: ActiveMQ Queue
     - id: org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble
       item:
         type: org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble
@@ -50,12 +51,15 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.messaging.kafka.KafkaZooKeeper
       item:
         type: org.apache.brooklyn.entity.messaging.kafka.KafkaZooKeeper
+        name: Kafka ZooKeeper
     - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQTopic
       item:
         type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQTopic
+        name: ActiveMQ Topic
     - id: org.apache.brooklyn.entity.messaging.qpid.QpidQueue
       item:
         type: org.apache.brooklyn.entity.messaging.qpid.QpidQueue
+        name: Qpid Queue
     - id: org.apache.brooklyn.entity.zookeeper.ZooKeeperNode
       item:
         type: org.apache.brooklyn.entity.zookeeper.ZooKeeperNode
@@ -69,9 +73,11 @@ brooklyn.catalog:
     - id: org.apache.brooklyn.entity.messaging.kafka.KafkaBroker
       item:
         type: org.apache.brooklyn.entity.messaging.kafka.KafkaBroker
+        name: Kafka Broker
     - id: org.apache.brooklyn.entity.messaging.qpid.QpidTopic
       item:
         type: org.apache.brooklyn.entity.messaging.qpid.QpidTopic
+        name: Qpid Topic
     - id: org.apache.brooklyn.entity.messaging.storm.StormDeployment
       item:
         type: org.apache.brooklyn.entity.messaging.storm.StormDeployment

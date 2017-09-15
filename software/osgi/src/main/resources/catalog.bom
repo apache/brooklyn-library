@@ -20,6 +20,7 @@ brooklyn.catalog:
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.osgi.karaf.KarafContainer
+      iconUrl: classpath:///karaf-logo.png
       item:
         type: org.apache.brooklyn.entity.osgi.karaf.KarafContainer
         name: Karaf

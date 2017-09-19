@@ -20,65 +20,79 @@ brooklyn.catalog:
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQBroker
+      iconUrl: classpath:///activemq-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQBroker
         name: ActiveMQ Broker
         description: ActiveMQ is an open source message broker which fully implements the Java Message Service 1.1 (JMS)
     - id: org.apache.brooklyn.entity.messaging.qpid.QpidBroker
+      iconUrl: classpath:///qpid-logo.jpeg
       item:
         type: org.apache.brooklyn.entity.messaging.qpid.QpidBroker
         name: Qpid Broker
         description: Apache Qpid is an open-source messaging system, implementing the Advanced Message Queuing Protocol (AMQP)
     - id: org.apache.brooklyn.entity.messaging.storm.Storm
+      iconUrl: classpath:///apache-storm-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.storm.Storm
         name: Storm Node
         description: Apache Storm is a distributed realtime computation system. 
     - id: org.apache.brooklyn.entity.messaging.kafka.KafkaCluster
+      iconUrl: classpath:///kafka-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.kafka.KafkaCluster
         name: Kafka
         description: Apache Kafka is a distributed publish-subscribe messaging system
     - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQQueue
+      iconUrl: classpath:///activemq-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQQueue
         name: ActiveMQ Queue
     - id: org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble
+      iconUrl: classpath:///zookeeper-logo.gif
       item:
         type: org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble
         name: ZooKeeper ensemble
         description: A cluster of ZooKeeper servers. 
     - id: org.apache.brooklyn.entity.messaging.kafka.KafkaZooKeeper
+      iconUrl: classpath:///kafka-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.kafka.KafkaZooKeeper
         name: Kafka ZooKeeper
     - id: org.apache.brooklyn.entity.messaging.activemq.ActiveMQTopic
+      iconUrl: classpath:///activemq-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQTopic
         name: ActiveMQ Topic
     - id: org.apache.brooklyn.entity.messaging.qpid.QpidQueue
+      iconUrl: classpath:///qpid-logo.jpeg
       item:
         type: org.apache.brooklyn.entity.messaging.qpid.QpidQueue
         name: Qpid Queue
     - id: org.apache.brooklyn.entity.zookeeper.ZooKeeperNode
+      iconUrl: classpath:///zookeeper-logo.gif
       item:
         type: org.apache.brooklyn.entity.zookeeper.ZooKeeperNode
         name: ZooKeeper Node
         description: Apache ZooKeeper is a server which enables 
     - id: org.apache.brooklyn.entity.messaging.rabbit.RabbitBroker
+      iconUrl: classpath:///RabbitMQLogo.png
       item:
         type: org.apache.brooklyn.entity.messaging.rabbit.RabbitBroker
         name: RabbitMQ Broker
         description: RabbitMQ is an open source message broker software (i.e. message-oriented middleware) that implements the Advanced Message Queuing Protocol (AMQP) standard
     - id: org.apache.brooklyn.entity.messaging.kafka.KafkaBroker
+      iconUrl: classpath:///kafka-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.kafka.KafkaBroker
         name: Kafka Broker
     - id: org.apache.brooklyn.entity.messaging.qpid.QpidTopic
+      iconUrl: classpath:///qpid-logo.jpeg
       item:
         type: org.apache.brooklyn.entity.messaging.qpid.QpidTopic
         name: Qpid Topic
     - id: org.apache.brooklyn.entity.messaging.storm.StormDeployment
+      iconUrl: classpath:///apache-storm-logo.png
       item:
         type: org.apache.brooklyn.entity.messaging.storm.StormDeployment
         name: Storm Deployment

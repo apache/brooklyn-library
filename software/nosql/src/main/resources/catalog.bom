@@ -20,86 +20,105 @@ brooklyn.catalog:
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.nosql.redis.RedisStore
+      iconUrl: classpath:///redis-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisStore
         name: Redis Server
         description: Redis is an open-source, networked, in-memory, key-value data store with optional durability
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBRouterCluster
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBRouterCluster
         name: MongoDB Router Cluster
     - id: org.apache.brooklyn.entity.nosql.cassandra.CassandraDatacenter
+      iconUrl: classpath:///cassandra-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.cassandra.CassandraDatacenter
         name: Apache Cassandra Datacenter Cluster
         description: Cassandra is a highly scalable, eventually 
     - id: org.apache.brooklyn.entity.nosql.solr.SolrServer
+      iconUrl: classpath:///solr-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.solr.SolrServer
         name: Apache Solr Node
         description: Solr is the popular, blazing fast open source enterprise search 
     - id: org.apache.brooklyn.entity.nosql.couchdb.CouchDBNode
+      iconUrl: classpath:///couchdb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.couchdb.CouchDBNode
         name: CouchDB Node
     - id: org.apache.brooklyn.entity.nosql.redis.RedisShard
+      iconUrl: classpath:///redis-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisShard
         name: Redis Shard
     - id: org.apache.brooklyn.entity.nosql.redis.RedisCluster
+      iconUrl: classpath:///redis-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisCluster
         name: Redis Cluster
         description: Redis is an open-source, networked, in-memory, key-value data store with optional durability
     - id: org.apache.brooklyn.entity.nosql.hazelcast.HazelcastCluster
+      iconUrl: classpath:///hazelcast-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.hazelcast.HazelcastCluster
         name: Hazelcast Cluster
         description: Hazelcast is a clustering and highly scalable data distribution platform for Java.
     - id: org.apache.brooklyn.entity.nosql.couchdb.CouchDBCluster
+      iconUrl: classpath:///couchdb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.couchdb.CouchDBCluster
         name: CouchDB Cluster
     - id: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseNode
+      iconUrl: classpath:///couchbase-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseNode
         name: CouchBase Node
         description: Couchbase Server is an open source, distributed (shared-nothing architecture) 
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBShardedDeployment
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBShardedDeployment
         name: MongoDB Sharded Deployment
     - id: org.apache.brooklyn.entity.nosql.cassandra.CassandraNode
+      iconUrl: classpath:///cassandra-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.cassandra.CassandraNode
         name: Apache Cassandra Node
         description: Cassandra is a highly scalable, eventually 
     - id: org.apache.brooklyn.entity.nosql.riak.RiakNode
+      iconUrl: classpath:///org/apache/brooklyn/entity/nosql/riak/riak.png
       item:
         type: org.apache.brooklyn.entity.nosql.riak.RiakNode
         name: Riak Node
         description: Riak is a distributed NoSQL key-value data store that offers 
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServerCluster
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServerCluster
         name: MongoDB Config Server Cluster
     - id: org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.MongoDBServer
         name: MongoDB Server
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBRouter
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBRouter
         name: MongoDB Router
     - id: org.apache.brooklyn.entity.nosql.mongodb.MongoDBReplicaSet
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.MongoDBReplicaSet
         name: MongoDB Replica Set
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBShardCluster
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBShardCluster
         name: MongoDB Shard Cluster
     - id: org.apache.brooklyn.entity.nosql.mongodb.MongoDBClient
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.MongoDBClient
         name: MongoDB Client
@@ -109,6 +128,7 @@ brooklyn.catalog:
         name: Elastic Search Node
         description: Elasticsearch is an open-source search server based on Lucene. 
     - id: org.apache.brooklyn.entity.nosql.cassandra.CassandraFabric
+      iconUrl: classpath:///cassandra-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.cassandra.CassandraFabric
         name: Apache Cassandra Database Fabric
@@ -119,37 +139,45 @@ brooklyn.catalog:
         name: Elastic Search Cluster
         description: Elasticsearch is an open-source search server based on Lucene. 
     - id: org.apache.brooklyn.entity.nosql.cassandra.CassandraCluster
+      iconUrl: classpath:///cassandra-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.cassandra.CassandraCluster
         name: Cassandra Cluster
     - id: org.apache.brooklyn.entity.nosql.redis.RedisSlave
+      iconUrl: classpath:///redis-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.redis.RedisSlave
         name: Redis Slave
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServer
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.MongoDBConfigServer
         name: MongoDB Config Server
     - id: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseCluster
+      iconUrl: classpath:///couchbase-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseCluster
         name: CouchBase Cluster
         description: Couchbase is an open source, distributed (shared-nothing architecture) 
     - id: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseSyncGateway
+      iconUrl: classpath:///couchbase-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.couchbase.CouchbaseSyncGateway
         name: Couchbase Sync Gateway
     - id: org.apache.brooklyn.entity.nosql.hazelcast.HazelcastNode
+      iconUrl: classpath:///hazelcast-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.hazelcast.HazelcastNode
         name: Hazelcast Node
         description: Hazelcast is a clustering and highly scalable data distribution platform for Java.
     - id: org.apache.brooklyn.entity.nosql.riak.RiakCluster
+      iconUrl: classpath:///org/apache/brooklyn/entity/nosql/riak/riak.png
       item:
         type: org.apache.brooklyn.entity.nosql.riak.RiakCluster
         name: Riak Cluster
         description: Riak is a distributed NoSQL key-value data store that offers 
     - id: org.apache.brooklyn.entity.nosql.mongodb.sharding.CoLocatedMongoDBRouter
+      iconUrl: classpath:///mongodb-logo.png
       item:
         type: org.apache.brooklyn.entity.nosql.mongodb.sharding.CoLocatedMongoDBRouter
         name: Co-located MongoDB Router

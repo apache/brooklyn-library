@@ -20,6 +20,7 @@ brooklyn.catalog:
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.cm.ansible.AnsibleEntity
+      iconUrl: classpath:///ansible-logo.png
       item:
         type: org.apache.brooklyn.entity.cm.ansible.AnsibleEntity
         name: AnsibleEntity

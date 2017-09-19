@@ -20,6 +20,7 @@ brooklyn.catalog:
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.monitoring.monit.MonitNode
+      iconUrl: classpath:///monit-logo.png
       item:
         type: org.apache.brooklyn.entity.monitoring.monit.MonitNode
         name: Monit Node

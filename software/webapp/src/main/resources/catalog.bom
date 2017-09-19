@@ -20,10 +20,12 @@ brooklyn.catalog:
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppService
+      iconUrl: classpath:///nodejs-logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppService
         name: Node.JS Application
     - id: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
+      iconUrl: classpath:///jboss_logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
         name: JBoss Application Server 7
@@ -37,16 +39,19 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.webapp.DynamicWebAppFabric
         name: Dynamic Web App Fabric
     - id: org.apache.brooklyn.entity.proxy.nginx.NginxController
+      iconUrl: classpath:///nginx-logo.jpeg
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.NginxController
         name: Nginx Server
         description: A single Nginx server. Provides HTTP and reverse proxy services
     - id: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
+      iconUrl: classpath:///jboss_logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
         name: JBoss Application Server 6
         description: AS6 -  an open source Java application server from JBoss
     - id: org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server
+      iconUrl: classpath:///tomcat-logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server
         name: Tomcat 8 Server
@@ -58,6 +63,7 @@ brooklyn.catalog:
           A cluster of load balancers; configuring the cluster (through the LoadBalancer interface)
           will configure all load balancers in the cluster.
     - id: org.apache.brooklyn.entity.webapp.jetty.Jetty6Server
+      iconUrl: classpath:///jetty-logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jetty.Jetty6Server
         name: Jetty6 Server
@@ -68,10 +74,12 @@ brooklyn.catalog:
         name: Dynamic Web-app Cluster
         description: A cluster of web-apps, which can be dynamically re-sized; this does not include a load-balancer
     - id: org.apache.brooklyn.entity.webapp.tomcat.TomcatServer
+      iconUrl: classpath:///tomcat-logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.tomcat.TomcatServer
         name: Tomcat 7 Server
     - id: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
+      iconUrl: classpath:///geoscaling-logo.gif
       item:
         type: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
         name: Geoscaling DNS Service
@@ -83,6 +91,7 @@ brooklyn.catalog:
         description: A cluster of load-balanced web-apps, which can be dynamically re-sized
 
     - id: load-balancer
+      iconUrl: classpath:///nginx-logo.jpeg
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.NginxController
         name: Load Balancer (nginx)

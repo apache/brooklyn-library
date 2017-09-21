@@ -48,7 +48,7 @@ public class HighstateTest {
 
     @AfterMethod(alwaysRun=true)
     public void tearDown() {
-        if ( app != null) {
+        if (app != null) {
             Entities.destroyAll(app.getManagementContext());
             app = null;
         }
@@ -57,7 +57,7 @@ public class HighstateTest {
     @Test
     public void shouldSetSensorsOnEntity() throws Exception {
         String contents = getTestYaml();
-        TestApplication app = TestApplication.Factory.newManagedInstanceForTests();
+        app = TestApplication.Factory.newManagedInstanceForTests();
         entity = app.createAndManageChild(EntitySpec.create(SaltEntity.class)
             .configure(SaltEntity.START_STATES, ImmutableSet.of("apache")));
 

@@ -18,15 +18,15 @@
 brooklyn.catalog:
   version: "0.13.0-SNAPSHOT" # BROOKLYN_VERSION
 
-  items:
-  - classpath://org.apache.brooklyn.software-cm-ansible:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
+  brooklyn.libraries:
+  - mvn:org.apache.brooklyn/brooklyn-software-cm-ansible/0.13.0-SNAPSHOT # BROOKLYN_VERSION
 #  TODO: Uncomment once chef has been moved to brooklyn-library
-#  - classpath://org.apache.brooklyn.software-cm-chef:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-cm-salt:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-database:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-messaging:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-monitoring:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-network:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-nosql:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-osgi:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
-  - classpath://org.apache.brooklyn.software-webapp:0.13.0-SNAPSHOT:catalog.bom # BROOKLYN_VERSION
+#  - mvn:org.apache.brooklyn/brooklyn-software-cm-chef/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-cm-salt/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-database/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-messaging/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-monitoring/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-network/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-nosql/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-osgi/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-webapp/0.13.0-SNAPSHOT # BROOKLYN_VERSION

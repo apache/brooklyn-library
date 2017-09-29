@@ -21,6 +21,7 @@ brooklyn.catalog:
     items:
     - id: org.apache.brooklyn.entity.network.bind.BindDnsServer
       description: BIND is an Internet Domain Name Server.
+      iconUrl: classpath:///isc-logo.png
       item:
         type: org.apache.brooklyn.entity.network.bind.BindDnsServer
         name: BIND

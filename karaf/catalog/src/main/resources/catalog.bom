@@ -20,8 +20,7 @@ brooklyn.catalog:
 
   brooklyn.libraries:
   - mvn:org.apache.brooklyn/brooklyn-software-cm-ansible/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-#  TODO: Uncomment once chef has been moved to brooklyn-library
-#  - mvn:org.apache.brooklyn/brooklyn-software-cm-chef/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-cm-chef/0.13.0-SNAPSHOT # BROOKLYN_VERSION
   - mvn:org.apache.brooklyn/brooklyn-software-cm-salt/0.13.0-SNAPSHOT # BROOKLYN_VERSION
   - mvn:org.apache.brooklyn/brooklyn-software-database/0.13.0-SNAPSHOT # BROOKLYN_VERSION
   - mvn:org.apache.brooklyn/brooklyn-software-messaging/0.13.0-SNAPSHOT # BROOKLYN_VERSION

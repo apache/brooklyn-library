@@ -71,10 +71,9 @@
     </mailingLists>
 
     <modules>
-
+        <module>chef</module>
         <module>salt</module>
         <module>ansible</module>
-
     </modules>
 
 </project>

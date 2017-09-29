@@ -27,6 +27,7 @@
     </feature>
 
     <feature name="brooklyn-software-cm" version="${project.version}" description="Configuration Management modules">
+        <bundle>mvn:org.apache.brooklyn/brooklyn-software-cm-chef/${project.version}</bundle>
         <bundle>mvn:org.apache.brooklyn/brooklyn-software-cm-salt/${project.version}</bundle>
         <bundle>mvn:org.apache.brooklyn/brooklyn-software-cm-ansible/${project.version}</bundle>
     </feature>

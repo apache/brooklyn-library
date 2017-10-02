@@ -43,4 +43,4 @@ services:
       NODE_ENV: production
       RIAK_NODES: >
         $brooklyn:component("mycluster").attributeWhenReady("riak.cluster.nodeListPbPort")
-    launch.latch: $brooklyn:component("mycluster").attributeWhenReady("service.isUp")
+    latch.launch: $brooklyn:component("mycluster").attributeWhenReady("service.isUp")

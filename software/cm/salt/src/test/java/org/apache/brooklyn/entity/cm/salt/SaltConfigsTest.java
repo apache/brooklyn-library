@@ -37,14 +37,14 @@ public class SaltConfigsTest {
     @AfterMethod(alwaysRun=true)
     public void tearDown() {
         if ( app != null) {
-        	Entities.destroyAll(app.getManagementContext());
+            Entities.destroyAll(app.getManagementContext());
             app = null;
         }
     }
 
     @Test
     public void testAddToRunList() {
-        TestApplication app = TestApplication.Factory.newManagedInstanceForTests();
+        app = TestApplication.Factory.newManagedInstanceForTests();
         SaltConfigs.addToRunList(app, "a", "b");
         Set<? extends String> runs = app.getConfig(SaltConfig.START_STATES);
         Assert.assertEquals(runs, ImmutableSet.of("a", "b"));
@@ -52,7 +52,7 @@ public class SaltConfigsTest {
 
     @Test
     public void testAddLaunchAttributes() {
-        TestApplication app = TestApplication.Factory.newManagedInstanceForTests();
+        app = TestApplication.Factory.newManagedInstanceForTests();
         SaltConfigs.addLaunchAttributes(app, ImmutableMap.of("k1", "v1"));
         Map<String, Object> attribs = app.getConfig(SaltConfig.SALT_SSH_LAUNCH_ATTRIBUTES);
         Assert.assertEquals(attribs, ImmutableMap.of("k1", "v1"));
@@ -60,7 +60,7 @@ public class SaltConfigsTest {
 
     @Test
     public void testAddToFormulas() {
-        TestApplication app = TestApplication.Factory.newManagedInstanceForTests();
+        app = TestApplication.Factory.newManagedInstanceForTests();
         SaltConfigs.addToFormulas(app, "v1");
         SaltConfigs.addToFormulas(app, "v2");
         final Set<? extends String> formulas = app.getConfig(SaltConfig.SALT_FORMULAS);

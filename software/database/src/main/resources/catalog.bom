@@ -16,31 +16,41 @@
 # under the License.
 
 brooklyn.catalog:
-    version: "0.12.0-SNAPSHOT" # BROOKLYN_VERSION
+    version: "0.13.0-SNAPSHOT" # BROOKLYN_VERSION
     itemType: entity
     items:
     - id: org.apache.brooklyn.entity.database.crate.CrateNode
+      iconUrl: classpath:///crate-logo.png
       item:
         type: org.apache.brooklyn.entity.database.crate.CrateNode
+        name: Crate Node
+        description: CrateDB offers Standard-SQL real-time queries and document support
     - id: org.apache.brooklyn.entity.database.mysql.MySqlNode
+      iconUrl: classpath:///mysql-logo-110x57.png
       item:
         type: org.apache.brooklyn.entity.database.mysql.MySqlNode
         name: MySql Node
         description: MySql is an open source relational database management system (RDBMS)
     - id: org.apache.brooklyn.entity.database.mysql.MySqlCluster
+      iconUrl: classpath:///mysql-logo-110x57.png
       item:
         type: org.apache.brooklyn.entity.database.mysql.MySqlCluster
         name: MySql Master-Slave cluster
         description: Sets up a cluster of MySQL nodes using master-slave relation and binary logging
     - id: org.apache.brooklyn.entity.database.postgresql.PostgreSqlNode
+      iconUrl: classpath:///postgresql-logo-200px.png
       item:
         type: org.apache.brooklyn.entity.database.postgresql.PostgreSqlNode
         name: PostgreSQL Node
         description: PostgreSQL is an object-relational database management system (ORDBMS)
     - id: org.apache.brooklyn.entity.database.rubyrep.RubyRepNode
+      iconUrl: classpath:///rubyrep-logo.png
       item:
         type: org.apache.brooklyn.entity.database.rubyrep.RubyRepNode
+        name: RubyRep Node
+        description: RubyRep is a database replication system
     - id: org.apache.brooklyn.entity.database.mariadb.MariaDbNode
+      iconUrl: classpath:///mariadb-logo-180x119.png
       item:
         type: org.apache.brooklyn.entity.database.mariadb.MariaDbNode
         name: MariaDB Node

@@ -25,6 +25,8 @@ import java.io.UnsupportedEncodingException;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+
+import org.apache.brooklyn.api.catalog.CatalogConfig;
 import org.apache.brooklyn.api.effector.Effector;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
@@ -56,10 +58,9 @@ public class DatastoreMixins {
     public static final Effector<String> EXECUTE_SCRIPT = CanExecuteScript.EXECUTE_SCRIPT;
     
     public static interface CanExecuteScript {
-        ConfigKey<String> COMMANDS = ConfigKeys.newStringConfigKey("commands");
         Effector<String> EXECUTE_SCRIPT = Effectors.effector(String.class, "executeScript")
             .description("executes the given script contents")
-            .parameter(COMMANDS)
+            .parameter(ConfigKeys.newStringConfigKey("commands"))
             .buildAbstract();
     }
 
@@ -69,22 +70,26 @@ public class DatastoreMixins {
     public static final ConfigKey<String> CREATION_SCRIPT_TEMPLATE = CanGiveCreationScript.CREATION_SCRIPT_TEMPLATE;
 
     public static interface CanGiveCreationScript {
+        @CatalogConfig(label = "Creation script contents")
         @SetFromFlag("creationScriptContents")
         public static final ConfigKey<String> CREATION_SCRIPT_CONTENTS = ConfigKeys.newStringConfigKey(
                 "datastore.creation.script.contents",
                 "Contents of creation script to initialize the datastore",
                 "");
 
+        @CatalogConfig(label = "Creation script URL")
         @SetFromFlag("creationScriptUrl")
         public static final ConfigKey<String> CREATION_SCRIPT_URL = ConfigKeys.newStringConfigKey(
                 "datastore.creation.script.url",
                 "URL of creation script to use to initialize the datastore (ignored if creationScriptContents is specified)",
                 "");
 
+        @CatalogConfig(label = "Creation script template URL")
         @SetFromFlag("creationScriptTemplateUrl")
         public static final ConfigKey<String> CREATION_SCRIPT_TEMPLATE = ConfigKeys.newStringConfigKey(
                 "datastore.creation.script.template.url",
-                "URL of creation script Freemarker template used to initialize the datastore (ignored if datastore.creation.script.contents or datastore.creation.script.url is specified)",
+                "URL of creation script Freemarker template used to initialize the datastore "
+                        + "(ignored if datastore.creation.script.contents or datastore.creation.script.url is specified)",
                 "");
     }
 

@@ -20,7 +20,7 @@
 # standalone catalog file
 
 brooklyn.catalog:
-  version: "0.12.0-SNAPSHOT"   # BROOKLYN_VERSION
+  version: "0.13.0-SNAPSHOT"   # BROOKLYN_VERSION
   items:
   - id: java-cluster-db-policy-example
     itemType: template
@@ -36,7 +36,8 @@ brooklyn.catalog:
           http://repo1.maven.org/maven2/org/apache/brooklyn/example/brooklyn-example-hello-world-sql-webapp/0.9.0/brooklyn-example-hello-world-sql-webapp-0.9.0.war
         java.sysprops: 
           brooklyn.example.db.url: $brooklyn:formatString("jdbc:%s%s?user=%s&password=%s",
-             component("db").attributeWhenReady("datastore.url"), "visitors", "brooklyn", "br00k11n")
+             component("db").attributeWhenReady("datastore.url"), "visitors", "brooklyn", 
+             $brooklyn:external("brooklyn-demo-sample", "hidden-brooklyn-password"))
       
         brooklyn.policies:
         - type: org.apache.brooklyn.policy.autoscaling.AutoScalerPolicy
@@ -52,3 +53,5 @@ brooklyn.catalog:
         name: My DB
         creationScriptUrl:
           https://raw.githubusercontent.com/apache/brooklyn-library/master/examples/simple-web-cluster/src/main/resources/visitors-creation-script.sql
+        brooklyn.config:
+          creation.script.password: $brooklyn:external("brooklyn-demo-sample", "hidden-brooklyn-password")

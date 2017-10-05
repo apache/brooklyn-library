@@ -51,6 +51,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+/** For use by downstream load-balancers. */
 public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntity implements AbstractNonProvisionedController {
     
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNonProvisionedControllerImpl.class);
@@ -66,6 +67,7 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
 
     public static class MemberTrackingPolicy extends AbstractMembershipTrackingPolicy {
         @Override protected void onEntityEvent(EventType type, Entity member) {
+            defaultHighlightAction(type, entity);
             ((AbstractNonProvisionedControllerImpl)super.entity).onServerPoolMemberChanged(member);
         }
     }
@@ -216,6 +218,7 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
     public static class ServerPoolMemberTrackerPolicy extends AbstractMembershipTrackingPolicy {
         @Override
         protected void onEntityEvent(EventType type, Entity entity) {
+            defaultHighlightAction(type, entity);
             // relies on policy-rebind injecting the implementation rather than the dynamic-proxy
             ((AbstractNonProvisionedControllerImpl)super.entity).onServerPoolMemberChanged(entity);
         }

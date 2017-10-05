@@ -30,12 +30,16 @@ import org.apache.brooklyn.core.entity.EntityPredicates;
 import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.group.DynamicClusterImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class MongoDBRouterClusterImpl extends DynamicClusterImpl implements MongoDBRouterCluster {
 
+    private static final Logger log = LoggerFactory.getLogger(MongoDBRouterClusterImpl.class);
+    
     @Override
     public void init() {
         super.init();
@@ -56,12 +60,17 @@ public class MongoDBRouterClusterImpl extends DynamicClusterImpl implements Mong
     
     public static class MemberTrackingPolicy extends AbstractMembershipTrackingPolicy {
         @Override protected void onEntityEvent(EventType type, Entity member) {
+            defaultHighlightAction(type, entity);
             ((MongoDBRouterClusterImpl)super.entity).setAnyRouter();
         }
         @Override protected void onEntityRemoved(Entity member) {
+            // TODO shouldn't be invoked - remove
+            log.warn("Removal handler should be hidden by event handler", new Throwable("Trace for unexpected mongo node handler"));
             ((MongoDBRouterClusterImpl)super.entity).setAnyRouter();
         }
         @Override protected void onEntityChange(Entity member) {
+            // TODO shouldn't be invoked - remove
+            log.warn("Change handler should be hidden by event handler", new Throwable("Trace for unexpected mongo node handler"));
             ((MongoDBRouterClusterImpl)super.entity).setAnyRouter();
         }
     }

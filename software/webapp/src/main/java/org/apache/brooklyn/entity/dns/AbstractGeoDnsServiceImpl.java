@@ -180,6 +180,7 @@ public abstract class AbstractGeoDnsServiceImpl extends AbstractEntity implement
     public static class MemberTrackingPolicy extends AbstractMembershipTrackingPolicy {
         @Override
         protected void onEntityEvent(EventType type, Entity entity) {
+            defaultHighlightAction(type, entity);
             ((AbstractGeoDnsServiceImpl)super.entity).refreshGroupMembership();
         }
     }

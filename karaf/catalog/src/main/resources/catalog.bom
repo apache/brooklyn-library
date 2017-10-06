@@ -16,16 +16,16 @@
 # under the License.
 #
 brooklyn.catalog:
-  version: "0.13.0-SNAPSHOT" # BROOKLYN_VERSION
+  version: "1.0.0-SNAPSHOT" # BROOKLYN_VERSION
 
   brooklyn.libraries:
-  - mvn:org.apache.brooklyn/brooklyn-software-cm-ansible/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-cm-chef/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-cm-salt/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-database/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-messaging/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-monitoring/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-network/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-nosql/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-osgi/0.13.0-SNAPSHOT # BROOKLYN_VERSION
-  - mvn:org.apache.brooklyn/brooklyn-software-webapp/0.13.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-cm-ansible/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-cm-chef/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-cm-salt/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-database/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-messaging/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-monitoring/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-network/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-nosql/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-osgi/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-software-webapp/1.0.0-SNAPSHOT # BROOKLYN_VERSION

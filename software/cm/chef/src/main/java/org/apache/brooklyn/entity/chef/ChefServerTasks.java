@@ -51,7 +51,7 @@ public class ChefServerTasks {
         if (data==null) return null;
         try {
             f.deleteOnExit();
-            Files.write(SecureKeys.stringPem(data), f, Charset.defaultCharset());
+            Files.write(SecureKeys.toPem(data), f, Charset.defaultCharset());
             return f;
         } catch (IOException e) {
             throw Throwables.propagate(e);

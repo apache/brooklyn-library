@@ -194,8 +194,8 @@ public class ChefAttributeFeed extends AbstractFeed {
     }
     
     protected ChefAttributeFeed(Builder builder) {
-        setConfig(ONLY_IF_SERVICE_UP, builder.onlyIfServiceUp);
-        setConfig(NODE_NAME, checkNotNull(builder.nodeName, "builder.nodeName"));
+        config().set(ONLY_IF_SERVICE_UP, builder.onlyIfServiceUp);
+        config().set(NODE_NAME, checkNotNull(builder.nodeName, "builder.nodeName"));
 
         Set<ChefAttributePollConfig<?>> polls = Sets.newLinkedHashSet();
         for (ChefAttributePollConfig<?> config : builder.polls) {
@@ -205,7 +205,7 @@ public class ChefAttributeFeed extends AbstractFeed {
             if (configCopy.getPeriod() < 0) configCopy.period(builder.period);
             polls.add(configCopy);
         }
-        setConfig(POLLS, polls);
+        config().set(POLLS, polls);
         initUniqueTag(builder.uniqueTag, polls);
     }
 

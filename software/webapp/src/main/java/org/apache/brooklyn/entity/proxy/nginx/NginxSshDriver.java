@@ -118,10 +118,10 @@ public class NginxSshDriver extends AbstractSoftwareProcessSshDriver implements 
         entity.sensors().set(NginxController.PID_FILE, getRunDir() + "/" + AbstractSoftwareProcessSshDriver.PID_FILENAME);
         if (((AbstractController)entity).isSsl()) {
             entity.sensors().set(Attributes.HTTPS_PORT, getPort());
-            ((EntityInternal)entity).removeAttribute(Attributes.HTTP_PORT);
+            ((EntityInternal)entity).sensors().remove(Attributes.HTTP_PORT);
         } else {
             entity.sensors().set(Attributes.HTTP_PORT, getPort());
-            ((EntityInternal)entity).removeAttribute(Attributes.HTTPS_PORT);
+            ((EntityInternal)entity).sensors().remove(Attributes.HTTPS_PORT);
         }
         super.postLaunch();
     }

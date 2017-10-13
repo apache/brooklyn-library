@@ -34,8 +34,9 @@ import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityAsserts;
 import org.apache.brooklyn.core.entity.trait.Startable;
-import org.apache.brooklyn.core.mgmt.internal.LocalManagementContext;
 import org.apache.brooklyn.core.test.BrooklynAppLiveTestSupport;
+import org.apache.brooklyn.entity.messaging.storm.topologies.ExclamationBolt;
+import org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.core.file.ArchiveBuilder;
@@ -45,9 +46,11 @@ import org.apache.brooklyn.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
@@ -56,12 +59,6 @@ import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.testing.TestWordSpout;
 import backtype.storm.topology.TopologyBuilder;
-
-import org.apache.brooklyn.entity.messaging.storm.topologies.ExclamationBolt;
-import org.apache.brooklyn.entity.zookeeper.ZooKeeperEnsemble;
-
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 
 public abstract class StormAbstractCloudLiveTest extends BrooklynAppLiveTestSupport {
 
@@ -73,17 +70,11 @@ public abstract class StormAbstractCloudLiveTest extends BrooklynAppLiveTestSupp
     private Storm supervisor;
     private Storm ui;
 
-    @BeforeClass(alwaysRun = true)
-    public void beforeClass() throws Exception {
-        mgmt = new LocalManagementContext();
-        location = mgmt.getLocationRegistry()
-                .getLocationManaged(getLocation(), getFlags());
+    @BeforeMethod(alwaysRun = true)
+    @Override
+    public void setUp() throws Exception {
         super.setUp();
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void afterClass() throws Exception {
-        // Entities.destroyAll(mgmt);
+        location = mgmt.getLocationRegistry().getLocationManaged(getLocation(), getFlags());
     }
 
     public abstract String getLocation();

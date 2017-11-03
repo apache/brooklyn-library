@@ -103,7 +103,7 @@ public class NodeJsWebAppSshDriver extends AbstractSoftwareProcessSshDriver impl
                 .add(BashCommands.ifExecutableElse0("apt-get", BashCommands.chain(
                         BashCommands.installPackage("software-properties-common python-software-properties python g++ make"),
                         BashCommands.sudo("add-apt-repository ppa:chris-lea/node.js"))))
-                .add(BashCommands.installPackage(MutableMap.of("yum", "git nodejs npm", "apt", "git-core nodejs npm"), null))
+                .add(BashCommands.installPackage(MutableMap.of("yum", "git openssl nodejs npm", "apt", "git-core nodejs npm"), null))
                 .add("mkdir -p \"$HOME/.npm\"")
                 .add(BashCommands.sudo("npm install -g n"))
                 .add(BashCommands.sudo("n " + getVersion()))

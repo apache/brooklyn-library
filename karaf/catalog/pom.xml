@@ -40,6 +40,12 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Brooklyn-Catalog-Force-Remove-Bundles>*</Brooklyn-Catalog-Force-Remove-Bundles>
+                        <Brooklyn-Catalog-Upgrade-For-Bundles>*</Brooklyn-Catalog-Upgrade-For-Bundles>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>

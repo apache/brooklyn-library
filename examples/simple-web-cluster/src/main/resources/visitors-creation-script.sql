@@ -23,7 +23,7 @@ use visitors;
 # Create two users: 'brooklyn'@'%' and 'brooklyn'@'localhost' with full access
 # default password specified for compatibility with older blueprints that don't provide config;
 # if your blueprint sets the password it can be removed here
-grant usage on *.* to 'brooklyn'@'%' identified by '${config["creation.script.password"]!"br00k11n"}';
+grant all privileges on *.*  to 'brooklyn'@'%' identified by '${config["creation.script.password"]!"br00k11n"}';
 # useful if sockets work also
 grant all privileges on *.* to 'brooklyn'@'localhost' identified by '${config["creation.script.password"]!"br00k11n"}';
 

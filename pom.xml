@@ -126,6 +126,8 @@
         <module>software/nosql</module>
         <module>software/monitoring</module>
 
+        <module>catalog-aliases</module>
+
         <module>qa</module>
         
         <module>examples</module>

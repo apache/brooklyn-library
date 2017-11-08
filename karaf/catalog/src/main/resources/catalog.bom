@@ -29,3 +29,5 @@ brooklyn.catalog:
   - mvn:org.apache.brooklyn/brooklyn-software-nosql/1.0.0-SNAPSHOT # BROOKLYN_VERSION
   - mvn:org.apache.brooklyn/brooklyn-software-osgi/1.0.0-SNAPSHOT # BROOKLYN_VERSION
   - mvn:org.apache.brooklyn/brooklyn-software-webapp/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+  - mvn:org.apache.brooklyn/brooklyn-catalog-aliases/1.0.0-SNAPSHOT # BROOKLYN_VERSION
+

@@ -72,7 +72,7 @@ public class MonitorUtilsTest {
         String errSuffix = writeToErr ? " >&2" : "";
         //Windows limits the length of the arguments so echo multiple times instead
         String bigstr = Strings.repeat("a", 8000);
-        String bigcmd = Strings.repeat(getSilentPrefix() + "echo " + bigstr + errSuffix + Os.LINE_SEPARATOR, 15);
+        String bigcmd = getExecPrefix() + Strings.repeat(getSilentPrefix() + "echo " + bigstr + errSuffix + Os.LINE_SEPARATOR, 15);
         File file = Os.newTempFile("test-consume", ".bat");
         file.setExecutable(true);
         Files.write(bigcmd, file, Charsets.UTF_8);
@@ -158,6 +158,14 @@ public class MonitorUtilsTest {
             return "@";
         } else {
             return "";
+        }
+    }
+
+    private String getExecPrefix() {
+        if (Os.isMicrosoftWindows()) {
+            return "";
+        } else {
+            return "#!/bin/sh\n";
         }
     }
 

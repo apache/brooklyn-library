@@ -290,6 +290,7 @@ public class CouchbaseClusterImpl extends DynamicClusterImpl implements Couchbas
     private final static class ListOfHostAndPort implements Function<Set<Entity>, List<String>> {
         @Override public List<String> apply(Set<Entity> input) {
             List<String> addresses = Lists.newArrayList();
+            if (input == null) return addresses;
             for (Entity entity : input) {
                 addresses.add(String.format("%s",
                         BrooklynAccessUtils.getBrooklynAccessibleAddress(entity, entity.getAttribute(CouchbaseNode.COUCHBASE_WEB_ADMIN_PORT))));

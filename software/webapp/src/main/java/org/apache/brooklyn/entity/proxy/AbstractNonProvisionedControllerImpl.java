@@ -137,6 +137,9 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
         sensors().set(MAIN_URI, URI.create(inferUrl()));
         sensors().set(ROOT_URL, inferUrl());
         addServerPoolMemberTrackingPolicy();
+        
+        isActive = true;
+        update();
     }
     
     protected void preStop() {
@@ -273,7 +276,6 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
         }
     }
 
-    
     protected void onServerPoolMemberChanged(Entity member) {
         synchronized (mutex) {
             if (LOG.isTraceEnabled()) LOG.trace("For {}, considering membership of {} which is in locations {}", 

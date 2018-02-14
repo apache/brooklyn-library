@@ -21,6 +21,7 @@ package org.apache.brooklyn.entity.proxy;
 import java.util.Map;
 
 import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.api.entity.Group;
 import org.apache.brooklyn.entity.group.DynamicClusterImpl;
 
 /**
@@ -70,6 +71,20 @@ public class LoadBalancerClusterImpl extends DynamicClusterImpl implements LoadB
         for (Entity member : getMembers()) {
             if (member instanceof LoadBalancer) {
                 ((LoadBalancer)member).bind(flags);
+            }
+        }
+    }
+    
+    @Override
+    public void changeServerPool(String groupId) {
+        Group newGroup = (Group) getManagementContext().getEntityManager().getEntity(groupId);
+        if (newGroup == null) {
+            throw new IllegalArgumentException("Group '"+groupId+"' not found");
+        }
+        
+        for (Entity member : getMembers()) {
+            if (member instanceof LoadBalancer) {
+                ((LoadBalancer)member).changeServerPool(groupId);
             }
         }
     }

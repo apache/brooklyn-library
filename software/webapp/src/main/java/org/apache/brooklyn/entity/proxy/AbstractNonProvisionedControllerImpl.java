@@ -39,6 +39,7 @@ import org.apache.brooklyn.core.entity.trait.Startable;
 import org.apache.brooklyn.core.feed.ConfigToAttributes;
 import org.apache.brooklyn.entity.group.AbstractMembershipTrackingPolicy;
 import org.apache.brooklyn.entity.proxy.AbstractControllerImpl.MapAttribute;
+import org.apache.brooklyn.entity.proxy.AbstractControllerImpl.ServerPoolMemberTrackerPolicy;
 import org.apache.brooklyn.util.core.task.Tasks;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.slf4j.Logger;
@@ -215,9 +216,25 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
     protected void removeServerPoolMemberTrackingPolicy() {
         if (serverPoolMemberTrackerPolicy != null) {
             policies().remove(serverPoolMemberTrackerPolicy);
+            serverPoolMemberTrackerPolicy = null;
         }
     }
     
+    protected boolean hasServerPoolMemberTrackingPolicy() {
+        if (serverPoolMemberTrackerPolicy != null) return true;
+
+        // On rebind, might not have set the field yet
+        for (Policy p: policies()) {
+            if (p instanceof ServerPoolMemberTrackerPolicy) {
+                LOG.info(this+" picking up "+p+" as the tracker (already set, often due to rebind)");
+                serverPoolMemberTrackerPolicy = (ServerPoolMemberTrackerPolicy) p;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public static class ServerPoolMemberTrackerPolicy extends AbstractMembershipTrackingPolicy {
         @Override
         protected void onEntityEvent(EventType type, Entity entity) {
@@ -263,8 +280,9 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
     public Task<?> updateAsync() {
         synchronized (mutex) {
             Task<?> result = null;
-            if (!isActive()) updateNeeded = true;
-            else {
+            if (!isActive()) {
+                updateNeeded = true;
+            } else {
                 updateNeeded = false;
                 LOG.debug("Updating {} in response to changes", this);
                 LOG.info("Updating {}, server pool targets {}", new Object[] {this, getAttribute(SERVER_POOL_TARGETS)});
@@ -274,6 +292,20 @@ public abstract class AbstractNonProvisionedControllerImpl extends AbstractEntit
             }
             return result;
         }
+    }
+
+    @Override
+    public void changeServerPool(String groupId) {
+        Group newGroup = (Group) getManagementContext().getEntityManager().getEntity(groupId);
+        if (newGroup == null) {
+            throw new IllegalArgumentException("Group '"+groupId+"' not found");
+        }
+        
+        config().set(SERVER_POOL, newGroup);
+        if (hasServerPoolMemberTrackingPolicy()) {
+            addServerPoolMemberTrackingPolicy();
+        }
+        updateNeeded();
     }
 
     protected void onServerPoolMemberChanged(Entity member) {

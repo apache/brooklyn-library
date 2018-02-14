@@ -229,6 +229,28 @@ public abstract class AbstractAbstractControllerTest<T extends LoadBalancer> ext
         assertEventuallyAddressesMatch(ImmutableList.<Entity>of());
     }
 
+    @Test
+    public void testUpdateCalledWhenServerPoolGroupSwapped() {
+        // Second cluster with one child
+        DynamicCluster cluster2 = app.addChild(EntitySpec.create(DynamicCluster.class)
+                .configure("initialSize", 1)
+                .configure("memberSpec", EntitySpec.create(TestEntity.class).impl(WebServerEntity.class)));
+        cluster2.start(ImmutableList.of());
+        
+        Entity child = Iterables.getOnlyElement(cluster2.getMembers());
+        child.sensors().set(WebServerEntity.HTTP_PORT, 1234);
+        child.sensors().set(Startable.SERVICE_UP, true);
+
+        // Reconfigure the controller to point at the new cluster
+        controller.changeServerPool(cluster2.getId());
+        assertEquals(controller.config().get(LoadBalancer.SERVER_POOL), cluster2);
+        assertEventuallyAddressesMatchCluster(cluster2);
+
+        // And remove all children; expect all addresses to go away
+        cluster2.resize(0);
+        assertEventuallyAddressesMatchCluster(cluster2);
+    }
+
     protected void assertEventuallyAddressesMatchCluster() {
         assertEventuallyAddressesMatchCluster(cluster);
     }

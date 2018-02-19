@@ -33,6 +33,7 @@ import org.apache.brooklyn.api.mgmt.Task;
 import org.apache.brooklyn.api.policy.Policy;
 import org.apache.brooklyn.api.policy.PolicySpec;
 import org.apache.brooklyn.api.sensor.AttributeSensor;
+import org.apache.brooklyn.core.annotation.EffectorParam;
 import org.apache.brooklyn.core.entity.Attributes;
 import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.entity.EntityInternal;
@@ -148,9 +149,25 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     protected void removeServerPoolMemberTrackingPolicy() {
         if (serverPoolMemberTrackerPolicy != null) {
             policies().remove(serverPoolMemberTrackerPolicy);
+            serverPoolMemberTrackerPolicy = null;
         }
     }
     
+    protected boolean hasServerPoolMemberTrackingPolicy() {
+        if (serverPoolMemberTrackerPolicy != null) return true;
+
+        // On rebind, might not have set the field yet
+        for (Policy p: policies()) {
+            if (p instanceof ServerPoolMemberTrackerPolicy) {
+                LOG.info(this+" picking up "+p+" as the tracker (already set, often due to rebind)");
+                serverPoolMemberTrackerPolicy = (ServerPoolMemberTrackerPolicy) p;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public static class ServerPoolMemberTrackerPolicy extends AbstractMembershipTrackingPolicy {
         @Override
         protected void onEntityEvent(EventType type, Entity entity) {
@@ -411,8 +428,9 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
     public Task<?> updateAsync() {
         synchronized (serverPoolAddresses) {
             Task<?> result = null;
-            if (!isActive()) updateNeeded = true;
-            else {
+            if (!isActive()) {
+                updateNeeded = true;
+            } else {
                 updateNeeded = false;
                 LOG.debug("Updating {} in response to changes", this);
                 LOG.info("Updating {}, server pool targets {}", new Object[] {this, getAttribute(SERVER_POOL_TARGETS)});
@@ -423,6 +441,20 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
             }
             return result;
         }
+    }
+
+    @Override
+    public void changeServerPool(String groupId) {
+        Group newGroup = (Group) getManagementContext().getEntityManager().getEntity(groupId);
+        if (newGroup == null) {
+            throw new IllegalArgumentException("Group '"+groupId+"' not found");
+        }
+        
+        config().set(SERVER_POOL, newGroup);
+        if (hasServerPoolMemberTrackingPolicy()) {
+            addServerPoolMemberTrackingPolicy();
+        }
+        updateNeeded();
     }
 
     protected void onServerPoolMemberChanged(Entity member) {

@@ -123,15 +123,31 @@ public class JBoss7SshDriver extends JavaWebAppSshDriver implements JBoss7Driver
         List<String> urls = resolver.getTargets();
         String saveAs = resolver.getFilename();
 
-        List<String> commands = new LinkedList<String>();
-        commands.addAll(BashCommands.commandsToDownloadUrlsAs(urls, saveAs));
-        commands.add(BashCommands.INSTALL_TAR);
-        commands.add("tar xzfv " + saveAs);
+        List<String> installCommands = new LinkedList<String>();
+        installCommands.addAll(BashCommands.commandsToDownloadUrlsAs(urls, saveAs));
+        installCommands.add(BashCommands.INSTALL_TAR);
+        installCommands.add("tar xzfv " + saveAs);
 
         newScript(INSTALLING)
                 // don't set vars yet -- it resolves dependencies (e.g. DB) which we don't want until we start
                 .environmentVariablesReset()
-                .body.append(commands)
+                .body.append(installCommands)
+                .execute();
+
+        // The jboss-modules.jar that comes with jBoss 7.1.1 is of version 1.1.1.GA. However, this has issue on initialisation.
+        // Hopefully, version 1.1.5.GA fixes the init issue. However, as jBoss 7.1.1 is EOF, we need to download and replace
+        // this jar before starting up the server
+        // see: https://stackoverflow.com/questions/48403832/javax-xml-parsers-factoryconfigurationerror-running-jboss-as-7-1-with-java-7-upd
+        String installDir = getExpandedInstallDir();
+        List<String> fixBugCommands = new LinkedList<String>();
+        fixBugCommands.add(BashCommands.INSTALL_WGET);
+        fixBugCommands.add(format("rm %s/jboss-modules.jar", installDir));
+        fixBugCommands.add(format("wget http://repo1.maven.org/maven2/org/jboss/modules/jboss-modules/1.1.5.GA/jboss-modules-1.1.5.GA.jar -O %s/jboss-modules.jar", installDir));
+
+        newScript("fix JBoss 7.1.1 init bug")
+                // don't set vars yet -- it resolves dependencies (e.g. DB) which we don't want until we start
+                .environmentVariablesReset()
+                .body.append(fixBugCommands)
                 .execute();
     }
 

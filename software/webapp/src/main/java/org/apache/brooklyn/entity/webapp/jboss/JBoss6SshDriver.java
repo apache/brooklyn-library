@@ -39,6 +39,10 @@ import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
 import org.apache.brooklyn.util.time.Duration;
 
+/**
+ * @deprecated since 1.0.0; JBoss 6 is EOF
+ */
+@Deprecated
 public class JBoss6SshDriver extends JavaWebAppSshDriver implements JBoss6Driver {
 
     public static final String SERVER_TYPE = "standard";

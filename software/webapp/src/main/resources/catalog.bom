@@ -48,8 +48,9 @@ brooklyn.catalog:
       iconUrl: classpath:///jboss_logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
-        name: JBoss Application Server 6
+        name: "[DEPRECATED] JBoss Application Server 6"
         description: AS6 -  an open source Java application server from JBoss
+        deprecated: true
     - id: org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server
       iconUrl: classpath:///tomcat-logo.png
       item:

@@ -20,5 +20,9 @@ package org.apache.brooklyn.entity.webapp.jboss;
 
 import org.apache.brooklyn.entity.webapp.JavaWebAppDriver;
 
+/**
+ * @deprecated since 1.0.0; JBoss 6 is EOF
+ */
+@Deprecated
 public interface JBoss6Driver extends JavaWebAppDriver {
 }

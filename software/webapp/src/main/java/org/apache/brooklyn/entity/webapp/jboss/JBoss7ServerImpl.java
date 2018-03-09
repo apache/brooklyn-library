@@ -37,6 +37,10 @@ import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HostAndPort;
 
+/**
+ * @deprecated since 1.0.0; JBoss 7 is EOF
+ */
+@Deprecated
 public class JBoss7ServerImpl extends JavaWebAppSoftwareProcessImpl implements JBoss7Server {
 
     public static final Logger log = LoggerFactory.getLogger(JBoss7ServerImpl.class);

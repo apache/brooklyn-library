@@ -33,6 +33,10 @@ import org.apache.brooklyn.util.core.ResourcePredicates;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.javalang.JavaClassNames;
 
+/**
+ * @deprecated since 1.0.0; JBoss 7 is EOF
+ */
+@Deprecated
 @Catalog(name="JBoss Application Server 7", description="AS7: an open source Java application server from JBoss", iconUrl="classpath:///jboss-logo.png")
 @ImplementedBy(JBoss7ServerImpl.class)
 public interface JBoss7Server extends JavaWebAppSoftwareProcess, HasShortName {

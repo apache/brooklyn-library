@@ -45,6 +45,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 
+/**
+ * @deprecated since 1.0.0; JBoss 7 is EOF
+ */
+@Deprecated
 public class JBoss7SshDriver extends JavaWebAppSshDriver implements JBoss7Driver {
 
     private static final Logger LOG = LoggerFactory.getLogger(JBoss7SshDriver.class);

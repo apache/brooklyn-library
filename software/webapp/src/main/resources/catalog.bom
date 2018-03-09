@@ -28,8 +28,9 @@ brooklyn.catalog:
       iconUrl: classpath:///jboss_logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
-        name: JBoss Application Server 7
+        name: "[DEPRECATED] JBoss Application Server 7"
         description: AS7 - an open source Java application server from JBoss
+        deprecated: true
     - id: org.apache.brooklyn.entity.proxy.nginx.UrlMapping
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.UrlMapping

@@ -30,6 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Functions;
 
+/**
+ * @deprecated since 1.0.0; JBoss 6 is EOF
+ */
+@Deprecated
 public class JBoss6ServerImpl extends JavaWebAppSoftwareProcessImpl implements JBoss6Server {
 
     public static final Logger log = LoggerFactory.getLogger(JBoss6ServerImpl.class);

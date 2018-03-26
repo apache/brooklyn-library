@@ -29,6 +29,12 @@ import org.apache.brooklyn.entity.webapp.JavaWebAppSoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.time.Duration;
 
+import com.google.gson.annotations.Since;
+
+/**
+ * @deprecated since 1.0.0; JBoss 6 is EOF
+ */
+@Deprecated
 @Catalog(name="JBoss Application Server 6", description="AS6: an open source Java application server from JBoss", iconUrl="classpath:///jboss-logo.png")
 @ImplementedBy(JBoss6ServerImpl.class)
 public interface JBoss6Server extends JavaWebAppSoftwareProcess, UsesJmx {

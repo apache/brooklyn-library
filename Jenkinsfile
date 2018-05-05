@@ -44,8 +44,8 @@ node(label: 'ubuntu') {
             // Conditional stage to deploy artifacts, when not building a PR
             if (env.CHANGE_ID == null) {
                 stage('Deploy artifacts') {
-                    environmentDockerImage.inside('-i --name brooklyn-${DOCKER_TAG} -v ${WORKSPACE}/.m2:/root/.m2 -v ${WORKSPACE}:/usr/build -w /usr/build') {
-                        sh 'mvn deploy -DskipTests'
+                    environmentDockerImage.inside('-i --name brooklyn-${DOCKER_TAG} -v ${HOME}:/usr/home -v ${WORKSPACE}/.m2:/root/.m2 -v ${WORKSPACE}:/usr/build -w /usr/build') {
+                        sh 'mvn deploy -s /usr/home/.m2/settings.xml -DskipTests'
                     }
                 }
 

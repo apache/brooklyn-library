@@ -113,7 +113,7 @@ public class WebClusterDatabaseExample extends AbstractApplication {
 
         BrooklynLauncher launcher = BrooklynLauncher.newInstance()
                 .application(EntitySpec.create(StartableApplication.class, WebClusterDatabaseExample.class).displayName("Brooklyn WebApp Cluster with Database example"))
-                .webconsolePort(port)
+                .restServerPort(port)
                 .location(location)
                 .start();
          

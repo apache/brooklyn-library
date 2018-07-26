@@ -86,7 +86,7 @@ public class WebClusterExample extends AbstractApplication {
         // TODO Want to parse, to handle multiple locations
         BrooklynLauncher launcher = BrooklynLauncher.newInstance()
                 .application(EntitySpec.create(WebClusterExample.class).displayName("Brooklyn WebApp Cluster example"))
-                .webconsolePort(port)
+                .restServerPort(port)
                 .location(location)
                 .start();
          

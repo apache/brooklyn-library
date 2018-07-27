@@ -57,7 +57,7 @@ public class SingleWebServerExample extends AbstractApplication {
 
         BrooklynLauncher launcher = BrooklynLauncher.newInstance()
                 .application(EntitySpec.create(StartableApplication.class, SingleWebServerExample.class).displayName("Brooklyn WebApp example"))
-                .webconsolePort(port)
+                .restServerPort(port)
                 .location(location)
                 .start();
          

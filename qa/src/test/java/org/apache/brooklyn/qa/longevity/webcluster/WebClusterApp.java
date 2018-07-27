@@ -92,7 +92,7 @@ public class WebClusterApp extends AbstractApplication {
 
         BrooklynLauncher launcher = BrooklynLauncher.newInstance()
                 .application(EntitySpec.create(StartableApplication.class, WebClusterApp.class).displayName("Brooklyn WebApp Cluster example"))
-                .webconsolePort(port)
+                .restServerPort(port)
                 .location(location)
                 .start();
          

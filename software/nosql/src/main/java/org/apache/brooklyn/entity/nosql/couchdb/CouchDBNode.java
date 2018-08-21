@@ -46,7 +46,7 @@ public interface CouchDBNode extends SoftwareProcess, WebAppService {
     ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-couchdb-%s");
     
     @SetFromFlag("version")
-    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "1.6.1");
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "1.7.2");
 
     @SetFromFlag("erlangVersion")
     ConfigKey<String> ERLANG_VERSION = ConfigKeys.newStringConfigKey("erlang.version", "Erlang runtime version", "R15B");

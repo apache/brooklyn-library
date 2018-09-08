@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-FROM maven:3.5.2-jdk-8-alpine
+FROM maven:3.5.4-jdk-8-alpine
 
 # Install necessary binaries to build brooklyn-library
 RUN apk add --no-cache git procps

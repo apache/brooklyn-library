@@ -23,7 +23,10 @@ docker build -t brooklyn:library .
 Then run the build:
 
 ```bash
-docker run -i --rm --name brooklyn-library -v ${HOME}/.m2:/root/.m2 -v ${PWD}:/usr/build -w /usr/build brooklyn:library mvn clean install
+docker run -i --rm --name brooklyn-library -u $(id -u $(whoami)):$(id -g $(whoami)) \
+    -e MAVEN_CONFIG=/var/maven/.m2 \
+    -v ${HOME}/.m2:/var/maven/.m2 -v ${PWD}:/usr/build -w /usr/build \
+    brooklyn:library mvn clean install -Duser.home=/var/maven -Duser.name=$(whoami)
 ```
 
 ### Using maven

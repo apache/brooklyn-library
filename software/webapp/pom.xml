@@ -48,6 +48,7 @@
                             -->
                             <exclude>src/main/resources/org/apache/brooklyn/entity/webapp/jboss/jboss7-standalone.xml</exclude>
                             <exclude>src/main/resources/org/apache/brooklyn/entity/webapp/jetty/jetty-brooklyn.xml</exclude>
+                            <exclude>**/.brooklyn/brooklyn-persisted-state/**</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

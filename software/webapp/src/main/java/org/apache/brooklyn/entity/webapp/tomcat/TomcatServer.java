@@ -59,7 +59,7 @@ public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasSho
 
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "http://download.nextag.com/apache/tomcat/tomcat-7/v${version}/bin/apache-tomcat-${version}.tar.gz");
+            "https://archive.apache.org/dist/tomcat/tomcat-7/v${version}/bin/apache-tomcat-${version}.tar.gz");
 
     /**
      * Tomcat insists on having a port you can connect to for the sole purpose of shutting it down.

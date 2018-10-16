@@ -44,7 +44,7 @@ public interface Tomcat8Server extends TomcatServer {
 
     @SetFromFlag("downloadUrl")
     AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "http://download.nextag.com/apache/tomcat/tomcat-8/v${version}/bin/apache-tomcat-${version}.tar.gz");
+            "https://archive.apache.org/dist/tomcat/tomcat-8/v${version}/bin/apache-tomcat-${version}.tar.gz");
 
     @SetFromFlag("server.xml")
     ConfigKey<String> SERVER_XML_RESOURCE = ConfigKeys.newStringConfigKey(

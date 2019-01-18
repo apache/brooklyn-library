@@ -25,7 +25,7 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppService
         name: Node.JS Application
     - id: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
-      iconUrl: classpath:///jboss_logo.png
+      iconUrl: classpath:///jboss-logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
         name: "[DEPRECATED] JBoss Application Server 7"
@@ -46,7 +46,7 @@ brooklyn.catalog:
         name: Nginx Server
         description: A single Nginx server. Provides HTTP and reverse proxy services
     - id: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
-      iconUrl: classpath:///jboss_logo.png
+      iconUrl: classpath:///jboss-logo.png
       item:
         type: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
         name: "[DEPRECATED] JBoss Application Server 6"

@@ -18,6 +18,7 @@
  */
 
 node(label: 'ubuntu') {
+
     catchError {
         def environmentDockerImage
 

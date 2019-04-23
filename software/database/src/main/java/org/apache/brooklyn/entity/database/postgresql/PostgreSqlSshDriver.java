@@ -106,15 +106,16 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
      */
     @Override
     public void install() {
-        String version = getEntity().getConfig(SoftwareProcess.SUGGESTED_VERSION);
-        String majorMinorVersion = version.substring(0, version.lastIndexOf("-"));
-        String shortVersion = majorMinorVersion.replace(".", "");
+        String version = getEntity().getConfig(SoftwareProcess.SUGGESTED_VERSION); //10-10-2
+        String majorMinorVersion = version.substring(0, version.lastIndexOf("-")); //10-10
+        String shortVersion = majorMinorVersion.substring(0, majorMinorVersion.lastIndexOf("-")); //10
 
         String altTarget = "/opt/brooklyn/postgres/";
         String altInstallDir = Urls.mergePaths(altTarget, "install/"+majorMinorVersion);
         
         Iterable<String> pgctlLocations = ImmutableList.of(
             altInstallDir+"/bin",
+            "/usr/pgsql-"+shortVersion+"/bin",
             "/usr/lib/postgresql/"+majorMinorVersion+"/bin/",
             "/opt/local/lib/postgresql"+shortVersion+"/bin/",
             "/usr/pgsql-"+majorMinorVersion+"/bin",
@@ -132,7 +133,7 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
             .append("which pg_ctl")
             .appendAll(Iterables.transform(pgctlLocations, StringFunctions.formatter("test -x %s/pg_ctl")))
             .append(installPackage(ImmutableMap.of(
-                "yum", "postgresql"+shortVersion+" postgresql"+shortVersion+"-server",
+                "yum", "postgresql"+shortVersion+" postgresql"+shortVersion+"-server postgresql"+shortVersion+"-contrib postgresql"+shortVersion+"-libs" ,
                 "apt", "postgresql-"+majorMinorVersion,
                 "port", "postgresql"+shortVersion+" postgresql"+shortVersion+"-server"
                 ), null))
@@ -218,7 +219,7 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
 
         if (Strings.isBlank(osMajorVersion)) {
             if (osName.equals("fedora")) osMajorVersion = "20";
-            else osMajorVersion = "6";
+            else osMajorVersion = "7";
             log.warn("Insuffient OS version information '"+getMachine().getOsDetails().getVersion()+"' for "+getMachine()+"when installing "+getEntity()+" (yum repos); treating as "+osMajorVersion);
         } else {
             if (osMajorVersion.indexOf(".")>0) 
@@ -227,9 +228,9 @@ public class PostgreSqlSshDriver extends AbstractSoftwareProcessSshDriver implem
 
         return chainGroup(
                 sudo(commandToDownloadUrlAs(
-                        format("http://yum.postgresql.org/%s/redhat/rhel-%s-%s/pgdg-%s%s-%s.noarch.rpm", majorMinorVersion, osMajorVersion, arch, osName, shortVersion, version),
-                        "pgdg.rpm")),
-                sudo("rpm -Uvh pgdg.rpm")
+                        format("https://download.postgresql.org/pub/repos/yum/%s/redhat/rhel-%s-%s/pgdg-centos%s.noarch.rpm", shortVersion, osMajorVersion, arch, version),
+                        "pgrepo.rpm")),
+                sudo("rpm -Uvh pgrepo.rpm")
             );
     }
 

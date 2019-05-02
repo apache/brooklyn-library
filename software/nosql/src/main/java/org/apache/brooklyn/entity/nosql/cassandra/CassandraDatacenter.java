@@ -44,17 +44,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.reflect.TypeToken;
 
 /**
- * A group of {@link CassandraNode}s -- based on Brooklyn's {@link DynamicCluster} 
- * (though it is a "Datacenter" in Cassandra terms, where Cassandra's "cluster" corresponds
- * to a Brooklyn Fabric, cf {@link CassandraFabric}). 
- * The Datacenter can be resized, manually or by policy if required.
- * Tokens are selected intelligently.
- * <p>
- * Note that due to how Cassandra assumes ports are the same across a cluster,
- * it is <em>NOT</em> possible to deploy a cluster of size larger than 1 to localhost.
- * (Some exploratory work has been done to use different 127.0.0.x IP's for localhost,
- * and there is evidence this could be made to work.)
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
  */
+@Deprecated
 @Catalog(name="Apache Cassandra Datacenter Cluster", description="Cassandra is a highly scalable, eventually " +
         "consistent, distributed, structured key-value store which provides a ColumnFamily-based data model " +
         "richer than typical key/value systems", iconUrl="classpath:///cassandra-logo.jpeg")

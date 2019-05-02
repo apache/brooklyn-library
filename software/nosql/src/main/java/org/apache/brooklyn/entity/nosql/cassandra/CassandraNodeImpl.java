@@ -81,8 +81,10 @@ import com.google.common.collect.Sets;
 import com.google.common.net.HostAndPort;
 
 /**
- * Implementation of {@link CassandraNode}.
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
  */
+@Deprecated
 public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraNode {
 
     private static final Logger log = LoggerFactory.getLogger(CassandraNodeImpl.class);

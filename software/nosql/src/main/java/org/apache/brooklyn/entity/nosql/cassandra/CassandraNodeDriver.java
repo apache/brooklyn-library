@@ -20,7 +20,11 @@ package org.apache.brooklyn.entity.nosql.cassandra;
 
 import org.apache.brooklyn.entity.java.JavaSoftwareProcessDriver;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskWrapper;
-
+/**
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
+ */
+@Deprecated
 public interface CassandraNodeDriver extends JavaSoftwareProcessDriver {
 
     Integer getGossipPort();

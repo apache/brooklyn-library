@@ -32,7 +32,11 @@ import org.apache.brooklyn.util.collections.MutableList;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+/**
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
+ */
+@Deprecated
 public class TokenGenerators {
 
     /**

@@ -65,8 +65,10 @@ import org.apache.brooklyn.util.time.Duration;
 import org.apache.brooklyn.util.time.Time;
 
 /**
- * Start a {@link CassandraNode} in a {@link Location} accessible over ssh.
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
  */
+@Deprecated
 public class CassandraNodeSshDriver extends JavaSoftwareProcessSshDriver implements CassandraNodeDriver {
 
     private static final Logger log = LoggerFactory.getLogger(CassandraNodeSshDriver.class);

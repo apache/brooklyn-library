@@ -36,11 +36,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.reflect.TypeToken;
 
 /**
- * A fabric of {@link CassandraNode}s, which forms a cluster spanning multiple locations.
- * <p>
- * Each {@link CassandraDatacenter} child instance is actually just a part of the whole cluster. It consists of the
- * nodes in that single location (which normally corresponds to a "datacenter" in Cassandra terminology).
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
  */
+@Deprecated
 @Catalog(name="Apache Cassandra Database Fabric", description="Cassandra is a highly scalable, eventually " +
         "consistent, distributed, structured key-value store which provides a ColumnFamily-based data model " +
         "richer than typical key/value systems", iconUrl="classpath:///cassandra-logo.jpeg")

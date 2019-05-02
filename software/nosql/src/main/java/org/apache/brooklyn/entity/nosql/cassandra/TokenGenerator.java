@@ -20,7 +20,11 @@ package org.apache.brooklyn.entity.nosql.cassandra;
 
 import java.math.BigInteger;
 import java.util.Set;
-
+/**
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
+ */
+@Deprecated
 public interface TokenGenerator {
 
     BigInteger max();

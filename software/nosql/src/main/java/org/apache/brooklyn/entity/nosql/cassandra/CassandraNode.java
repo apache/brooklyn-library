@@ -44,8 +44,10 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.time.Duration;
 
 /**
- * An {@link org.apache.brooklyn.api.entity.Entity} that represents a Cassandra node in a {@link CassandraDatacenter}.
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
  */
+@Deprecated
 @Catalog(name="Apache Cassandra Node", description="Cassandra is a highly scalable, eventually " +
         "consistent, distributed, structured key-value store which provides a ColumnFamily-based data model " +
         "richer than typical key/value systems", iconUrl="classpath:///cassandra-logo.jpeg")

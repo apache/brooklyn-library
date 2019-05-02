@@ -70,14 +70,10 @@ import com.google.common.collect.Sets;
 import com.google.common.net.HostAndPort;
 
 /**
- * Implementation of {@link CassandraDatacenter}.
- * <p>
- * Several subtleties to note:
- * - a node may take some time after it is running and serving JMX to actually be contactable on its thrift port
- *   (so we wait for thrift port to be contactable)
- * - sometimes new nodes take a while to peer, and/or take a while to get a consistent schema
- *   (each up to 1m; often very close to the 1m) 
+ * @deprecated since 1.0.0; use {@link 'https://github.com/brooklyncentral/brooklyn-cassandra'} which is a pure YAML template
+ * for a database cluster.
  */
+@Deprecated
 public class CassandraDatacenterImpl extends DynamicClusterImpl implements CassandraDatacenter {
 
     /*

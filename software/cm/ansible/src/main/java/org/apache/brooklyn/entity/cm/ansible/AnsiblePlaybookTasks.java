@@ -71,7 +71,7 @@ public class AnsiblePlaybookTasks {
     public static TaskFactory<?> runAnsible(final String dir, Object extraVars, String playbookName) {
         String cmd = sudo(String.format("ansible-playbook "
             + optionalExtraVarsParameter(extraVars)
-            + " -s %s.yaml", playbookName));
+            + " -b %s.yaml", playbookName));
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ansible command: {}", cmd);

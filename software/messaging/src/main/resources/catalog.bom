@@ -25,6 +25,57 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.messaging.activemq.ActiveMQBroker
         name: ActiveMQ Broker
         description: ActiveMQ is an open source message broker which fully implements the Java Message Service 1.1 (JMS)
+    - id: org.apache.brooklyn.entity.messaging.activemq-artemis
+      iconUrl: https://activemq.apache.org/artemis/images/activemq-logo.png
+      version: "1.0.0-SNAPSHOT" # BROOKLYN_VERSION
+      item:
+        type: org.apache.brooklyn.entity.software.base.VanillaSoftwareProcess
+        name: ActiveMQ Artemis
+        itemType: entity
+        description: Apache ActiveMQ Artemis has a proven non blocking architecture. It delivers outstanding performance. JMS 2.0 and 1.1 support.
+        brooklyn.parameters:
+        - name: rest.api.port
+          type: integer
+          default: 8161
+        brooklyn.config:
+          version: '2.3.0' # sets install.version
+          installFile: $brooklyn:formatString("apache-artemis-%1$s-bin.tar.gz", config("install.version"))
+          brokerName: broker1
+          installSourceDirectory: $brooklyn:formatString("apache-artemis-%1$s", config("install.version"))
+          downloadUrl: $brooklyn:formatString("http://apache.cbox.biz/activemq/activemq-artemis/%1$s/apache-artemis-%1$s-bin.tar.gz",config("install.version"), config("installFile")) # sets download.url
+          install.command:
+            $brooklyn:formatString("tar zxf %2$s", config("download.url"), config("installFile"))
+          customize.command:
+            $brooklyn:formatString:
+              - "%1$s/%2$s/bin/artemis create %3$s --user '%4$s' --password '%5$s' --require-login --name '%3$s' --addresses '%6$s' --http-port %7$s"
+              - $brooklyn:attributeWhenReady("expandedinstall.dir")
+              - $brooklyn:config("installSourceDirectory")
+              - $brooklyn:config("brokerName")
+              - $brooklyn:attributeWhenReady("user")
+              - $brooklyn:attributeWhenReady("password")
+              - $brooklyn:attributeWhenReady("host.name")
+              - $brooklyn:config("rest.api.port")
+          launch.command:
+            $brooklyn:formatString("%1$s/bin/artemis-service start", config("brokerName"))
+          checkRunning.command:
+            ps aux | grep '' | grep org.apache.activemq.artemis.boot.Artemis > /dev/null
+          stop.command:
+            $brooklyn:formatString("%1$s/bin/artemis-service stop", config("brokerName"))
+        brooklyn.initializers:
+        - type: org.apache.brooklyn.core.sensor.password.CreatePasswordSensor
+          brooklyn.config:
+            name: password
+            password.length: 12
+        - type: org.apache.brooklyn.core.sensor.StaticSensor
+          brooklyn.config:
+            name: user
+            static.value: br0kerusEr
+        - type: org.apache.brooklyn.core.sensor.StaticSensor
+          brooklyn.config:
+            name: main.uri
+            static.value:
+              $brooklyn:formatString("http://%s:%s", attributeWhenReady("host.name"), config("rest.api.port"))
+
     - id: org.apache.brooklyn.entity.messaging.qpid.QpidBroker
       iconUrl: classpath:///qpid-logo.jpeg
       item:

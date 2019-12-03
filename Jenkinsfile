@@ -36,16 +36,16 @@ node(label: 'ubuntu') {
             }
 
             stage('Run tests') {
-                environmentDockerImage.inside('-i --name brooklyn-${DOCKER_TAG} -u 910:910 --mount type=bind,source="${HOME}/.m2/settings.xml",target=/var/maven/.m2/settings.xml,readonly -v ${WORKSPACE}:/usr/build -w /usr/build') {
-                    sh 'mvn clean install -Duser.home=/var/maven -Duser.name=$(id -un 910)'
+                environmentDockerImage.inside('-i --name brooklyn-${DOCKER_TAG} --mount type=bind,source="${HOME}/.m2/settings.xml",target=/var/maven/.m2/settings.xml,readonly -v ${WORKSPACE}:/usr/build -w /usr/build') {
+                    sh 'mvn clean install -Duser.home=/var/maven -Duser.name=jenkins'
                 }
             }
 
             // Conditional stage to deploy artifacts, when not building a PR
             if (env.CHANGE_ID == null) {
                 stage('Deploy artifacts') {
-                    environmentDockerImage.inside('-i --name brooklyn-${DOCKER_TAG} -u 910:910 --mount type=bind,source="${HOME}/.m2/settings.xml",target=/var/maven/.m2/settings.xml,readonly -v ${WORKSPACE}:/usr/build -w /usr/build') {
-                        sh 'mvn deploy -DskipTests -Duser.home=/var/maven -Duser.name=$(id -un 910)'
+                    environmentDockerImage.inside('-i --name brooklyn-${DOCKER_TAG} --mount type=bind,source="${HOME}/.m2/settings.xml",target=/var/maven/.m2/settings.xml,readonly -v ${WORKSPACE}:/usr/build -w /usr/build') {
+                        sh 'mvn deploy -DskipTests -Duser.home=/var/maven -Duser.name=jenkins'
                     }
                 }
 

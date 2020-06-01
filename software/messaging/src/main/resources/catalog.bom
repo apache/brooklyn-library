@@ -26,7 +26,7 @@ brooklyn.catalog:
         name: ActiveMQ Broker
         description: ActiveMQ is an open source message broker which fully implements the Java Message Service 1.1 (JMS)
     - id: org.apache.brooklyn.entity.messaging.activemq-artemis
-      iconUrl: classpath:///artemis-logo.png
+      iconUrl: classpath:///activemq-logo.png
       version: "1.1.0-SNAPSHOT" # BROOKLYN_VERSION
       item:
         type: org.apache.brooklyn.entity.software.base.VanillaSoftwareProcess

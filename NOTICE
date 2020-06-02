@@ -1,7 +1,7 @@
 Notice: |
 
   Apache Brooklyn
-  Copyright 2014-2018 The Apache Software Foundation
+  Copyright 2014-2020 The Apache Software Foundation
 
   This product includes software developed at
   The Apache Software Foundation (http://www.apache.org/).
@@ -9,16 +9,15 @@ Notice: |
 
 Bundled dependencies:
 
-  # This software includes the following bundled third-party components.
+  # This source code distribution includes the following bundled third-party components.
   # Referenced licenses can be found in the accompanying LICENSE file.
 
-  # No such dependencies
-
-
-Runtime dependencies:
-
-  # This artifact depends on additional third-party components at runtime.
-  # These are not bundled here but may be included as part of a build.
-
-  # No such dependencies
-
+  misc:logo_icons: 
+    Project:      Various logos for third-party projects
+    Inclusive of: various *.png and other image files containing logos
+    Notice: |
+      This software includes logos for third-party components as icons
+      where those components are blueprinted or otherwise referenced.
+      These logo files are used under fair use and all copyright and trademark rights
+      remain with the owner(s) of the respective components.
+  

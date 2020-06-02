@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.brooklyn</groupId>
         <artifactId>brooklyn-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>  <!-- BROOKLYN_VERSION -->
+        <version>1.1.0-SNAPSHOT</version>  <!-- BROOKLYN_VERSION -->
         <relativePath>../brooklyn-server/parent/</relativePath>
     </parent>
 
@@ -80,7 +80,7 @@
         <repository>
             <id>apache.snapshots</id>
             <name>Apache Snapshot Repository</name>
-            <url>http://repository.apache.org/snapshots</url>
+            <url>https://repository.apache.org/snapshots</url>
             <releases>
                 <enabled>false</enabled>
             </releases>

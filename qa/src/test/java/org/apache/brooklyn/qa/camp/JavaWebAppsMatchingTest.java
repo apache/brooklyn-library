@@ -90,12 +90,11 @@ public class JavaWebAppsMatchingTest {
         Map<?,?> cfg1 = (Map<?, ?>) plan.getServices().get(0).getCustomAttributes().get(BrooklynCampReservedKeys.BROOKLYN_CONFIG);
         Map<?,?> cfg = MutableMap.copyOf(cfg1);
         
-        Assert.assertEquals(cfg.remove("literalValue1"), "$brooklyn: is a fun place");
-        Assert.assertEquals(cfg.remove("literalValue2"), "$brooklyn: is a fun place");
-        Assert.assertEquals(cfg.remove("literalValue3"), "$brooklyn: is a fun place");
+        Assert.assertEquals(cfg.remove("literalValue1").toString(), "$brooklyn:literal(\"$brooklyn: is a fun place\")");
+        Assert.assertEquals(cfg.remove("literalValue2").toString(), "$brooklyn:literal(\"$brooklyn: is a fun place\")");
+        Assert.assertEquals(cfg.remove("literalValue3").toString(), "$brooklyn:literal(\"$brooklyn: is a fun place\")");
         Assert.assertEquals(cfg.remove("literalValue4"), "$brooklyn: is a fun place");
-        Assert.assertEquals(cfg.remove("$brooklyn:1"), "key to the city");
-        Assert.assertTrue(cfg.isEmpty(), ""+cfg);
+        Assert.assertEquals(cfg.size(), 1, ""+cfg);
 
         Assert.assertEquals(plan.getName(), "example-with-function");
         Assert.assertEquals(plan.getCustomAttributes().get("location"), "localhost");

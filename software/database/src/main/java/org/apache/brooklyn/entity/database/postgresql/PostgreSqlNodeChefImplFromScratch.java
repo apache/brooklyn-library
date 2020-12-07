@@ -98,7 +98,7 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
                 );
         }
         @Override
-        protected void postStartCustom() {
+        protected void postStartCustom(ConfigBag parameters) {
             // now run the creation script
             String creationScript;
             String creationScriptUrl = entity().getConfig(PostgreSqlNode.CREATION_SCRIPT_URL);
@@ -111,12 +111,12 @@ public class PostgreSqlNodeChefImplFromScratch extends EffectorStartableImpl imp
 
             // and finally connect sensors
             entity().connectSensors();
-            super.postStartCustom();
+            super.postStartCustom(parameters);
         }
         @Override
-        protected void preStopCustom() {
+        protected void preStopCustom(ConfigBag parameters) {
             entity().disconnectSensors();
-            super.preStopCustom();
+            super.preStopCustom(parameters);
         }
         @Override
         protected PostgreSqlNodeChefImplFromScratch entity() {

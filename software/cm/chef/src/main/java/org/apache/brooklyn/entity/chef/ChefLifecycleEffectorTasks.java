@@ -57,7 +57,7 @@ import com.google.common.collect.ImmutableList;
  * <p>
  * Instances of this should use the {@link ChefConfig} config attributes to configure startup,
  * and invoke {@link #usePidFile(String)} or {@link #useService(String)} to determine check-running and stop behaviour.
- * Alternatively this can be subclassed and {@link #postStartCustom()} and {@link #stopProcessesAtMachine()} overridden.
+ * Alternatively this can be subclassed and {@link #postStartCustom(ConfigBag)} and {@link #stopProcessesAtMachine(ConfigBag)} overridden.
  * 
  * @since 0.6.0
  **/
@@ -237,7 +237,7 @@ public class ChefLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
     }
 
     @Override
-    protected void postStartCustom() {
+    protected void postStartCustom(ConfigBag parameters) {
         boolean result = false;
         result |= tryCheckStartPid();
         result |= tryCheckStartService();
@@ -246,7 +246,7 @@ public class ChefLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
             log.warn("No way to check whether "+entity()+" is running; assuming yes");
         }
         entity().sensors().set(SoftwareProcess.SERVICE_UP, true);
-        super.postStartCustom();
+        super.postStartCustom(parameters);
     }
     
     protected boolean tryCheckStartPid() {
@@ -289,7 +289,7 @@ public class ChefLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
     }
 
     @Override
-    protected String stopProcessesAtMachine() {
+    protected String stopProcessesAtMachine(ConfigBag parameters) {
         boolean result = false;
         result |= tryStopService();
         result |= tryStopWindowsService();
@@ -301,7 +301,7 @@ public class ChefLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
     }
     
     @Override
-    protected StopMachineDetails<Integer> stopAnyProvisionedMachines() {
+    protected StopMachineDetails<Integer> stopAnyProvisionedMachines(ConfigBag parameters) {
         if (detectChefMode(entity())==ChefModes.KNIFE) {
             DynamicTasks.queue(
                 // if this task fails show it as failed but don't block subsequent routines
@@ -315,7 +315,7 @@ public class ChefLifecycleEffectorTasks extends MachineLifecycleEffectorTasks im
                     .newTask() ));
         }
 
-        return super.stopAnyProvisionedMachines();
+        return super.stopAnyProvisionedMachines(parameters);
     }
     
     protected boolean tryStopService() {

@@ -24,6 +24,7 @@ import org.apache.brooklyn.entity.software.base.lifecycle.MachineLifecycleEffect
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Supplier;
+import org.apache.brooklyn.util.core.config.ConfigBag;
 
 /**
  * Kept only for rebinding to historic persisted state; not used.
@@ -38,7 +39,7 @@ class SaltLifecycleEffectorTasks extends MachineLifecycleEffectorTasks implement
     }
 
     @Override
-    protected String stopProcessesAtMachine() {
+    protected String stopProcessesAtMachine(ConfigBag params) {
         throw new UnsupportedOperationException("Legacy SaltEntity no longer supported");
     }
     

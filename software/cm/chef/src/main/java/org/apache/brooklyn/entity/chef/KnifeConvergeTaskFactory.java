@@ -82,7 +82,7 @@ public class KnifeConvergeTaskFactory<RET> extends KnifeTaskFactory<RET> {
         result.addAll(extraBootstrapParameters);
 
         HostAndPort hostAndPort = machine.getSshHostAndPort();
-        result.add(wrapBash(hostAndPort.getHostText()));
+        result.add(wrapBash(hostAndPort.getHost()));
         Integer whichPort = knifeWhichPort(hostAndPort);
         if (whichPort!=null)
             result.add("-p "+whichPort);

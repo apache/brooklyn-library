@@ -49,7 +49,7 @@ public class MongoDBConfigServerClusterImpl extends DynamicClusterImpl implement
             @Override
             public String apply(Entity entity) {
                 HostAndPort hostAndPort = BrooklynAccessUtils.getBrooklynAccessibleAddress(entity, entity.getAttribute(MongoDBConfigServer.PORT));
-                return hostAndPort.getHostText() + ":" + hostAndPort.getPort();
+                return hostAndPort.getHost() + ":" + hostAndPort.getPort();
             }
         });
         sensors().set(MongoDBConfigServerCluster.CONFIG_SERVER_ADDRESSES, ImmutableList.copyOf(memberHostNamesAndPorts));

@@ -609,7 +609,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
 
             try {
                 long start = System.currentTimeMillis();
-                Socket s = new Socket(hp.getHostText(), hp.getPort());
+                Socket s = new Socket(hp.getHost(), hp.getPort());
                 s.close();
                 long latency = System.currentTimeMillis() - start;
                 return latency;

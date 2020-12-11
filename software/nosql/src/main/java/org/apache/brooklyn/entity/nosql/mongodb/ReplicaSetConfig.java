@@ -124,7 +124,7 @@ public class ReplicaSetConfig {
         // address. It will require modification to MongoDBClientSupport, though, since it sets
         // the primary to the host/port accessible from Brooklyn.
         HostAndPort hap = BrooklynAccessUtils.getBrooklynAccessibleAddress(server, server.getAttribute(MongoDBServer.PORT));
-        return member(hap.getHostText(), hap.getPort(), id);
+        return member(hap.getHost(), hap.getPort(), id);
     }
 
     /**
@@ -132,7 +132,7 @@ public class ReplicaSetConfig {
      * Doesn't attempt to check that the id is free.
      */
     public ReplicaSetConfig member(HostAndPort address, Integer id) {
-        return member(address.getHostText(), address.getPort(), id);
+        return member(address.getHost(), address.getPort(), id);
     }
 
     /**
@@ -155,12 +155,12 @@ public class ReplicaSetConfig {
     /** Removes the first entity using {@link MongoDBServer#HOSTNAME} and {@link MongoDBServer#PORT}. */
     public ReplicaSetConfig remove(MongoDBServer server) {
         HostAndPort hap = BrooklynAccessUtils.getBrooklynAccessibleAddress(server, server.getAttribute(MongoDBServer.PORT));
-        return remove(hap.getHostText(), hap.getPort());
+        return remove(hap.getHost(), hap.getPort());
     }
 
     /** Removes the first entity with host and port matching the given address. */
     public ReplicaSetConfig remove(HostAndPort address) {
-        return remove(address.getHostText(), address.getPort());
+        return remove(address.getHost(), address.getPort());
     }
 
     /**
@@ -229,7 +229,7 @@ public class ReplicaSetConfig {
             LOG.debug("Setting voting and non-voting members of replica set: {}", name);
         boolean seenPrimary = false;
         String expectedPrimary = primary.isPresent()
-                ? primary.get().getHostText() + ":" + primary.get().getPort()
+                ? primary.get().getHost() + ":" + primary.get().getPort()
                 : "";
 
         // Ensure an odd number of voters

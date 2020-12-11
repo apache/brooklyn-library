@@ -49,7 +49,7 @@ public class CouchbaseSyncGatewayImpl extends SoftwareProcessImpl implements Cou
                 getAttribute(CouchbaseSyncGateway.ADMIN_REST_API_PORT));
 
         String managementUri = String.format("http://%s:%s",
-                hp.getHostText(), hp.getPort());
+                hp.getHost(), hp.getPort());
 
         sensors().set(MANAGEMENT_URL, managementUri);
 

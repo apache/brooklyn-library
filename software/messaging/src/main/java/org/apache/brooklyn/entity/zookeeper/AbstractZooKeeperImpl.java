@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Functions;
-import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Apache ZooKeeper instance.

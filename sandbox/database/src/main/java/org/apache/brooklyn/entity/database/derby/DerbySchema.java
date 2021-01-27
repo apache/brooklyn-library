@@ -39,7 +39,7 @@ import org.apache.brooklyn.api.sensor.AttributeSensor;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Objects.ToStringHelper;
 
 public class DerbySchema extends AbstractEntity implements Schema {
 

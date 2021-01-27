@@ -27,7 +27,7 @@ import org.apache.brooklyn.entity.software.base.SoftwareProcessImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Rabbit MQ broker instance, using AMQP 0-9-1.

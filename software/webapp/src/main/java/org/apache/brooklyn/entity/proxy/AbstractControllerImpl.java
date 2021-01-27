@@ -294,7 +294,7 @@ public abstract class AbstractControllerImpl extends SoftwareProcessImpl impleme
         if (requireManagementAccessible) {
             HostAndPort accessible = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, port);
             if (accessible!=null) {
-                domain = accessible.getHost();
+                domain = accessible.getHostText();
                 port = accessible.getPort();
             }
         }

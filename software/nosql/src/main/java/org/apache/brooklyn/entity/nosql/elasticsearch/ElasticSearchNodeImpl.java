@@ -90,7 +90,7 @@ public class ElasticSearchNodeImpl extends SoftwareProcessImpl implements Elasti
             httpFeed = HttpFeed.builder()
                     .entity(this)
                     .period(1000)
-                    .baseUri(String.format("http://%s:%s/_nodes/_local/stats", hp.getHost(), hp.getPort()))
+                    .baseUri(String.format("http://%s:%s/_nodes/_local/stats", hp.getHostText(), hp.getPort()))
                     .poll(new HttpPollConfig<Boolean>(SERVICE_UP)
                         .onSuccess(HttpValueFunctions.responseCodeEquals(200))
                         .onFailureOrException(Functions.constant(false)))

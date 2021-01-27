@@ -113,7 +113,7 @@ public class MongoDBTestHelper {
     private static MongoClient clientForServer(AbstractMongoDBServer server) {
         try {
             HostAndPort hap = BrooklynAccessUtils.getBrooklynAccessibleAddress(server, server.getAttribute(MongoDBServer.PORT));
-            return new MongoClient(hap.getHost(), hap.getPort());
+            return new MongoClient(hap.getHostText(), hap.getPort());
         } catch (Exception e) {
             // Fail whatever test called this method.
             throw Throwables.propagate(e);

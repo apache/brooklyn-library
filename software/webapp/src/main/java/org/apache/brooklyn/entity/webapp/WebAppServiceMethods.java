@@ -90,12 +90,12 @@ public class WebAppServiceMethods implements WebAppServiceConstants {
             Integer rawPort = entity.getAttribute(HTTPS_PORT);
             checkNotNull(rawPort, "HTTPS_PORT sensors not set for %s; is an acceptable port available?", entity);
             HostAndPort hp = BrooklynAccessUtils.getBrooklynAccessibleAddress(entity, rawPort);
-            return String.format("https://%s:%s/", hp.getHost(), hp.getPort());
+            return String.format("https://%s:%s/", hp.getHostText(), hp.getPort());
         } else if (isProtocolEnabled(entity, "http")) {
             Integer rawPort = entity.getAttribute(HTTP_PORT);
             checkNotNull(rawPort, "HTTP_PORT sensors not set for %s; is an acceptable port available?", entity);
             HostAndPort hp = BrooklynAccessUtils.getBrooklynAccessibleAddress(entity, rawPort);
-            return String.format("http://%s:%s/", hp.getHost(), hp.getPort());
+            return String.format("http://%s:%s/", hp.getHostText(), hp.getPort());
         } else {
             throw new IllegalStateException("HTTP and HTTPS protocols not enabled for "+entity+"; enabled protocols are "+getEnabledProtocols(entity));
         }

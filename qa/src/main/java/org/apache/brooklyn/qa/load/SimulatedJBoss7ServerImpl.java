@@ -105,7 +105,7 @@ public class SimulatedJBoss7ServerImpl extends JBoss7ServerImpl {
                 getAttribute(MANAGEMENT_HTTP_PORT) + getConfig(PORT_INCREMENT));
 
         String managementUri = String.format("http://%s:%s/management/subsystem/web/connector/http/read-resource",
-                hp.getHost(), hp.getPort());
+                hp.getHostText(), hp.getPort());
         sensors().set(MANAGEMENT_URL, managementUri);
 
         if (simulateExternalMonitoring) {

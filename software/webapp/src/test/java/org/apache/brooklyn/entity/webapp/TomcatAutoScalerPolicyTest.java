@@ -116,7 +116,7 @@ public class TomcatAutoScalerPolicyTest {
                 String err = "policy="+policy.isRunning()+"; size="+cluster.getCurrentSize()+"; reqCountPerNode="+cluster.getAttribute(DynamicWebAppCluster.REQUEST_COUNT_PER_NODE);
                 assertTrue(policy.isRunning(), "err="+err);
                 assertEquals(cluster.getCurrentSize(), (Integer)2, "err="+err);
-                assertEquals(cluster.getAttribute(DynamicWebAppCluster.REQUEST_COUNT_PER_NODE), 1.0d, "err="+err);
+                assertEquals(cluster.getAttribute(DynamicWebAppCluster.REQUEST_COUNT_PER_NODE), (Double) 1.0d, "err="+err);
             }});
     }
 }

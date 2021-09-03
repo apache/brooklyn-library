@@ -32,19 +32,19 @@ import org.apache.brooklyn.util.javalang.JavaClassNames;
  */
 @Catalog(name="Tomcat 8 Server",
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
-        iconUrl="classpath:///tomcat-logo.png")
+        iconUrl="classpath:///tomcat8-logo.png")
 @ImplementedBy(Tomcat8ServerImpl.class)
 public interface Tomcat8Server extends TomcatServer {
+    String TOMCAT8_DOWNLOAD_URL = "https://archive.apache.org/dist/tomcat/tomcat-8/v${version}/bin/apache-tomcat-${version}.tar.gz";
 
     @SetFromFlag("version")
-    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "8.0.22");
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "8.5.70");
 
     @SetFromFlag("archiveNameFormat")
     ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-tomcat-%s");
 
     @SetFromFlag("downloadUrl")
-    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "https://archive.apache.org/dist/tomcat/tomcat-8/v${version}/bin/apache-tomcat-${version}.tar.gz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL, TOMCAT8_DOWNLOAD_URL);
 
     @SetFromFlag("server.xml")
     ConfigKey<String> SERVER_XML_RESOURCE = ConfigKeys.newStringConfigKey(

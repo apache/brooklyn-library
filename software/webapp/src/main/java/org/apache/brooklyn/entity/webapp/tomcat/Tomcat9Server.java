@@ -31,7 +31,7 @@ import org.apache.brooklyn.util.javalang.JavaClassNames;
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
         iconUrl="classpath:///tomcat9-logo.png")
 @ImplementedBy(Tomcat9ServerImpl.class)
-public interface Tomcat9Server {
+public interface Tomcat9Server extends TomcatServer {
 
     String TOMCAT9_DOWNLOAD_URL = "https://archive.apache.org/dist/tomcat/tomcat-9/v${version}/bin/apache-tomcat-${version}.tar.gz";
 

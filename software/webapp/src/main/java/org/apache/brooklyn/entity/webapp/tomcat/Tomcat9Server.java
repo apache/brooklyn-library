@@ -19,6 +19,7 @@
 package org.apache.brooklyn.entity.webapp.tomcat;
 
 import org.apache.brooklyn.api.catalog.Catalog;
+import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.sensor.AttributeSensorAndConfigKey;
@@ -29,6 +30,7 @@ import org.apache.brooklyn.util.javalang.JavaClassNames;
 @Catalog(name="Tomcat 9 Server",
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
         iconUrl="classpath:///tomcat9-logo.png")
+@ImplementedBy(Tomcat9ServerImpl.class)
 public interface Tomcat9Server {
 
     String TOMCAT9_DOWNLOAD_URL = "https://archive.apache.org/dist/tomcat/tomcat-9/v${version}/bin/apache-tomcat-${version}.tar.gz";
@@ -46,11 +48,11 @@ public interface Tomcat9Server {
     ConfigKey<String> SERVER_XML_RESOURCE = ConfigKeys.newStringConfigKey(
             "tomcat.serverxml",
             "The file to template and use as the Tomcat's server.xml",
-            JavaClassNames.resolveClasspathUrl(Tomcat8Server.class, "tomcat9-server.xml"));
+            JavaClassNames.resolveClasspathUrl(Tomcat9Server.class, "tomcat9-server.xml"));
 
     @SetFromFlag("web.xml")
     ConfigKey<String> WEB_XML_RESOURCE = ConfigKeys.newStringConfigKey(
             "tomcat.webxml",
             "The file to template and use as the Tomcat's web.xml",
-            JavaClassNames.resolveClasspathUrl(Tomcat8Server.class, "tomcat9-web.xml"));
+            JavaClassNames.resolveClasspathUrl(Tomcat9Server.class, "tomcat9-web.xml"));
 }

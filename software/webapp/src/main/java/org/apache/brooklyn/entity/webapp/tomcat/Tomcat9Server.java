@@ -27,34 +27,32 @@ import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.javalang.JavaClassNames;
 
-/**
- * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Tomcat instance.
- */
-@Catalog(name="Tomcat 8 Server",
+@Catalog(name="Tomcat 9 Server",
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
-        iconUrl="classpath:///tomcat8-logo.png")
-@ImplementedBy(Tomcat8ServerImpl.class)
-public interface Tomcat8Server extends TomcatServer {
-    String TOMCAT8_DOWNLOAD_URL = "https://archive.apache.org/dist/tomcat/tomcat-8/v${version}/bin/apache-tomcat-${version}.tar.gz";
+        iconUrl="classpath:///tomcat9-logo.png")
+@ImplementedBy(Tomcat9ServerImpl.class)
+public interface Tomcat9Server extends TomcatServer {
+
+    String TOMCAT9_DOWNLOAD_URL = "https://archive.apache.org/dist/tomcat/tomcat-9/v${version}/bin/apache-tomcat-${version}.tar.gz";
 
     @SetFromFlag("version")
-    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "8.5.70");
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "9.0.52");
 
     @SetFromFlag("archiveNameFormat")
     ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-tomcat-%s");
 
     @SetFromFlag("downloadUrl")
-    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL, TOMCAT8_DOWNLOAD_URL);
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL, TOMCAT9_DOWNLOAD_URL);
 
     @SetFromFlag("server.xml")
     ConfigKey<String> SERVER_XML_RESOURCE = ConfigKeys.newStringConfigKey(
-            "tomcat.serverxml", 
+            "tomcat.serverxml",
             "The file to template and use as the Tomcat's server.xml",
-            JavaClassNames.resolveClasspathUrl(Tomcat8Server.class, "tomcat8-server.xml"));
+            JavaClassNames.resolveClasspathUrl(Tomcat9Server.class, "tomcat9-server.xml"));
 
     @SetFromFlag("web.xml")
     ConfigKey<String> WEB_XML_RESOURCE = ConfigKeys.newStringConfigKey(
-            "tomcat.webxml", 
+            "tomcat.webxml",
             "The file to template and use as the Tomcat's web.xml",
-            JavaClassNames.resolveClasspathUrl(Tomcat8Server.class, "tomcat8-web.xml"));
+            JavaClassNames.resolveClasspathUrl(Tomcat9Server.class, "tomcat9-web.xml"));
 }

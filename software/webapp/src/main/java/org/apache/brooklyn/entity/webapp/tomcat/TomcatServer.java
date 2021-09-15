@@ -43,23 +43,24 @@ import org.apache.brooklyn.util.time.Duration;
  */
 @Catalog(name="Tomcat 7 Server",
         description="Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies",
-        iconUrl="classpath:///tomcat-logo.png")
+        iconUrl="classpath:///tomcat7-logo.png")
 @ImplementedBy(TomcatServerImpl.class)
 public interface TomcatServer extends JavaWebAppSoftwareProcess, UsesJmx, HasShortName {
+
+    String TOMCAT7_DOWNLOAD_URL = "https://archive.apache.org/dist/tomcat/tomcat-7/v${version}/bin/apache-tomcat-${version}.tar.gz";
 
     @CatalogConfig(label = "Root WAR")
     @SetFromFlag("war")
     public static final ConfigKey<String> ROOT_WAR = JavaWebAppService.ROOT_WAR;
 
     @SetFromFlag("version")
-    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "7.0.65");
+    ConfigKey<String> SUGGESTED_VERSION = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.SUGGESTED_VERSION, "7.0.99");
 
     @SetFromFlag("archiveNameFormat")
     ConfigKey<String> ARCHIVE_DIRECTORY_NAME_FORMAT = ConfigKeys.newConfigKeyWithDefault(SoftwareProcess.ARCHIVE_DIRECTORY_NAME_FORMAT, "apache-tomcat-%s");
 
     @SetFromFlag("downloadUrl")
-    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL,
-            "https://archive.apache.org/dist/tomcat/tomcat-7/v${version}/bin/apache-tomcat-${version}.tar.gz");
+    AttributeSensorAndConfigKey<String, String> DOWNLOAD_URL = ConfigKeys.newSensorAndConfigKeyWithDefault(SoftwareProcess.DOWNLOAD_URL, TOMCAT7_DOWNLOAD_URL);
 
     /**
      * Tomcat insists on having a port you can connect to for the sole purpose of shutting it down.

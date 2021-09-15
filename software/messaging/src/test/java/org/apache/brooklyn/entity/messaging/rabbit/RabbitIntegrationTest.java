@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.Location;
@@ -150,7 +151,7 @@ public class RabbitIntegrationTest extends BrooklynAppLiveTestSupport {
                 @Override public void run() {
                     try {
                         channel.close();
-                    } catch (IOException e) {
+                    } catch (IOException | TimeoutException e) {
                         log.error("Error closing RabbitMQ Channel; continuing", e);
                     }
                 }});

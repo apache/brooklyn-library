@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.messaging.activemq;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +32,6 @@ import org.apache.brooklyn.feed.jmx.JmxAttributePollConfig;
 import org.apache.brooklyn.feed.jmx.JmxFeed;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicates;
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single ActiveMQ broker instance.

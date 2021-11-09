@@ -106,7 +106,7 @@ public class MongoDBClientSupport {
      */
     public static MongoDBClientSupport forServer(AbstractMongoDBServer standalone) throws UnknownHostException {
         HostAndPort hostAndPort = BrooklynAccessUtils.getBrooklynAccessibleAddress(standalone, standalone.getAttribute(MongoDBServer.PORT));
-        ServerAddress address = new ServerAddress(hostAndPort.getHostText(), hostAndPort.getPort());
+        ServerAddress address = new ServerAddress(hostAndPort.getHost(), hostAndPort.getPort());
         if (MongoDBAuthenticationUtils.usesAuthentication(standalone)) {
             return new MongoDBClientSupport(address, standalone.sensors().get(MongoDBAuthenticationMixins.ROOT_USERNAME),
                     standalone.sensors().get(MongoDBAuthenticationMixins.ROOT_PASSWORD), standalone.sensors().get(MongoDBAuthenticationMixins.AUTHENTICATION_DATABASE));

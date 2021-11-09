@@ -179,7 +179,7 @@ public class CouchbaseNodeImpl extends SoftwareProcessImpl implements CouchbaseN
         URI apiUri = null;
         try {
             HostAndPort accessible = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, getAttribute(COUCHBASE_WEB_ADMIN_PORT));
-            apiUri = URI.create(String.format("http://%s:%d/node/controller/rename", accessible.getHostText(), accessible.getPort()));
+            apiUri = URI.create(String.format("http://%s:%d/node/controller/rename", accessible.getHost(), accessible.getPort()));
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getConfig(COUCHBASE_ADMIN_USERNAME), getConfig(COUCHBASE_ADMIN_PASSWORD));
             HttpToolResponse response = HttpTool.httpPost(
                     // the uri is required by the HttpClientBuilder in order to set the AuthScope of the credentials
@@ -190,7 +190,7 @@ public class CouchbaseNodeImpl extends SoftwareProcessImpl implements CouchbaseN
                             HttpHeaders.ACCEPT, "*/*",
                             // this appears needed; without it we get org.apache.http.NoHttpResponseException !?
                             HttpHeaders.AUTHORIZATION, HttpTool.toBasicAuthorizationValue(credentials)),
-                    Charsets.UTF_8.encode("hostname="+Urls.encode(accessible.getHostText())).array());
+                    Charsets.UTF_8.encode("hostname="+Urls.encode(accessible.getHost())).array());
             log.debug("Renamed Couchbase server "+this+" via "+apiUri+": "+response);
             if (!HttpTool.isStatusCodeHealthy(response.getResponseCode())) {
                 log.warn("Invalid response code, renaming {} ({}): {}",

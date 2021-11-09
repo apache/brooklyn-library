@@ -353,7 +353,7 @@ public class ZabbixFeed extends AbstractFeed {
                     if (machine instanceof SupportsPortForwarding) {
                         Cidr management = entity.getConfig(BrooklynAccessUtils.MANAGEMENT_ACCESS_CIDR);
                         HostAndPort forwarded = ((SupportsPortForwarding) machine).getSocketEndpointFor(management, port);
-                        address = forwarded.getHostText();
+                        address = forwarded.getHost();
                         port = forwarded.getPort();
                     }
 

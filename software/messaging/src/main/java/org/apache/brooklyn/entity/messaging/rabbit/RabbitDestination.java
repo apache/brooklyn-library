@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.messaging.rabbit;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import org.apache.brooklyn.core.entity.AbstractEntity;
 import org.apache.brooklyn.entity.messaging.amqp.AmqpExchange;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 

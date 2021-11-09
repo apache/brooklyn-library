@@ -69,7 +69,7 @@ public class JBoss7ServerImpl extends JavaWebAppSoftwareProcessImpl implements J
                 getAttribute(MANAGEMENT_HTTP_PORT) + getConfig(PORT_INCREMENT));
         
         String managementUri = String.format("http://%s:%s/management/subsystem/web/connector/http/read-resource",
-                hp.getHostText(), hp.getPort());
+                hp.getHost(), hp.getPort());
         sensors().set(MANAGEMENT_URL, managementUri);
 
         if (isHttpMonitoringEnabled()) {

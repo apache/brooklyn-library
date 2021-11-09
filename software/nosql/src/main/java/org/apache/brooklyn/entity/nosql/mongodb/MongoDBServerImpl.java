@@ -65,11 +65,11 @@ public class MongoDBServerImpl extends SoftwareProcessImpl implements MongoDBSer
         int port = sensors().get(MongoDBServer.PORT);
         HostAndPort accessibleAddress = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, port);
         sensors().set(MONGO_SERVER_ENDPOINT, String.format("%s:%d",
-                accessibleAddress.getHostText(), accessibleAddress.getPort()));
+                accessibleAddress.getHost(), accessibleAddress.getPort()));
 
         int httpConsolePort = BrooklynAccessUtils.getBrooklynAccessibleAddress(this, sensors().get(HTTP_PORT)).getPort();
         sensors().set(HTTP_INTERFACE_URL, String.format("http://%s:%d",
-                accessibleAddress.getHostText(), httpConsolePort));
+                accessibleAddress.getHost(), httpConsolePort));
 
         if (clientAccessEnabled()) {
             try {

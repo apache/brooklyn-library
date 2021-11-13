@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.zookeeper;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.ObjectName;
@@ -31,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Apache ZooKeeper instance.

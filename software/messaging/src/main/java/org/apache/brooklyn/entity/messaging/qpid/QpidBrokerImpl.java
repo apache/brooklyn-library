@@ -18,6 +18,7 @@
  */
 package org.apache.brooklyn.entity.messaging.qpid;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import static java.lang.String.format;
 
 import java.io.IOException;
@@ -39,7 +40,6 @@ import org.apache.brooklyn.util.exceptions.Exceptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * An {@link org.apache.brooklyn.api.entity.Entity} that represents a single Qpid broker instance, using AMQP 0-10.

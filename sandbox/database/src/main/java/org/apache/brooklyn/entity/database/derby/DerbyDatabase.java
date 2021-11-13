@@ -42,7 +42,7 @@ import org.apache.brooklyn.entity.java.UsesJmx;
 import org.apache.brooklyn.core.config.BasicConfigKey;
 import org.apache.brooklyn.util.collections.MutableMap;
 
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;

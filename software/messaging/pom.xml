@@ -232,6 +232,7 @@
             -->
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
+            <version>${jax-rs-api.version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -230,9 +230,8 @@
             <!-- We exclude jsr311-api transitive dependency from jclouds (for javax.ws.rs) due to version conflict.
                  Therefore explicitly bring this one in.
             -->
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>${jax-rs-api.version}</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
             <scope>test</scope>
         </dependency>
 

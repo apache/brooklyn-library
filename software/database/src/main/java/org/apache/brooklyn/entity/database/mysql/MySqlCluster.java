@@ -35,7 +35,7 @@ import org.apache.brooklyn.util.GenericTypes;
 import com.google.common.reflect.TypeToken;
 
 @ImplementedBy(MySqlClusterImpl.class)
-@Catalog(name="MySql Master-Slave cluster", description="Sets up a cluster of MySQL nodes using master-slave relation and binary logging", iconUrl="classpath:///mysql-logo-110x57.png")
+@Catalog(name="MySql Master-Slave cluster", description="Sets up a cluster of MySQL nodes using master-slave relation and binary logging", iconUrl="classpath:///mysql-logo.svg")
 public interface MySqlCluster extends DynamicCluster, HasDatastoreUrl {
     interface MySqlMaster {
         // TODO these should be on MySqlCluster - no need to have on an interface

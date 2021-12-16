@@ -26,13 +26,13 @@ brooklyn.catalog:
         name: Crate Node
         description: CrateDB offers Standard-SQL real-time queries and document support
     - id: org.apache.brooklyn.entity.database.mysql.MySqlNode
-      iconUrl: classpath:///mysql-logo-110x57.png
+      iconUrl: classpath:///mysql-logo.svg
       item:
         type: org.apache.brooklyn.entity.database.mysql.MySqlNode
         name: MySql Node
         description: MySql is an open source relational database management system (RDBMS)
     - id: org.apache.brooklyn.entity.database.mysql.MySqlCluster
-      iconUrl: classpath:///mysql-logo-110x57.png
+      iconUrl: classpath:///mysql-logo.svg
       item:
         type: org.apache.brooklyn.entity.database.mysql.MySqlCluster
         name: MySql Master-Slave cluster

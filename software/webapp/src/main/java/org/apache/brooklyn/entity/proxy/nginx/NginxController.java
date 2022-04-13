@@ -18,10 +18,7 @@
  */
 package org.apache.brooklyn.entity.proxy.nginx;
 
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.brooklyn.api.catalog.Catalog;
 import org.apache.brooklyn.api.entity.ImplementedBy;
 import org.apache.brooklyn.api.objs.HasShortName;
@@ -37,6 +34,8 @@ import org.apache.brooklyn.entity.proxy.AbstractController;
 import org.apache.brooklyn.entity.proxy.ProxySslConfig;
 import org.apache.brooklyn.entity.software.base.SoftwareProcess;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
+
+import java.util.Map;
 
 /**
  * An entity that represents an Nginx proxy (e.g. for routing requests to servers in a cluster).
@@ -56,7 +55,7 @@ import org.apache.brooklyn.util.core.flags.SetFromFlag;
  * or different ports if that is supported.
  * see more info on Ssl in {@link ProxySslConfig}.
  */
-@Catalog(name="Nginx Server", description="A single Nginx server. Provides HTTP and reverse proxy services", iconUrl="classpath:///nginx-logo.jpeg")
+@Catalog(name="Nginx Server", description="A single Nginx server. Provides HTTP and reverse proxy services", iconUrl="classpath:///nginx-logo.png")
 @ImplementedBy(NginxControllerImpl.class)
 public interface NginxController extends AbstractController, HasShortName {
 

@@ -40,7 +40,7 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.webapp.DynamicWebAppFabric
         name: Dynamic Web App Fabric
     - id: org.apache.brooklyn.entity.proxy.nginx.NginxController
-      iconUrl: classpath:///nginx-logo.jpeg
+      iconUrl: classpath:///nginx-logo.png
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.NginxController
         name: Nginx Server
@@ -86,7 +86,7 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.webapp.tomcat.TomcatServer
         name: Tomcat 7 Server
     - id: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
-      iconUrl: classpath:///geoscaling-logo.gif
+      iconUrl: classpath:///icons/geoscaling-logo.gif
       item:
         type: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
         name: Geoscaling DNS Service
@@ -96,3 +96,5 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.webapp.ControlledDynamicWebAppCluster
         name: Controlled Dynamic Web-app Cluster
         description: A cluster of load-balanced web-apps, which can be dynamically re-sized
+
+    - yaml/nginx-multi.bom

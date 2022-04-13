@@ -1,0 +1,160 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+brooklyn.catalog:
+  items:
+    - id:              nginx-multi
+      name:            Multi-cluster NGINX
+      iconUrl:         classpath:///nginx-logo.png
+      description: |
+        Create a RHEL or CentOS load balancer which can be pointed at groups of servers and routed via multiple host names.
+        Use <code>render-targets</code> to configure a unique group of servers and <code>render-routing</code> to configure a
+        unique route for the group. Use <code>delete-targets</code> and <code>delete-routing</code> to delete previously
+        configure group or route, respectively.
+      item:
+        name:          NGINX (multi)
+        type:          org.apache.brooklyn.entity.software.base.VanillaSoftwareProcess
+
+        brooklyn.parameters:
+
+          - name:      install.command
+            pinned:    false
+          - name:      customize.command 
+            pinned:    false
+          - name:      launch.command
+            pinned:    false
+          - name:      checkRunning.command
+            pinned:    false
+          - name:      stop.command
+            pinned:    false
+
+        #------------------------------------------------------------------------------------------
+
+        brooklyn.config:
+
+          http.port: 80
+
+          dontRequireTtyForSudo: true
+          sshMonitoring.enabled: false
+
+          shell.env:
+            NGINX_PID:           /var/run/nginx.pid
+            CONF_DIR:            /etc/nginx/conf.d
+            SCRIPT_DIR:          $brooklyn:attributeWhenReady("install.dir")
+
+          files.install:
+            classpath://scripts/nginx-render-server.sh:    nginx-render-server.sh
+            classpath://scripts/nginx-render-upstream.sh:  nginx-render-upstream.sh
+
+          install.command: |
+            sudo yum install -y firewalld
+            sudo systemctl enable firewalld
+            sudo systemctl start firewalld
+            chmod +x ${SCRIPT_DIR}/*.sh
+            sudo yum install -y nginx
+            sudo firewall-cmd --permanent --zone=public --add-service=http
+            sudo firewall-cmd --reload
+
+          launch.command: |
+            sudo nginx
+
+          stop.command: |
+            # let worker processes complete processing of in-flight requests
+            sudo nginx -s quit
+
+          checkRunning.command: |
+            PID=`cat "${NGINX_PID}"`
+            sudo kill -0 $PID
+
+        #------------------------------------------------------------------------------------------
+
+        brooklyn.initializers:
+
+          - type: org.apache.brooklyn.core.effector.ssh.SshCommandEffector
+            brooklyn.config:
+              name:                reload
+              description:         Reload config files
+              command: |
+                sudo nginx -s reload
+
+          - type: org.apache.brooklyn.core.effector.ssh.SshCommandEffector
+            brooklyn.config:
+              name:                render-targets
+              description:         Create config file for 'upstream' block
+              parameters:
+                groupName:
+                    description: Name of this group
+                serverAddresses:
+                  description: Collection of servers separated by space, e.g. '1.2.3.4:8080 2.3.4.5'
+              command: |
+                confFile="${CONF_DIR}/targets-${groupName}.conf"
+                [[ -f "$confFile" ]] && echo "Updating ${confFile}:" || echo "Creating ${confFile}:"
+                ${SCRIPT_DIR}/nginx-render-upstream.sh | sudo tee ${confFile}
+                echo "Reloading config"
+                sudo nginx -s reload
+                echo "Done"
+
+          - type: org.apache.brooklyn.core.effector.ssh.SshCommandEffector
+            brooklyn.config:
+              name:                render-routing
+              description:         Create config file for 'server' block
+              parameters:
+                logicalName:
+                  description: Name of this routing configuration
+                hostName: {}
+                groupName:
+                  description: Name of group to render routing for
+              command: |
+                confFile="${CONF_DIR}/routing-${logicalName}.conf"
+                [[ -z "$logicalName" ]] && confFile="${CONF_DIR}/default.conf"
+                [[ -f "$confFile" ]] && echo "Updating ${confFile}:" || echo "Creating ${confFile}:"
+                ${SCRIPT_DIR}/nginx-render-server.sh | sudo tee ${confFile}
+                echo "Reloading config"
+                sudo nginx -s reload
+                echo "Done"
+
+          - type: org.apache.brooklyn.core.effector.ssh.SshCommandEffector
+            brooklyn.config:
+              name:                delete-routing
+              description:         Remove an existing 'server' block
+              parameters:
+                logicalName:
+                  description: Name of the routing configuration to remove
+
+              command: |
+                confFile="${CONF_DIR}/routing-${logicalName}.conf"
+                [[ -z "$logicalName" ]] && confFile="${CONF_DIR}/default.conf"
+                echo "Deleting ${confFile}"
+                sudo rm -f ${confFile}
+                echo "Reloading config"
+                sudo nginx -s reload
+                echo "Done"
+
+          - type: org.apache.brooklyn.core.effector.ssh.SshCommandEffector
+            brooklyn.config:
+              name:                delete-targets
+              description:         Remove an existing 'upstream' block
+              parameters:
+                groupName:
+                  description: Name of the group to remove
+              command: |
+                confFile="${CONF_DIR}/targets-${groupName}.conf"
+                echo "Deleting ${confFile}"
+                sudo rm -f ${confFile}
+                echo "Reloading config"
+                sudo nginx -s reload
+                echo "Done"

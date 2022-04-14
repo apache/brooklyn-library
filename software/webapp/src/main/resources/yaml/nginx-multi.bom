@@ -158,3 +158,10 @@ brooklyn.catalog:
                 echo "Reloading config"
                 sudo nginx -s reload
                 echo "Done"
+
+    - id:              nginx-multi-upstream-sync
+      itemType:        policy
+      name:            Multi-cluster NGINX config synchronizer
+      iconUrl:         classpath:///nginx-logo.png
+      item:
+        type:          org.apache.brooklyn.entity.webapp.nginx.UpstreamSyncPolicy

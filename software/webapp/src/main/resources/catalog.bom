@@ -86,7 +86,7 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.webapp.tomcat.TomcatServer
         name: Tomcat 7 Server
     - id: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
-      iconUrl: classpath:///icons/geoscaling-logo.gif
+      iconUrl: classpath:///geoscaling-logo.gif
       item:
         type: org.apache.brooklyn.entity.dns.geoscaling.GeoscalingDnsService
         name: Geoscaling DNS Service

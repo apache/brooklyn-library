@@ -35,7 +35,7 @@ import org.apache.brooklyn.util.core.task.system.internal.SystemProcessTaskFacto
 import org.apache.brooklyn.util.text.Strings;
 import org.apache.brooklyn.util.text.StringEscapes.BashStringEscapes;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 
 /** A factory which acts like {@link ProcessTaskFactory} with special options for knife.
  * Typical usage is to {@link #addKnifeParameters(String)}s for the knife command to be run.

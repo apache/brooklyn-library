@@ -18,25 +18,11 @@
  */
 package org.apache.brooklyn.entity.webapp;
 
-import static org.apache.brooklyn.test.HttpTestUtils.connectToUrl;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.google.common.base.Predicate;
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import org.apache.brooklyn.api.entity.Application;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
@@ -62,22 +48,28 @@ import org.apache.brooklyn.test.support.TestResourceUnavailableException;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.crypto.FluentKeySigner;
 import org.apache.brooklyn.util.core.crypto.SecureKeys;
+import org.apache.brooklyn.util.http.HttpTool;
 import org.apache.brooklyn.util.net.Urls;
 import org.apache.brooklyn.util.stream.Streams;
 import org.apache.brooklyn.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.testng.Assert.*;
 
 /**
  * Test fixture for implementations of JavaWebApp, checking start up and shutdown, 
@@ -252,7 +244,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
 
         final int n = 10;
         for (int i = 0; i < n; i++) {
-            URLConnection connection = HttpTestUtils.connectToUrl(url);
+            URLConnection connection = HttpTool.connectToUrlUnsafe(url);
             int status = ((HttpURLConnection) connection).getResponseCode();
             log.info("connection to {} gives {}", url, status);
         }
@@ -312,7 +304,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
                     log.info("Applying load for "+WebAppServiceMethods.DEFAULT_WINDOW_DURATION);
                     while (stopwatch.elapsed(TimeUnit.MILLISECONDS) < WebAppServiceMethods.DEFAULT_WINDOW_DURATION.toMilliseconds()) {
                         long preReqsTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-                        for (int i = 0; i < desiredMsgsPerSec; i++) { connectToUrl(url); }
+                        for (int i = 0; i < desiredMsgsPerSec; i++) { HttpTool.connectToUrlUnsafe(url); }
                         Time.sleep(1000 - (stopwatch.elapsed(TimeUnit.MILLISECONDS)-preReqsTime));
                         reqsSent.addAndGet(desiredMsgsPerSec);
                     }
@@ -386,7 +378,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
         String url = entity.getAttribute(WebAppService.ROOT_URL) + "does_not_exist";
 
         // Apply load to entity. Assert enriched sensor values.
-        HttpTestUtils.connectToUrl(url);
+        HttpTool.connectToUrlUnsafe(url);
         EntityAsserts.assertAttributeEventually(entity, WebAppServiceMetrics.REQUEST_COUNT, new Predicate<Integer>() {
                 @Override public boolean apply(Integer input) {
                     return input > 0;

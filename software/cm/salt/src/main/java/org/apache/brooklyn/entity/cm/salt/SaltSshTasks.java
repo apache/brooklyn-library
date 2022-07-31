@@ -195,7 +195,7 @@ public class SaltSshTasks {
 
     private static SshPutTaskFactory installScript(String name, String description) {
         return SshEffectorTasks.put("/tmp/" + name)
-                .contents(ResourceUtils.create().getResourceFromUrl("classpath:" + name))
+                .contents(() -> ResourceUtils.create("salt-classpath-lookup-from-context").getResourceFromUrl("classpath:" + name))
                 .summary(description);
     }
 

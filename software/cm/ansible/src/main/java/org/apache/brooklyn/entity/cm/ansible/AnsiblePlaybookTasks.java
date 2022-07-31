@@ -49,7 +49,7 @@ public class AnsiblePlaybookTasks {
     public static TaskFactory<?> installPlaybook(final String ansibleDirectory, final String playbookName, final String playbookUrl) {
         return Tasks.sequential("build ansible playbook file for "+playbookName,
                 SshEffectorTasks.put(ansibleDirectory + "/" + playbookName + ".yaml")
-                    .contents(ResourceUtils.create().getResourceFromUrl(playbookUrl))
+                    .contents(ResourceUtils.create(app).getResourceFromUrl(playbookUrl))
                     .createDirectory());
     }
     

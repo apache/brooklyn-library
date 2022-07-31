@@ -41,6 +41,7 @@ import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.test.HttpTestUtils;
 import org.apache.brooklyn.test.WebAppMonitor;
 import org.apache.brooklyn.test.support.TestResourceUnavailableException;
+import org.apache.brooklyn.util.http.HttpTool;
 import org.apache.brooklyn.util.time.Duration;
 import org.apache.brooklyn.util.time.Time;
 import org.slf4j.Logger;
@@ -367,7 +368,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
                 while (true) {
                     try {
                         num++;
-                        int code = HttpTestUtils.getHttpStatusCode(nginxUrl);
+                        int code = HttpTool.getHttpStatusCodeUnsafe(nginxUrl);
                         if (code!=200) log.info("NGINX GOT: "+code);
                         else log.debug("NGINX GOT: "+code);
                         if (System.currentTimeMillis()>=lastReportTime+1000) {
@@ -390,7 +391,7 @@ public class NginxIntegrationTest extends BrooklynAppLiveTestSupport {
                 while (true) {
                     try {
                         num++;
-                        int code = HttpTestUtils.getHttpStatusCode(jbossUrl);
+                        int code = HttpTool.getHttpStatusCodeUnsafe(jbossUrl);
                         if (code!=200) log.info("JBOSS GOT: "+code);
                         else log.debug("JBOSS GOT: "+code);
                         if (System.currentTimeMillis()>=1000+lastReportTime) {

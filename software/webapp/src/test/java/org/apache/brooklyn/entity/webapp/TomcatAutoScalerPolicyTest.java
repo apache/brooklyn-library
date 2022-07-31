@@ -18,10 +18,8 @@
  */
 package org.apache.brooklyn.entity.webapp;
 
-import static org.apache.brooklyn.test.HttpTestUtils.connectToUrl;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.api.location.LocationSpec;
 import org.apache.brooklyn.api.mgmt.ManagementContext;
@@ -29,18 +27,19 @@ import org.apache.brooklyn.core.entity.Entities;
 import org.apache.brooklyn.core.test.entity.TestApplication;
 import org.apache.brooklyn.entity.webapp.tomcat.TomcatServer;
 import org.apache.brooklyn.entity.webapp.tomcat.TomcatServerImpl;
+import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
+import org.apache.brooklyn.policy.autoscaling.AutoScalerPolicy;
 import org.apache.brooklyn.test.Asserts;
 import org.apache.brooklyn.util.collections.MutableMap;
+import org.apache.brooklyn.util.http.HttpTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.apache.brooklyn.location.localhost.LocalhostMachineProvisioningLocation;
-import org.apache.brooklyn.policy.autoscaling.AutoScalerPolicy;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class TomcatAutoScalerPolicyTest {
 
@@ -101,7 +100,7 @@ public class TomcatAutoScalerPolicyTest {
         // Alternatively could hit each tomcat server's URL twice per second; but that's less deterministic.
         TomcatServer tc = (TomcatServer) Iterables.getOnlyElement(cluster.getMembers());
         for (int i = 0; i < 2; i++) {
-            connectToUrl(tc.getAttribute(TomcatServerImpl.ROOT_URL));
+            HttpTool.connectToUrlUnsafe(tc.getAttribute(TomcatServerImpl.ROOT_URL));
         }
         
         // We'll scale to two members as soon as the policy detects it.

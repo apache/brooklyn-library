@@ -22,15 +22,16 @@ import java.util.Arrays;
 
 import org.apache.brooklyn.api.entity.EntitySpec;
 import org.apache.brooklyn.core.internal.BrooklynProperties;
+import org.apache.brooklyn.util.ssh.BashCommandsConfigurable;
 import org.testng.annotations.Test;
 import org.apache.brooklyn.entity.database.DatastoreMixins.DatastoreCommon;
 import org.apache.brooklyn.entity.database.VogellaExampleAccess;
 import org.apache.brooklyn.location.jclouds.JcloudsLocation;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
 import org.apache.brooklyn.util.net.Protocol;
-import org.apache.brooklyn.util.ssh.IptablesCommands;
-import org.apache.brooklyn.util.ssh.IptablesCommands.Chain;
-import org.apache.brooklyn.util.ssh.IptablesCommands.Policy;
+import org.apache.brooklyn.util.ssh.IptablesCommandsConfigurable;
+import org.apache.brooklyn.util.ssh.IptablesCommandsConfigurable.Chain;
+import org.apache.brooklyn.util.ssh.IptablesCommandsConfigurable.Policy;
 
 import com.google.common.collect.ImmutableList;
 
@@ -99,7 +100,7 @@ public class MariaDbLiveRackspaceTest extends MariaDbIntegrationTest {
         app.start(ImmutableList.of(jcloudsLocation));
 
         SshMachineLocation l = (SshMachineLocation) mariadb.getLocations().iterator().next();
-        l.execCommands("add iptables rule", ImmutableList.of(IptablesCommands.insertIptablesRule(Chain.INPUT, Protocol.TCP, 3306, Policy.ACCEPT)));
+        l.execCommands("add iptables rule", ImmutableList.of(new IptablesCommandsConfigurable(BashCommandsConfigurable.newInstance()).insertIptablesRule(Chain.INPUT, Protocol.TCP, 3306, Policy.ACCEPT)));
 
         new VogellaExampleAccess("com.mysql.jdbc.Driver", mariadb.getAttribute(DatastoreCommon.DATASTORE_URL)).readModifyAndRevertDataBase();
     } 

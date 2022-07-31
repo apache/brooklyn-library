@@ -22,6 +22,8 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.brooklyn.util.ssh.BashCommandsConfigurable;
+import org.apache.brooklyn.util.ssh.IptablesCommandsConfigurable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +37,6 @@ import org.apache.brooklyn.util.net.Networking;
 import org.apache.brooklyn.util.net.Protocol;
 import org.apache.brooklyn.util.os.Os;
 import org.apache.brooklyn.util.ssh.BashCommands;
-import org.apache.brooklyn.util.ssh.IptablesCommands;
-import org.apache.brooklyn.util.ssh.IptablesCommands.Chain;
-import org.apache.brooklyn.util.ssh.IptablesCommands.Policy;
 import org.apache.brooklyn.util.text.Strings;
 
 public class BindDnsServerSshDriver extends AbstractSoftwareProcessSshDriver implements BindDnsServerDriver {
@@ -78,8 +77,8 @@ public class BindDnsServerSshDriver extends AbstractSoftwareProcessSshDriver imp
                 BashCommands.sudo("mkdir -p " + getDataDirectory() + " " + getDynamicDirectory() + " " + getOsSupport().getConfigDirectory()),
                 BashCommands.sudo("chown -R " + getOsSupport().getUser() + ":" + getOsSupport().getUser() + " " + getDataDirectory() + " " + getDynamicDirectory()),
                 // TODO determine name of ethernet interface if not eth0?
-                IptablesCommands.insertIptablesRule(Chain.INPUT, "eth0", Protocol.UDP, dnsPort, Policy.ACCEPT),
-                IptablesCommands.insertIptablesRule(Chain.INPUT, "eth0", Protocol.TCP, dnsPort, Policy.ACCEPT),
+                new IptablesCommandsConfigurable(BashCommandsConfigurable.newInstance()).insertIptablesRule(IptablesCommandsConfigurable.Chain.INPUT, "eth0", Protocol.UDP, dnsPort, IptablesCommandsConfigurable.Policy.ACCEPT),
+                new IptablesCommandsConfigurable(BashCommandsConfigurable.newInstance()).insertIptablesRule(IptablesCommandsConfigurable.Chain.INPUT, "eth0", Protocol.TCP, dnsPort, IptablesCommandsConfigurable.Policy.ACCEPT),
                 // TODO Iptables is not a service on Ubuntu
                 BashCommands.sudo("service iptables save"),
                 BashCommands.sudo("service iptables restart"));

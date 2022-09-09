@@ -88,7 +88,7 @@ public class MongoDBWinEc2LiveTest {
         try {
             try {
                 if (app != null)
-                    Entities.destroy(app);
+                    Entities.destroy(app, true);
             } catch (Throwable t) {
                 LOG.error("Caught exception in tearDown method", t);
             }

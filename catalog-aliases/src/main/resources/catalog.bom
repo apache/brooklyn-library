@@ -21,16 +21,6 @@ brooklyn.catalog:
   itemType: entity
 
   items:
-  - id: server
-    iconUrl: classpath://brooklyn/icons/server.svg
-    description: |
-      Provision a server, with customizable provisioning.properties and credentials installed,
-      but no other special software process or scripts executed.
-    item:
-      type: org.apache.brooklyn.entity.software.base.EmptySoftwareProcess
-      name: Server
-      iconUrl: classpath://brooklyn/icons/server.svg
-
   - id: vanilla-bash-server
     description: |
       Provision a server, with customizable provisioning.properties and credentials installed,
@@ -50,13 +40,4 @@ brooklyn.catalog:
     item:
       type: org.apache.brooklyn.entity.proxy.nginx.NginxController
       name: Load Balancer (nginx)
-
-  - id: cluster
-    iconUrl: classpath://brooklyn/icons/cluster.svg
-    description: |
-      Create a cluster of entities, resizable, with starting size "initialSize",
-      and using a spec supplied in the "memberSpec" key.
-    item:
-      type: org.apache.brooklyn.entity.group.DynamicCluster
-      iconUrl: classpath://brooklyn/icons/cluster.svg
 

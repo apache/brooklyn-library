@@ -91,7 +91,7 @@ public class MySqlClusterIntegrationTest extends BrooklynAppLiveTestSupport {
             MySqlClusterTestHelper.assertReplication(master, secondSlave);
 
             // test dump replication from slave, missing snapshot entity
-            Entities.destroy(slave);
+            Entities.destroy(slave, true);
             cluster.config().set(MySqlCluster.REPLICATION_PREFERRED_SOURCE, secondSlave.getId());
             MySqlNode thirdSlave = (MySqlNode) Iterables.getOnlyElement(cluster.invoke(MySqlCluster.RESIZE_BY_DELTA, ImmutableMap.of("delta", 1)).getUnchecked());
             assertEquals(cluster.getAttribute(MySqlCluster.REPLICATION_LAST_SLAVE_SNAPSHOT).getEntityId(), secondSlave.getId());

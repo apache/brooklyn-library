@@ -128,7 +128,7 @@ public abstract class AbstractWebAppFixtureIntegrationTest {
     public void shutdownApp() {
         if (entity != null) {
             Application app = entity.getApplication();
-            if (app != null) Entities.destroy(app);
+            if (app != null) Entities.destroy(app, true);
         }
     }
 

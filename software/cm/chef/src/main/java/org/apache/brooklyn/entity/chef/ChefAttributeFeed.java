@@ -39,6 +39,7 @@ import org.apache.brooklyn.core.feed.AbstractFeed;
 import org.apache.brooklyn.core.feed.PollHandler;
 import org.apache.brooklyn.core.feed.Poller;
 import org.apache.brooklyn.feed.ssh.SshPollValue;
+import org.apache.brooklyn.feed.windows.WindowsPerformanceCounterFeed;
 import org.apache.brooklyn.util.core.flags.TypeCoercions;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskWrapper;
 import org.apache.brooklyn.util.time.Duration;
@@ -174,10 +175,7 @@ public class ChefAttributeFeed extends AbstractFeed {
         }
         public ChefAttributeFeed build() {
             built = true;
-            ChefAttributeFeed result = new ChefAttributeFeed(this);
-            result.setEntity(checkNotNull((EntityLocal)entity, "entity"));
-            result.start();
-            return result;
+            return AbstractFeed.initAndMaybeStart(new ChefAttributeFeed(this), entity);
         }
         @Override
         protected void finalize() {

@@ -34,11 +34,11 @@ public interface AnsibleConfig {
 
     @SetFromFlag("playbook")
     ConfigKey<String> ANSIBLE_PLAYBOOK = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbook",
-        "Playbook to be execute by Ansible");
+        "Name to be used for a playbook to be execute by Ansible");
 
     @SetFromFlag("playbook.yaml")
     ConfigKey<String> ANSIBLE_PLAYBOOK_YAML = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbookYaml",
-        "Playbook to be execute by Ansible");
+        "Playbook contents as YAML in a string, to be execute by Ansible");
 
     @SetFromFlag("playbook.url")
     ConfigKey<String> ANSIBLE_PLAYBOOK_URL = ConfigKeys.newStringConfigKey("brooklyn.ansible.playbookUrl");

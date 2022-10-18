@@ -58,7 +58,7 @@ public class AnsibleEntitySshDriver extends AbstractSoftwareProcessSshDriver imp
         String playbookYaml = getEntity().config().get(AnsibleConfig.ANSIBLE_PLAYBOOK_YAML);
 
         if (playbookUrl != null && playbookYaml != null) {
-            throw new IllegalArgumentException( "You can not specify both "+  AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName() +
+            throw new IllegalArgumentException( "You cannot specify both "+  AnsibleConfig.ANSIBLE_PLAYBOOK_URL.getName() +
                     " and " + AnsibleConfig.ANSIBLE_PLAYBOOK_YAML.getName() + " as arguments.");
         }
 
@@ -79,7 +79,7 @@ public class AnsibleEntitySshDriver extends AbstractSoftwareProcessSshDriver imp
         }
 
         if (Strings.isNonBlank(playbookYaml)) {
-            DynamicTasks.queue(AnsiblePlaybookTasks.buildPlaybookFile(getRunDir(), playbookName));
+            DynamicTasks.queue(AnsiblePlaybookTasks.buildPlaybookFile(getRunDir(), playbookName, playbookYaml));
         }
         DynamicTasks.queue(AnsiblePlaybookTasks.runAnsible(getRunDir(), extraVars, playbookName));
     }

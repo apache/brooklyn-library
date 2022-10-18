@@ -22,6 +22,7 @@ import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.mgmt.TaskFactory;
 import org.apache.brooklyn.core.effector.EffectorTasks;
 import org.apache.brooklyn.core.effector.ssh.SshEffectorTasks;
+import org.apache.brooklyn.core.mgmt.BrooklynTaskTags;
 import org.apache.brooklyn.util.core.ResourceUtils;
 import org.apache.brooklyn.util.core.task.Tasks;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskFactory;
@@ -41,7 +42,9 @@ public class AnsiblePlaybookTasks {
     private static final String EXTRA_VARS_FILENAME = "extra_vars.yaml";
 
     public static TaskFactory<?> installAnsible(String ansibleDirectory, boolean force) {
-        String installCmd = cdAndRun(ansibleDirectory, AnsibleBashCommands.INSTALL_ANSIBLE);
+        Entity entity = BrooklynTaskTags.getContextEntity(Tasks.current());
+        String installCmd = cdAndRun(ansibleDirectory, entity!=null ? AnsibleBashCommands.INSTALL_ANSIBLE(entity) : AnsibleBashCommands.INSTALL_ANSIBLE);
+
         if (!force) installCmd = BashCommands.alternatives("which ansible", installCmd);
         return ssh(installCmd).summary("install ansible");
     }
@@ -59,19 +62,23 @@ public class AnsiblePlaybookTasks {
                 command);
     }
 
+    @Deprecated /** @deprecated since 1.1, not used; pass the yaml manually */
     public static TaskFactory<?> buildPlaybookFile(final String ansibleDirectory, String playbook) {
         Entity entity = EffectorTasks.findEntity();
         String yaml = entity.config().get(AnsibleConfig.ANSIBLE_PLAYBOOK_YAML);
-
-        return Tasks.sequential("build ansible playbook file for "+ playbook,
-            SshEffectorTasks.put(Urls.mergePaths(ansibleDirectory) + "/" + playbook + ".yaml")
-                .contents(yaml).createDirectory());
+        return buildPlaybookFile(ansibleDirectory, playbook, yaml);
     }
 
-    public static TaskFactory<?> runAnsible(final String dir, Object extraVars, String playbookName) {
-        String cmd = sudo(String.format("ansible-playbook "
+    public static TaskFactory<?> buildPlaybookFile(final String ansibleDirectory, String playbook, String playbookYaml) {
+        return Tasks.sequential("build ansible playbook file for "+ playbook,
+            SshEffectorTasks.put(Urls.mergePaths(ansibleDirectory) + "/" + playbook + ".yaml")
+                .contents(playbookYaml).createDirectory());
+    }
+
+    public static SshEffectorTasks.SshEffectorTaskFactory<Integer> runAnsible(final String dir, Object extraVars, String playbookName) {
+        String cmd = sudo("ansible-playbook "
             + optionalExtraVarsParameter(extraVars)
-            + " -b %s.yaml", playbookName));
+            + String.format(" -b %s.yaml", playbookName));
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ansible command: {}", cmd);

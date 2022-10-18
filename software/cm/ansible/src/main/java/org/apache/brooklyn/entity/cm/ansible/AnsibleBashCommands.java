@@ -18,22 +18,27 @@
  */
 package org.apache.brooklyn.entity.cm.ansible;
 
-import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_CURL;
-import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_TAR;
-import static org.apache.brooklyn.util.ssh.BashCommands.INSTALL_UNZIP;
-import static org.apache.brooklyn.util.ssh.BashCommands.installExecutable;
-import static org.apache.brooklyn.util.ssh.BashCommands.ifExecutableElse0;
-import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
+import org.apache.brooklyn.api.entity.Entity;
+import org.apache.brooklyn.util.core.file.BrooklynOsCommands;
+import org.apache.brooklyn.util.ssh.BashCommandsConfigurable;
 
-import org.apache.brooklyn.util.ssh.BashCommands;
+import static org.apache.brooklyn.util.ssh.BashCommands.sudo;
 
 public class AnsibleBashCommands {
 
-    public static final String INSTALL_ANSIBLE =
-            BashCommands.chain(
-                    ifExecutableElse0("apt-add-repository",sudo("apt-add-repository -y ppa:ansible/ansible")),
-                    INSTALL_CURL,
-                    INSTALL_TAR,
-                    INSTALL_UNZIP,
-                    installExecutable("ansible"));
+    public static final String INSTALL_ANSIBLE(Entity entity) {
+        return INSTALL_ANSIBLE(BrooklynOsCommands.bash(entity, true));
+    }
+
+    static final String INSTALL_ANSIBLE(BashCommandsConfigurable cmds) {
+        return cmds.chain(
+                cmds.ifExecutableElse0("apt-add-repository",sudo("apt-add-repository -y ppa:ansible/ansible")),
+                cmds.INSTALL_CURL,
+                cmds.INSTALL_TAR,
+                cmds.INSTALL_UNZIP,
+                cmds.installExecutable("ansible"));
+    }
+
+    public static final String INSTALL_ANSIBLE = INSTALL_ANSIBLE(BashCommandsConfigurable.newInstance());
+
 }

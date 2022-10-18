@@ -25,3 +25,8 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.cm.ansible.AnsibleEntity
         name: AnsibleEntity
         description: Software managed by Ansible CM
+    - id: ansible-ssh
+      format: java-type-name
+      itemType: bean
+      item:
+        type: org.apache.brooklyn.entity.cm.ansible.AnsibleSshWorkflowStep

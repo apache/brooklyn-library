@@ -101,7 +101,7 @@ public class DatastoreMixins {
 
         String templateUrl = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_TEMPLATE);
         if (!Strings.isBlank(templateUrl)) {
-            String template = TemplateProcessor.processTemplateContents(new ResourceUtils(entity).getResourceAsString(templateUrl), (EntityInternal) entity, ImmutableMap.<String, Object>of());
+            String template = TemplateProcessor.processTemplateContents("datastore mixin "+templateUrl, new ResourceUtils(entity).getResourceAsString(templateUrl), (EntityInternal) entity, ImmutableMap.<String, Object>of());
             try {
                 return new ByteArrayInputStream(template.getBytes("UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -123,7 +123,7 @@ public class DatastoreMixins {
 
         String templateUrl = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_TEMPLATE);
         if (!Strings.isBlank(templateUrl))
-            return TemplateProcessor.processTemplateContents(new ResourceUtils(entity).getResourceAsString(templateUrl), (EntityInternal) entity, ImmutableMap.<String, Object>of());
+            return TemplateProcessor.processTemplateContents("datastore mixin "+templateUrl, new ResourceUtils(entity).getResourceAsString(templateUrl), (EntityInternal) entity, ImmutableMap.<String, Object>of());
 
         String contents = entity.getConfig(DatastoreMixins.CREATION_SCRIPT_CONTENTS);
         if (!Strings.isBlank(contents))

@@ -76,7 +76,7 @@ public class NginxTemplateConfigGenerator implements NginxConfigFileGenerator {
 
         // Get template contents and process
         String contents = ResourceUtils.create(driver.getEntity()).getResourceAsString(templateUrl);
-        return TemplateProcessor.processTemplateContents(contents, driver, substitutions);
+        return TemplateProcessor.processTemplateContents("nginx config "+templateUrl, contents, driver, substitutions);
     }
 
 }

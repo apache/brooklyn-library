@@ -100,7 +100,7 @@ public class CassandraNodeSshDriver extends JavaSoftwareProcessSshDriver impleme
     @Override
     public String getCassandraConfigTemplateUrl() {
         String templatedUrl = entity.getConfig(CassandraNode.CASSANDRA_CONFIG_TEMPLATE_URL);
-        return TemplateProcessor.processTemplateContents(templatedUrl, this, ImmutableMap.<String, Object>of());
+        return TemplateProcessor.processTemplateContents("cassandra template url", templatedUrl, this, ImmutableMap.<String, Object>of());
     }
 
     @Override

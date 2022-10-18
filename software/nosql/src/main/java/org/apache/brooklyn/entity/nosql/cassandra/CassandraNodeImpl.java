@@ -196,7 +196,7 @@ public class CassandraNodeImpl extends SoftwareProcessImpl implements CassandraN
     
     public String getCassandraConfigTemplateUrl() {
         String templatedUrl = getConfig(CassandraNode.CASSANDRA_CONFIG_TEMPLATE_URL);
-        return TemplateProcessor.processTemplateContents(templatedUrl, this, ImmutableMap.<String, Object>of());
+        return TemplateProcessor.processTemplateContents("cassandra url template", templatedUrl, this, ImmutableMap.<String, Object>of());
     }
 
     @Override public Integer getGossipPort() { return getAttribute(CassandraNode.GOSSIP_PORT); }

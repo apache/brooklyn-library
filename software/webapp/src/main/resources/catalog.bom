@@ -24,13 +24,6 @@ brooklyn.catalog:
       item:
         type: org.apache.brooklyn.entity.webapp.nodejs.NodeJsWebAppService
         name: Node.JS Application
-    - id: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
-      iconUrl: classpath:///jboss-logo.png
-      item:
-        type: org.apache.brooklyn.entity.webapp.jboss.JBoss7Server
-        name: "[DEPRECATED] JBoss Application Server 7"
-        description: AS7 - an open source Java application server from JBoss
-        deprecated: true
     - id: org.apache.brooklyn.entity.proxy.nginx.UrlMapping
       item:
         type: org.apache.brooklyn.entity.proxy.nginx.UrlMapping
@@ -45,13 +38,6 @@ brooklyn.catalog:
         type: org.apache.brooklyn.entity.proxy.nginx.NginxController
         name: Nginx Server
         description: A single Nginx server. Provides HTTP and reverse proxy services
-    - id: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
-      iconUrl: classpath:///jboss-logo.png
-      item:
-        type: org.apache.brooklyn.entity.webapp.jboss.JBoss6Server
-        name: "[DEPRECATED] JBoss Application Server 6"
-        description: AS6 -  an open source Java application server from JBoss
-        deprecated: true
     - id: org.apache.brooklyn.entity.webapp.tomcat.Tomcat8Server
       iconUrl: classpath:///tomcat8-logo.png
       item:

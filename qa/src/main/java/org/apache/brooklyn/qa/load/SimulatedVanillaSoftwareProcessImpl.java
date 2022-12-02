@@ -152,7 +152,7 @@ public class SimulatedVanillaSoftwareProcessImpl extends VanillaSoftwareProcessI
         }
 
         if (functionFeedPeriod != null) {
-            functionFeed = feeds().add(FunctionFeed.builder()
+            functionFeed = FunctionFeed.builder()
                     .entity(this)
                     .period(functionFeedPeriod)
                     .poll(FunctionPollConfig.forSensor(FUNCTION_COUNTER)
@@ -162,11 +162,11 @@ public class SimulatedVanillaSoftwareProcessImpl extends VanillaSoftwareProcessI
                                     return (oldVal == null) ? 1 : oldVal + 1;
                                 }
                             }))
-                    .build());
+                    .build(true);
         }
         
         if (httpFeedUri != null) {
-            httpFeed = feeds().add(HttpFeed.builder()
+            httpFeed = HttpFeed.builder()
                     .entity(this)
                     .period(config().get(HTTP_FEED_POLL_PERIOD))
                     .baseUri(httpFeedUri)
@@ -174,7 +174,7 @@ public class SimulatedVanillaSoftwareProcessImpl extends VanillaSoftwareProcessI
                             .onSuccess(HttpValueFunctions.responseCode()))
                     .poll(new HttpPollConfig<String>(HTTP_STRING_ATTRIBUTE)
                             .onSuccess(HttpValueFunctions.stringContentsFunction()))
-                    .build());
+                    .build(true, null);
         }
     }
 

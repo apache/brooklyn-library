@@ -144,7 +144,7 @@ public class SimulatedJBoss7ServerImpl extends JBoss7ServerImpl {
                                 sensors().set(BYTES_SENT, (long) (counter++ % 100));
                                 return true;
                             }}))
-                .build();
+                .build(false);  // called on rebind so does not need to be persisted
         
         enrichers().add(Enrichers.builder().updatingMap(Attributes.SERVICE_NOT_UP_INDICATORS)
                 .from(MANAGEMENT_URL_UP)

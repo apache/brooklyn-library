@@ -71,7 +71,7 @@ public class SimulatedMySqlNodeImpl extends MySqlNodeImpl {
                                     return true;
                                 }})
                             .setOnFailureOrException(false))
-                    .build();
+                    .build(false);
         } else {
             super.connectSensors();
         }

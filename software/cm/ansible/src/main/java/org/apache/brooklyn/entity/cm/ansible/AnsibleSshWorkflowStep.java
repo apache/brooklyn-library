@@ -19,23 +19,23 @@
 package org.apache.brooklyn.entity.cm.ansible;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.reflect.TypeToken;
 import org.apache.brooklyn.api.entity.drivers.DriverDependentEntity;
 import org.apache.brooklyn.api.entity.drivers.EntityDriver;
 import org.apache.brooklyn.config.ConfigKey;
 import org.apache.brooklyn.core.config.ConfigKeys;
 import org.apache.brooklyn.core.location.Locations;
 import org.apache.brooklyn.core.resolve.jackson.BeanWithTypeUtils;
-import org.apache.brooklyn.core.resolve.jackson.BrooklynJacksonSerializationUtils;
 import org.apache.brooklyn.core.workflow.WorkflowStepDefinition;
 import org.apache.brooklyn.core.workflow.WorkflowStepInstanceExecutionContext;
-import org.apache.brooklyn.core.workflow.steps.SshWorkflowStep;
+import org.apache.brooklyn.core.workflow.steps.external.SshWorkflowStep;
 import org.apache.brooklyn.entity.software.base.AbstractSoftwareProcessDriver;
 import org.apache.brooklyn.location.ssh.SshMachineLocation;
+import org.apache.brooklyn.util.core.predicates.DslPredicates;
 import org.apache.brooklyn.util.core.task.DynamicTasks;
 import org.apache.brooklyn.util.core.task.system.ProcessTaskFactory;
 import org.apache.brooklyn.util.exceptions.Exceptions;
 import org.apache.brooklyn.util.text.Strings;
-import org.apache.brooklyn.util.yaml.Yamls;
 
 import java.util.Map;
 
@@ -52,6 +52,11 @@ public class AnsibleSshWorkflowStep extends WorkflowStepDefinition {
     public static final ConfigKey<Object> ANSIBLE_PLAYBOOK_YAML = ConfigKeys.newConfigKey(Object.class, "playbook_yaml");
     public static final ConfigKey<String> ANSIBLE_PLAYBOOK_URL = ConfigKeys.newStringConfigKey("playbook_url");
     public static final ConfigKey<Object> ANSIBLE_VARS = ConfigKeys.newConfigKey(Object.class, "vars");
+
+    // SshWorkflowStep uses these, copied for visibility
+    public static final ConfigKey<DslPredicates.DslPredicate<Integer>> EXIT_CODE = ConfigKeys.newConfigKey(new TypeToken<DslPredicates.DslPredicate<Integer>>() {}, "exit_code");
+    public static final ConfigKey<Integer> OUTPUT_MAX_SIZE = ConfigKeys.newIntegerConfigKey("output_max_size", "Maximum size for stdout and stderr, or -1 for no limit", 100000);
+
 
     @Override
     public void populateFromShorthand(String expression) {
@@ -136,4 +141,5 @@ public class AnsibleSshWorkflowStep extends WorkflowStepDefinition {
         return "./brooklyn-managed-ansible/run-"+context.getEntity().getApplicationId()+"-"+context.getEntity().getId()+"/";
     }
 
+    @Override protected Boolean isDefaultIdempotent() { return false; }
 }

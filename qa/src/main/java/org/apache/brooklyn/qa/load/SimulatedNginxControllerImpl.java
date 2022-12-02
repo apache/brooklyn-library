@@ -103,7 +103,7 @@ public class SimulatedNginxControllerImpl extends NginxControllerImpl {
                             public Boolean call() {
                                 return true;
                             }}))
-                .build();
+                .build(false);
 
         // Can guarantee that parent/managementContext has been set
         Group urlMappings = getConfig(URL_MAPPINGS);

@@ -206,7 +206,7 @@ public class MySqlClusterImpl extends DynamicClusterImpl implements MySqlCluster
         if (!MySqlClusterUtils.IS_MASTER.apply(node)) {
             ServiceNotUpLogic.updateNotUpIndicator(node, MySqlSlave.SLAVE_HEALTHY, "Replication not started");
 
-            addFeed(FunctionFeed.builder()
+            FunctionFeed.builder()
                 .entity(node)
                 .period(Duration.FIVE_SECONDS)
                 .poll(FunctionPollConfig.forSensor(MySqlSlave.SLAVE_HEALTHY)
@@ -215,7 +215,7 @@ public class MySqlClusterImpl extends DynamicClusterImpl implements MySqlCluster
                         .onSuccess(new SlaveStateParser(node))
                         .setOnFailure(false)
                         .description("Polls SHOW SLAVE STATUS"))
-                .build());
+                .build(false);
 
             node.enrichers().add(Enrichers.builder().updatingMap(Attributes.SERVICE_NOT_UP_INDICATORS)
                     .from(MySqlSlave.SLAVE_HEALTHY)

@@ -203,6 +203,7 @@ public class GeoscalingIntegrationTest extends BrooklynAppUnitTestSupport {
 
         @Override
         public HostGeoInfo getHostGeoInfo(InetAddress address) throws Exception {
+            if (isHostGeoLookupGloballyDisabled()) return null;
             // Saw strange test failure on jenkins: hence paranoid logging, just in case exception is swallowed somehow.
             try {
                 HostGeoInfo result;
